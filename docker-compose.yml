@@ -1,0 +1,102 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:16-alpine
+    container_name: apex-postgres
+    environment:
+      POSTGRES_USER: apex_user
+      POSTGRES_PASSWORD: apex_password
+      POSTGRES_DB: apex_providers
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U apex_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # NestJS API
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    container_name: apex-api
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://apex_user:apex_password@postgres:5432/apex_providers?schema=public
+      JWT_SECRET: your-production-secret-change-this
+      JWT_EXPIRES_IN: 7d
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # Super Admin Dashboard
+  admin-super:
+    build:
+      context: .
+      dockerfile: apps/admin-super/Dockerfile
+    container_name: apex-admin-super
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: http://api:3000
+    ports:
+      - "4200:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Education Admin Portal
+  admin-education:
+    build:
+      context: .
+      dockerfile: apps/admin-education/Dockerfile
+    container_name: apex-admin-education
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: http://api:3000
+    ports:
+      - "4201:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Healthcare Admin Portal
+  admin-healthcare:
+    build:
+      context: .
+      dockerfile: apps/admin-healthcare/Dockerfile
+    container_name: apex-admin-healthcare
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: http://api:3000
+    ports:
+      - "4202:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+  # Manufacturing Admin Portal
+  admin-manufacturing:
+    build:
+      context: .
+      dockerfile: apps/admin-manufacturing/Dockerfile
+    container_name: apex-admin-manufacturing
+    environment:
+      NODE_ENV: production
+      VITE_API_URL: http://api:3000
+    ports:
+      - "4203:80"
+    depends_on:
+      - api
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
