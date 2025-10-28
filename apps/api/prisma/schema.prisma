@@ -57,168 +57,169 @@ enum SubscriptionStatus {
 }
 
 model Organization {
-  id                String             @id @default(uuid())
-  name              String
-  legalName         String?
-  vertical          Vertical
-  status            OrganizationStatus @default(TRIAL)
-  size              String?
-  subdomain         String             @unique
-  customDomain      String?            @unique
-  logo              String?
-  brandingSettings  Json?
-  
+  id               String             @id @default(uuid())
+  name             String
+  legalName        String?
+  vertical         Vertical
+  status           OrganizationStatus @default(TRIAL)
+  size             String?
+  subdomain        String             @unique
+  customDomain     String?            @unique
+  logo             String?
+  brandingSettings Json?
+
   // Contact Information
-  primaryEmail      String
-  primaryPhone      String?
-  address           String?
-  city              String?
-  state             String?
-  country           String
-  postalCode        String?
-  
+  primaryEmail String
+  primaryPhone String?
+  address      String?
+  city         String?
+  state        String?
+  country      String
+  postalCode   String?
+
   // Health & Metrics
-  healthScore       Int                @default(5)
-  lastActivityAt    DateTime?
-  
+  healthScore    Int       @default(5)
+  lastActivityAt DateTime?
+
   // Relationships
-  users             User[]
-  subscription      Subscription?
-  invoices          Invoice[]
-  auditLogs         AuditLog[]
-  
+  users          User[]
+  subscription   Subscription?
+  invoices       Invoice[]
+  auditLogs      AuditLog[]
+  supportTickets SupportTicket[]
+
   // Vertical-specific relationships
-  educationOrg      EducationOrganization?
-  healthcareOrg     HealthcareOrganization?
-  manufacturingOrg  ManufacturingOrganization?
-  
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  
+  educationOrg     EducationOrganization?
+  healthcareOrg    HealthcareOrganization?
+  manufacturingOrg ManufacturingOrganization?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([vertical])
   @@index([status])
   @@index([subdomain])
 }
 
 model User {
-  id                String       @id @default(uuid())
-  email             String       @unique
-  password          String
-  firstName         String
-  lastName          String
-  avatar            String?
-  phone             String?
-  
-  role              UserRole     @default(END_USER)
-  isActive          Boolean      @default(true)
-  lastLoginAt       DateTime?
-  
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  firstName String
+  lastName  String
+  avatar    String?
+  phone     String?
+
+  role        UserRole  @default(END_USER)
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+
   // Multi-tenant relationship
-  organizationId    String?
-  organization      Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
   // Additional permissions (JSON for flexibility)
-  permissions       Json?
-  
+  permissions Json?
+
   // Relationships
-  auditLogs         AuditLog[]
-  createdTickets    SupportTicket[] @relation("TicketCreator")
-  assignedTickets   SupportTicket[] @relation("TicketAssignee")
-  
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  
+  auditLogs       AuditLog[]
+  createdTickets  SupportTicket[] @relation("TicketCreator")
+  assignedTickets SupportTicket[] @relation("TicketAssignee")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([email])
   @@index([organizationId])
   @@index([role])
 }
 
 model Subscription {
-  id                String             @id @default(uuid())
-  organizationId    String             @unique
-  organization      Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  plan              SubscriptionPlan
-  status            SubscriptionStatus @default(TRIAL)
-  
+  id             String       @id @default(uuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  plan   SubscriptionPlan
+  status SubscriptionStatus @default(TRIAL)
+
   // Billing details
-  billingCycle      String             // MONTHLY, ANNUAL
-  amount            Decimal            @db.Decimal(10, 2)
-  currency          String             @default("USD")
-  
+  billingCycle String // MONTHLY, ANNUAL
+  amount       Decimal @db.Decimal(10, 2)
+  currency     String  @default("USD")
+
   // Limits
-  userLimit         Int                @default(10)
-  storageLimit      Int                @default(10) // GB
-  
+  userLimit    Int @default(10)
+  storageLimit Int @default(10) // GB
+
   // Dates
-  trialEndsAt       DateTime?
+  trialEndsAt        DateTime?
   currentPeriodStart DateTime
   currentPeriodEnd   DateTime
-  cancelledAt       DateTime?
-  
+  cancelledAt        DateTime?
+
   // Payment
-  paymentMethod     String?
-  stripeCustomerId  String?
+  paymentMethod        String?
+  stripeCustomerId     String?
   stripeSubscriptionId String?
-  
-  invoices          Invoice[]
-  
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  
+
+  invoices Invoice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([organizationId])
   @@index([status])
 }
 
 model Invoice {
-  id                String       @id @default(uuid())
-  invoiceNumber     String       @unique
-  
-  organizationId    String
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  subscriptionId    String?
-  subscription      Subscription? @relation(fields: [subscriptionId], references: [id])
-  
-  amount            Decimal      @db.Decimal(10, 2)
-  tax               Decimal      @db.Decimal(10, 2) @default(0)
-  total             Decimal      @db.Decimal(10, 2)
-  currency          String       @default("USD")
-  
-  status            String       // DRAFT, SENT, PAID, OVERDUE, CANCELLED
-  dueDate           DateTime
-  paidAt            DateTime?
-  
-  stripeInvoiceId   String?
-  
-  items             Json         // Line items
-  
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
-  
+  id            String @id @default(uuid())
+  invoiceNumber String @unique
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  subscriptionId String?
+  subscription   Subscription? @relation(fields: [subscriptionId], references: [id])
+
+  amount   Decimal @db.Decimal(10, 2)
+  tax      Decimal @default(0) @db.Decimal(10, 2)
+  total    Decimal @db.Decimal(10, 2)
+  currency String  @default("USD")
+
+  status  String // DRAFT, SENT, PAID, OVERDUE, CANCELLED
+  dueDate DateTime
+  paidAt  DateTime?
+
+  stripeInvoiceId String?
+
+  items Json // Line items
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([organizationId])
   @@index([status])
   @@index([dueDate])
 }
 
 model AuditLog {
-  id             String       @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  userId         String
-  user           User         @relation(fields: [userId], references: [id])
-  
-  action         String       // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
-  resource       String       // User, Organization, Student, etc.
-  resourceId     String?
-  changes        Json?        // Before/after values
-  ipAddress      String?
-  userAgent      String?
-  
-  createdAt      DateTime     @default(now())
-  
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  action     String // CREATE, UPDATE, DELETE, LOGIN, LOGOUT, etc.
+  resource   String // User, Organization, Student, etc.
+  resourceId String?
+  changes    Json? // Before/after values
+  ipAddress  String?
+  userAgent  String?
+
+  createdAt DateTime @default(now())
+
   @@index([organizationId])
   @@index([userId])
   @@index([action])
@@ -226,29 +227,29 @@ model AuditLog {
 }
 
 model SupportTicket {
-  id             String       @id @default(uuid())
-  ticketNumber   String       @unique
-  
+  id           String @id @default(uuid())
+  ticketNumber String @unique
+
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  createdById    String
-  createdBy      User         @relation("TicketCreator", fields: [createdById], references: [id])
-  
-  assignedToId   String?
-  assignedTo     User?        @relation("TicketAssignee", fields: [assignedToId], references: [id])
-  
-  subject        String
-  description    String       @db.Text
-  priority       String       // LOW, MEDIUM, HIGH, CRITICAL
-  status         String       @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
-  
-  resolvedAt     DateTime?
-  closedAt       DateTime?
-  
-  createdAt      DateTime     @default(now())
-  updatedAt      DateTime     @updatedAt
-  
+
+  createdById String
+  createdBy   User   @relation("TicketCreator", fields: [createdById], references: [id])
+
+  assignedToId String?
+  assignedTo   User?   @relation("TicketAssignee", fields: [assignedToId], references: [id])
+
+  subject     String
+  description String @db.Text
+  priority    String // LOW, MEDIUM, HIGH, CRITICAL
+  status      String @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+
+  resolvedAt DateTime?
+  closedAt   DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([organizationId])
   @@index([status])
   @@index([priority])
@@ -266,217 +267,221 @@ enum SchoolType {
 }
 
 model EducationOrganization {
-  id                String       @id @default(uuid())
-  organizationId    String       @unique
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  schoolType        SchoolType
-  principalName     String?
+  id             String       @id @default(uuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  schoolType          SchoolType
+  principalName       String?
   accreditationStatus String?
-  studentCapacity   Int?
-  
-  departments       Department[]
-  students          Student[]
-  teachers          Teacher[]
-  courses           Course[]
-  classes           Class[]
-  
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  studentCapacity     Int?
+
+  departments Department[]
+  students    Student[]
+  teachers    Teacher[]
+  courses     Course[]
+  classes     Class[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Department {
-  id                String                  @id @default(uuid())
-  name              String
-  code              String
-  
-  educationOrgId    String
-  educationOrg      EducationOrganization   @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
-  
-  headOfDepartment  String?
-  budget            Decimal?                @db.Decimal(12, 2)
-  
-  teachers          Teacher[]
-  courses           Course[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id   String @id @default(uuid())
+  name String
+  code String
+
+  educationOrgId String
+  educationOrg   EducationOrganization @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
+
+  headOfDepartment String?
+  budget           Decimal? @db.Decimal(12, 2)
+
+  teachers Teacher[]
+  courses  Course[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([educationOrgId, code])
 }
 
 model Student {
-  id                String                  @id @default(uuid())
-  studentId         String
-  
-  educationOrgId    String
-  educationOrg      EducationOrganization   @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
-  
-  firstName         String
-  lastName          String
-  dateOfBirth       DateTime
-  gender            String?
-  email             String?
-  phone             String?
-  address           String?
-  
-  enrollmentDate    DateTime
-  gradeLevel        String
-  status            String                  @default("ACTIVE") // ACTIVE, GRADUATED, WITHDRAWN
-  
+  id        String @id @default(uuid())
+  studentId String
+
+  educationOrgId String
+  educationOrg   EducationOrganization @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
+
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      String?
+  email       String?
+  phone       String?
+  address     String?
+
+  enrollmentDate DateTime
+  gradeLevel     String
+  status         String   @default("ACTIVE") // ACTIVE, GRADUATED, WITHDRAWN
+
   // Parent/Guardian Info
-  parentName        String?
-  parentEmail       String?
-  parentPhone       String?
-  
-  enrollments       ClassEnrollment[]
-  grades            Grade[]
-  attendance        AttendanceRecord[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  parentName  String?
+  parentEmail String?
+  parentPhone String?
+
+  enrollments ClassEnrollment[]
+  grades      Grade[]
+  attendance  AttendanceRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([educationOrgId, studentId])
   @@index([educationOrgId])
   @@index([status])
 }
 
 model Teacher {
-  id                String                  @id @default(uuid())
-  teacherId         String
-  
-  educationOrgId    String
-  educationOrg      EducationOrganization   @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
-  
-  departmentId      String?
-  department        Department?             @relation(fields: [departmentId], references: [id])
-  
-  firstName         String
-  lastName          String
-  email             String
-  phone             String?
-  
-  qualification     String?
-  specialization    String?
-  hireDate          DateTime
-  status            String                  @default("ACTIVE")
-  
-  classes           Class[]
-  grades            Grade[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id        String @id @default(uuid())
+  teacherId String
+
+  educationOrgId String
+  educationOrg   EducationOrganization @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+
+  qualification  String?
+  specialization String?
+  hireDate       DateTime
+  status         String   @default("ACTIVE")
+
+  classes Class[]
+  grades  Grade[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([educationOrgId, teacherId])
   @@index([educationOrgId])
   @@index([departmentId])
 }
 
 model Course {
-  id                String                  @id @default(uuid())
-  courseCode        String
-  name              String
-  description       String?                 @db.Text
-  credits           Int?
-  
-  educationOrgId    String
-  educationOrg      EducationOrganization   @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
-  
-  departmentId      String?
-  department        Department?             @relation(fields: [departmentId], references: [id])
-  
-  classes           Class[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id          String  @id @default(uuid())
+  courseCode  String
+  name        String
+  description String? @db.Text
+  credits     Int?
+
+  educationOrgId String
+  educationOrg   EducationOrganization @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
+
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  classes Class[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([educationOrgId, courseCode])
 }
 
 model Class {
-  id                String                  @id @default(uuid())
-  classCode         String
-  section           String?
-  
-  courseId          String
-  course            Course                  @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  
-  teacherId         String
-  teacher           Teacher                 @relation(fields: [teacherId], references: [id])
-  
-  term              String                  // Fall 2024, Spring 2025, etc.
-  schedule          Json?                   // Days and times
-  room              String?
-  capacity          Int?
-  
-  enrollments       ClassEnrollment[]
-  grades            Grade[]
-  attendance        AttendanceRecord[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id        String  @id @default(uuid())
+  classCode String
+  section   String?
+
+  courseId String
+  course   Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  educationOrgId String
+  educationOrg   EducationOrganization @relation(fields: [educationOrgId], references: [id], onDelete: Cascade)
+
+  term     String // Fall 2024, Spring 2025, etc.
+  schedule Json? // Days and times
+  room     String?
+  capacity Int?
+
+  enrollments ClassEnrollment[]
+  grades      Grade[]
+  attendance  AttendanceRecord[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([courseId, classCode, term])
   @@index([teacherId])
+  @@index([educationOrgId])
 }
 
 model ClassEnrollment {
-  id                String                  @id @default(uuid())
-  
-  studentId         String
-  student           Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
-  classId           String
-  class             Class                   @relation(fields: [classId], references: [id], onDelete: Cascade)
-  
-  enrollmentDate    DateTime                @default(now())
-  status            String                  @default("ACTIVE") // ACTIVE, DROPPED, COMPLETED
-  
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  enrollmentDate DateTime @default(now())
+  status         String   @default("ACTIVE") // ACTIVE, DROPPED, COMPLETED
+
   @@unique([studentId, classId])
   @@index([studentId])
   @@index([classId])
 }
 
 model Grade {
-  id                String                  @id @default(uuid())
-  
-  studentId         String
-  student           Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
-  classId           String
-  class             Class                   @relation(fields: [classId], references: [id], onDelete: Cascade)
-  
-  teacherId         String
-  teacher           Teacher                 @relation(fields: [teacherId], references: [id])
-  
-  assessment        String                  // Midterm, Final, Assignment 1, etc.
-  score             Decimal                 @db.Decimal(5, 2)
-  maxScore          Decimal                 @db.Decimal(5, 2)
-  percentage        Decimal                 @db.Decimal(5, 2)
-  letterGrade       String?
-  
-  gradedAt          DateTime                @default(now())
-  comments          String?                 @db.Text
-  
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  teacherId String
+  teacher   Teacher @relation(fields: [teacherId], references: [id])
+
+  assessment  String // Midterm, Final, Assignment 1, etc.
+  score       Decimal @db.Decimal(5, 2)
+  maxScore    Decimal @db.Decimal(5, 2)
+  percentage  Decimal @db.Decimal(5, 2)
+  letterGrade String?
+
+  gradedAt DateTime @default(now())
+  comments String?  @db.Text
+
   @@index([studentId])
   @@index([classId])
 }
 
 model AttendanceRecord {
-  id                String                  @id @default(uuid())
-  
-  studentId         String
-  student           Student                 @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  
-  classId           String
-  class             Class                   @relation(fields: [classId], references: [id], onDelete: Cascade)
-  
-  date              DateTime
-  status            String                  // PRESENT, ABSENT, LATE, EXCUSED
-  notes             String?
-  
-  createdAt         DateTime                @default(now())
-  
+  id String @id @default(uuid())
+
+  studentId String
+  student   Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  classId String
+  class   Class  @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  date   DateTime
+  status String // PRESENT, ABSENT, LATE, EXCUSED
+  notes  String?
+
+  createdAt DateTime @default(now())
+
   @@unique([studentId, classId, date])
   @@index([studentId])
   @@index([classId])
@@ -495,170 +500,170 @@ enum FacilityType {
 }
 
 model HealthcareOrganization {
-  id                String       @id @default(uuid())
-  organizationId    String       @unique
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  facilityType      FacilityType
-  licenseNumber     String?
+  id             String       @id @default(uuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  facilityType        FacilityType
+  licenseNumber       String?
   accreditationStatus String?
-  bedCapacity       Int?
-  
-  departments       MedicalDepartment[]
-  patients          Patient[]
-  doctors           Doctor[]
-  nurses            Nurse[]
-  appointments      Appointment[]
-  
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+  bedCapacity         Int?
+
+  departments  MedicalDepartment[]
+  patients     Patient[]
+  doctors      Doctor[]
+  nurses       Nurse[]
+  appointments Appointment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model MedicalDepartment {
-  id                String                  @id @default(uuid())
-  name              String
-  code              String
-  
-  healthcareOrgId   String
-  healthcareOrg     HealthcareOrganization  @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
-  
-  departmentChief   String?
-  bedCount          Int?
-  
-  doctors           Doctor[]
-  nurses            Nurse[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id   String @id @default(uuid())
+  name String
+  code String
+
+  healthcareOrgId String
+  healthcareOrg   HealthcareOrganization @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
+
+  departmentChief String?
+  bedCount        Int?
+
+  doctors Doctor[]
+  nurses  Nurse[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([healthcareOrgId, code])
 }
 
 model Patient {
-  id                String                  @id @default(uuid())
-  patientId         String
-  
-  healthcareOrgId   String
-  healthcareOrg     HealthcareOrganization  @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
-  
-  firstName         String
-  lastName          String
-  dateOfBirth       DateTime
-  gender            String
-  email             String?
-  phone             String
-  address           String?
-  
-  bloodType         String?
-  allergies         String?                 @db.Text
-  emergencyContact  String?
-  emergencyPhone    String?
-  
+  id        String @id @default(uuid())
+  patientId String
+
+  healthcareOrgId String
+  healthcareOrg   HealthcareOrganization @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
+
+  firstName   String
+  lastName    String
+  dateOfBirth DateTime
+  gender      String
+  email       String?
+  phone       String
+  address     String?
+
+  bloodType        String?
+  allergies        String? @db.Text
+  emergencyContact String?
+  emergencyPhone   String?
+
   insuranceProvider String?
   insuranceNumber   String?
-  
-  registrationDate  DateTime                @default(now())
-  status            String                  @default("ACTIVE")
-  
-  appointments      Appointment[]
-  medicalRecords    MedicalRecord[]
-  prescriptions     Prescription[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+
+  registrationDate DateTime @default(now())
+  status           String   @default("ACTIVE")
+
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+  prescriptions  Prescription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([healthcareOrgId, patientId])
   @@index([healthcareOrgId])
   @@index([status])
 }
 
 model Doctor {
-  id                String                  @id @default(uuid())
-  doctorId          String
-  
-  healthcareOrgId   String
-  healthcareOrg     HealthcareOrganization  @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
-  
-  departmentId      String?
-  department        MedicalDepartment?      @relation(fields: [departmentId], references: [id])
-  
-  firstName         String
-  lastName          String
-  email             String
-  phone             String?
-  
-  specialization    String
-  licenseNumber     String
-  qualification     String
-  
-  hireDate          DateTime
-  status            String                  @default("ACTIVE")
-  
-  appointments      Appointment[]
-  medicalRecords    MedicalRecord[]
-  prescriptions     Prescription[]
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id       String @id @default(uuid())
+  doctorId String
+
+  healthcareOrgId String
+  healthcareOrg   HealthcareOrganization @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
+
+  departmentId String?
+  department   MedicalDepartment? @relation(fields: [departmentId], references: [id])
+
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+
+  specialization String
+  licenseNumber  String
+  qualification  String
+
+  hireDate DateTime
+  status   String   @default("ACTIVE")
+
+  appointments   Appointment[]
+  medicalRecords MedicalRecord[]
+  prescriptions  Prescription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([healthcareOrgId, doctorId])
   @@index([healthcareOrgId])
   @@index([departmentId])
 }
 
 model Nurse {
-  id                String                  @id @default(uuid())
-  nurseId           String
-  
-  healthcareOrgId   String
-  healthcareOrg     HealthcareOrganization  @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
-  
-  departmentId      String?
-  department        MedicalDepartment?      @relation(fields: [departmentId], references: [id])
-  
-  firstName         String
-  lastName          String
-  email             String
-  phone             String?
-  
-  licenseNumber     String
-  qualification     String
-  
-  hireDate          DateTime
-  status            String                  @default("ACTIVE")
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id      String @id @default(uuid())
+  nurseId String
+
+  healthcareOrgId String
+  healthcareOrg   HealthcareOrganization @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
+
+  departmentId String?
+  department   MedicalDepartment? @relation(fields: [departmentId], references: [id])
+
+  firstName String
+  lastName  String
+  email     String
+  phone     String?
+
+  licenseNumber String
+  qualification String
+
+  hireDate DateTime
+  status   String   @default("ACTIVE")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([healthcareOrgId, nurseId])
   @@index([healthcareOrgId])
   @@index([departmentId])
 }
 
 model Appointment {
-  id                String                  @id @default(uuid())
+  id                String @id @default(uuid())
   appointmentNumber String
-  
-  healthcareOrgId   String
-  healthcareOrg     HealthcareOrganization  @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
-  
-  patientId         String
-  patient           Patient                 @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  
-  doctorId          String
-  doctor            Doctor                  @relation(fields: [doctorId], references: [id])
-  
-  scheduledAt       DateTime
-  duration          Int                     // minutes
-  status            String                  @default("SCHEDULED") // SCHEDULED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
-  
-  type              String                  // CONSULTATION, FOLLOW_UP, EMERGENCY, etc.
-  reason            String?                 @db.Text
-  notes             String?                 @db.Text
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+
+  healthcareOrgId String
+  healthcareOrg   HealthcareOrganization @relation(fields: [healthcareOrgId], references: [id], onDelete: Cascade)
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  scheduledAt DateTime
+  duration    Int // minutes
+  status      String   @default("SCHEDULED") // SCHEDULED, CONFIRMED, IN_PROGRESS, COMPLETED, CANCELLED
+
+  type   String // CONSULTATION, FOLLOW_UP, EMERGENCY, etc.
+  reason String? @db.Text
+  notes  String? @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([healthcareOrgId, appointmentNumber])
   @@index([patientId])
   @@index([doctorId])
@@ -666,54 +671,54 @@ model Appointment {
 }
 
 model MedicalRecord {
-  id                String                  @id @default(uuid())
-  recordNumber      String
-  
-  patientId         String
-  patient           Patient                 @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  
-  doctorId          String
-  doctor            Doctor                  @relation(fields: [doctorId], references: [id])
-  
-  visitDate         DateTime
-  diagnosis         String                  @db.Text
-  symptoms          String?                 @db.Text
-  treatment         String?                 @db.Text
-  notes             String?                 @db.Text
-  
-  vitalSigns        Json?                   // Temperature, BP, Pulse, etc.
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+  id           String @id @default(uuid())
+  recordNumber String
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  visitDate DateTime
+  diagnosis String   @db.Text
+  symptoms  String?  @db.Text
+  treatment String?  @db.Text
+  notes     String?  @db.Text
+
+  vitalSigns Json? // Temperature, BP, Pulse, etc.
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([patientId])
   @@index([doctorId])
   @@index([visitDate])
 }
 
 model Prescription {
-  id                String                  @id @default(uuid())
+  id                 String @id @default(uuid())
   prescriptionNumber String
-  
-  patientId         String
-  patient           Patient                 @relation(fields: [patientId], references: [id], onDelete: Cascade)
-  
-  doctorId          String
-  doctor            Doctor                  @relation(fields: [doctorId], references: [id])
-  
-  medication        String
-  dosage            String
-  frequency         String
-  duration          String
-  instructions      String?                 @db.Text
-  
-  prescribedAt      DateTime                @default(now())
-  validUntil        DateTime
-  status            String                  @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
-  
-  createdAt         DateTime                @default(now())
-  updatedAt         DateTime                @updatedAt
-  
+
+  patientId String
+  patient   Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  doctorId String
+  doctor   Doctor @relation(fields: [doctorId], references: [id])
+
+  medication   String
+  dosage       String
+  frequency    String
+  duration     String
+  instructions String? @db.Text
+
+  prescribedAt DateTime @default(now())
+  validUntil   DateTime
+  status       String   @default("ACTIVE") // ACTIVE, EXPIRED, CANCELLED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@index([patientId])
   @@index([doctorId])
   @@index([status])
@@ -733,212 +738,213 @@ enum PlantType {
 }
 
 model ManufacturingOrganization {
-  id                String       @id @default(uuid())
-  organizationId    String       @unique
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  
-  plantType         PlantType
-  certifications    String?      // ISO, etc.
-  productionCapacity Decimal?    @db.Decimal(12, 2)
-  
-  departments       ProductionDepartment[]
-  workers           Worker[]
-  equipment         Equipment[]
-  productionLines   ProductionLine[]
-  qualityInspections QualityInspection[]
+  id             String       @id @default(uuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  plantType          PlantType
+  certifications     String? // ISO, etc.
+  productionCapacity Decimal?  @db.Decimal(12, 2)
+
+  departments         ProductionDepartment[]
+  workers             Worker[]
+  equipment           Equipment[]
+  productionLines     ProductionLine[]
+  productionLogs      ProductionLog[]
+  qualityInspections  QualityInspection[]
   maintenanceRequests MaintenanceRequest[]
-  
-  createdAt         DateTime     @default(now())
-  updatedAt         DateTime     @updatedAt
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ProductionDepartment {
-  id                String                      @id @default(uuid())
-  name              String
-  code              String
-  
+  id   String @id @default(uuid())
+  name String
+  code String
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  manager           String?
-  budget            Decimal?                    @db.Decimal(12, 2)
-  
-  workers           Worker[]
-  productionLines   ProductionLine[]
-  
-  createdAt         DateTime                    @default(now())
-  updatedAt         DateTime                    @updatedAt
-  
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  manager String?
+  budget  Decimal? @db.Decimal(12, 2)
+
+  workers         Worker[]
+  productionLines ProductionLine[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([manufacturingOrgId, code])
 }
 
 model Worker {
-  id                String                      @id @default(uuid())
-  workerId          String
-  
+  id       String @id @default(uuid())
+  workerId String
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  departmentId      String?
-  department        ProductionDepartment?       @relation(fields: [departmentId], references: [id])
-  
-  firstName         String
-  lastName          String
-  email             String?
-  phone             String?
-  
-  position          String
-  skillLevel        String?
-  shift             String                      // MORNING, EVENING, NIGHT, ROTATING
-  
-  hireDate          DateTime
-  status            String                      @default("ACTIVE")
-  
-  productionLogs    ProductionLog[]
-  
-  createdAt         DateTime                    @default(now())
-  updatedAt         DateTime                    @updatedAt
-  
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  departmentId String?
+  department   ProductionDepartment? @relation(fields: [departmentId], references: [id])
+
+  firstName String
+  lastName  String
+  email     String?
+  phone     String?
+
+  position   String
+  skillLevel String?
+  shift      String // MORNING, EVENING, NIGHT, ROTATING
+
+  hireDate DateTime
+  status   String   @default("ACTIVE")
+
+  productionLogs ProductionLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([manufacturingOrgId, workerId])
   @@index([manufacturingOrgId])
   @@index([departmentId])
 }
 
 model ProductionLine {
-  id                String                      @id @default(uuid())
-  lineCode          String
-  name              String
-  
+  id       String @id @default(uuid())
+  lineCode String
+  name     String
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  departmentId      String?
-  department        ProductionDepartment?       @relation(fields: [departmentId], references: [id])
-  
-  capacity          Decimal                     @db.Decimal(10, 2) // units per hour
-  status            String                      @default("OPERATIONAL") // OPERATIONAL, MAINTENANCE, DOWN
-  
-  equipment         Equipment[]
-  productionLogs    ProductionLog[]
-  
-  createdAt         DateTime                    @default(now())
-  updatedAt         DateTime                    @updatedAt
-  
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  departmentId String?
+  department   ProductionDepartment? @relation(fields: [departmentId], references: [id])
+
+  capacity Decimal @db.Decimal(10, 2) // units per hour
+  status   String  @default("OPERATIONAL") // OPERATIONAL, MAINTENANCE, DOWN
+
+  equipment      Equipment[]
+  productionLogs ProductionLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([manufacturingOrgId, lineCode])
 }
 
 model Equipment {
-  id                String                      @id @default(uuid())
-  equipmentCode     String
-  name              String
-  type              String
-  
+  id            String @id @default(uuid())
+  equipmentCode String
+  name          String
+  type          String
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  productionLineId  String?
-  productionLine    ProductionLine?             @relation(fields: [productionLineId], references: [id])
-  
-  manufacturer      String?
-  serialNumber      String?
-  purchaseDate      DateTime?
-  
-  status            String                      @default("OPERATIONAL")
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  productionLineId String?
+  productionLine   ProductionLine? @relation(fields: [productionLineId], references: [id])
+
+  manufacturer String?
+  serialNumber String?
+  purchaseDate DateTime?
+
+  status              String    @default("OPERATIONAL")
   lastMaintenanceDate DateTime?
   nextMaintenanceDate DateTime?
-  
+
   maintenanceRequests MaintenanceRequest[]
-  
-  createdAt         DateTime                    @default(now())
-  updatedAt         DateTime                    @updatedAt
-  
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([manufacturingOrgId, equipmentCode])
   @@index([productionLineId])
 }
 
 model ProductionLog {
-  id                String                      @id @default(uuid())
-  
+  id String @id @default(uuid())
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  productionLineId  String
-  productionLine    ProductionLine              @relation(fields: [productionLineId], references: [id], onDelete: Cascade)
-  
-  workerId          String?
-  worker            Worker?                     @relation(fields: [workerId], references: [id])
-  
-  shift             String
-  date              DateTime
-  
-  unitsProduced     Int
-  unitsDefective    Int
-  downtimeMinutes   Int                         @default(0)
-  
-  notes             String?                     @db.Text
-  
-  createdAt         DateTime                    @default(now())
-  
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  productionLineId String
+  productionLine   ProductionLine @relation(fields: [productionLineId], references: [id], onDelete: Cascade)
+
+  workerId String?
+  worker   Worker? @relation(fields: [workerId], references: [id])
+
+  shift String
+  date  DateTime
+
+  unitsProduced   Int
+  unitsDefective  Int
+  downtimeMinutes Int @default(0)
+
+  notes String? @db.Text
+
+  createdAt DateTime @default(now())
+
   @@index([manufacturingOrgId])
   @@index([productionLineId])
   @@index([date])
 }
 
 model QualityInspection {
-  id                String                      @id @default(uuid())
-  inspectionNumber  String
-  
+  id               String @id @default(uuid())
+  inspectionNumber String
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  productBatch      String
-  inspectionDate    DateTime
-  inspectorName     String
-  
-  samplesInspected  Int
-  samplesPassed     Int
-  samplesFailed     Int
-  
-  defectTypes       Json?
-  remarks           String?                     @db.Text
-  
-  status            String                      @default("PENDING") // PENDING, APPROVED, REJECTED
-  
-  createdAt         DateTime                    @default(now())
-  updatedAt         DateTime                    @updatedAt
-  
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  productBatch   String
+  inspectionDate DateTime
+  inspectorName  String
+
+  samplesInspected Int
+  samplesPassed    Int
+  samplesFailed    Int
+
+  defectTypes Json?
+  remarks     String? @db.Text
+
+  status String @default("PENDING") // PENDING, APPROVED, REJECTED
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([manufacturingOrgId, inspectionNumber])
   @@index([manufacturingOrgId])
   @@index([inspectionDate])
 }
 
 model MaintenanceRequest {
-  id                String                      @id @default(uuid())
-  requestNumber     String
-  
+  id            String @id @default(uuid())
+  requestNumber String
+
   manufacturingOrgId String
-  manufacturingOrg   ManufacturingOrganization  @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
-  
-  equipmentId       String
-  equipment         Equipment                   @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
-  
-  type              String                      // PREVENTIVE, CORRECTIVE, EMERGENCY
-  priority          String                      // LOW, MEDIUM, HIGH, CRITICAL
-  status            String                      @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED, CANCELLED
-  
-  description       String                      @db.Text
-  assignedTo        String?
-  
-  requestedAt       DateTime                    @default(now())
-  scheduledAt       DateTime?
-  completedAt       DateTime?
-  
-  cost              Decimal?                    @db.Decimal(10, 2)
-  notes             String?                     @db.Text
-  
-  createdAt         DateTime                    @default(now())
-  updatedAt         DateTime                    @updatedAt
-  
+  manufacturingOrg   ManufacturingOrganization @relation(fields: [manufacturingOrgId], references: [id], onDelete: Cascade)
+
+  equipmentId String
+  equipment   Equipment @relation(fields: [equipmentId], references: [id], onDelete: Cascade)
+
+  type     String // PREVENTIVE, CORRECTIVE, EMERGENCY
+  priority String // LOW, MEDIUM, HIGH, CRITICAL
+  status   String @default("OPEN") // OPEN, IN_PROGRESS, COMPLETED, CANCELLED
+
+  description String  @db.Text
+  assignedTo  String?
+
+  requestedAt DateTime  @default(now())
+  scheduledAt DateTime?
+  completedAt DateTime?
+
+  cost  Decimal? @db.Decimal(10, 2)
+  notes String?  @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
   @@unique([manufacturingOrgId, requestNumber])
   @@index([equipmentId])
   @@index([status])
