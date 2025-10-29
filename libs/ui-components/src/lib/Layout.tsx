@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 export interface NavItem {
   label: string;
@@ -25,6 +26,7 @@ export const AdminLayout: React.FC<LayoutProps> = ({
   vertical = 'super-admin',
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
   
   const verticalColors = {
     education: 'bg-authority-purple',
@@ -45,31 +47,41 @@ export const AdminLayout: React.FC<LayoutProps> = ({
         {/* Navigation */}
         <nav className="flex-1 overflow-y-auto p-4">
           <ul className="space-y-2">
-            {navigation.map((item, idx) => (
-              <li key={idx}>
-                <a
-                  href={item.href}
-                  className="flex items-center px-4 py-3 rounded-lg hover:bg-white/10 transition-colors"
-                >
-                  {item.icon && <span className="mr-3">{item.icon}</span>}
-                  <span className="font-medium">{item.label}</span>
-                </a>
-                {item.children && (
-                  <ul className="ml-8 mt-2 space-y-1">
-                    {item.children.map((child, childIdx) => (
-                      <li key={childIdx}>
-                        <a
-                          href={child.href}
-                          className="block px-4 py-2 text-sm rounded-lg hover:bg-white/10 transition-colors"
-                        >
-                          {child.label}
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </li>
-            ))}
+            {navigation.map((item, idx) => {
+              const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/');
+              return (
+                <li key={idx}>
+                  <Link
+                    to={item.href}
+                    className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
+                      isActive ? 'bg-white/20' : 'hover:bg-white/10'
+                    }`}
+                  >
+                    {item.icon && <span className="mr-3">{item.icon}</span>}
+                    <span className="font-medium">{item.label}</span>
+                  </Link>
+                  {item.children && (
+                    <ul className="ml-8 mt-2 space-y-1">
+                      {item.children.map((child, childIdx) => {
+                        const isChildActive = location.pathname === child.href;
+                        return (
+                          <li key={childIdx}>
+                            <Link
+                              to={child.href}
+                              className={`block px-4 py-2 text-sm rounded-lg transition-colors ${
+                                isChildActive ? 'bg-white/20' : 'hover:bg-white/10'
+                              }`}
+                            >
+                              {child.label}
+                            </Link>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </li>
+              );
+            })}
           </ul>
         </nav>
       </aside>

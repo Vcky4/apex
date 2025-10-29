@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from '@apex-providers/ui-components';
 import Dashboard from './pages/Dashboard';
 import Organizations from './pages/Organizations';
@@ -74,25 +74,23 @@ const userMenu = (
 
 export function App() {
   return (
-    <Router>
-      <AdminLayout
-        navigation={navigation}
-        logo={logo}
-        userMenu={userMenu}
-        vertical="super-admin"
-      >
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/organizations" element={<Organizations />} />
-          <Route path="/organizations/:id" element={<OrganizationDetail />} />
-          <Route path="/billing" element={<Billing />} />
-          <Route path="/analytics" element={<Analytics />} />
-          <Route path="/security" element={<Security />} />
-          <Route path="/support" element={<Support />} />
-        </Routes>
-      </AdminLayout>
-    </Router>
+    <AdminLayout
+      navigation={navigation}
+      logo={logo}
+      userMenu={userMenu}
+      vertical="super-admin"
+    >
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/organizations" element={<Organizations />} />
+        <Route path="/organizations/:id" element={<OrganizationDetail />} />
+        <Route path="/billing" element={<Billing />} />
+        <Route path="/analytics" element={<Analytics />} />
+        <Route path="/security" element={<Security />} />
+        <Route path="/support" element={<Support />} />
+      </Routes>
+    </AdminLayout>
   );
 }
 
