@@ -17,7 +17,10 @@ export default function Attendance() {
   const [selectedGrade, setSelectedGrade] = useState('all');
   const [selectedClass, setSelectedClass] = useState('all');
   const [showMarkModal, setShowMarkModal] = useState(false);
+  const [showTakeAttendanceModal, setShowTakeAttendanceModal] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState<AttendanceRecord | null>(null);
+  const [bulkAttendanceGrade, setBulkAttendanceGrade] = useState('9');
+  const [bulkAttendanceClass, setBulkAttendanceClass] = useState('');
   const [attendanceData, setAttendanceData] = useState<AttendanceRecord[]>([
     { id: 1, studentId: 'STU001', name: 'Alex Johnson', grade: '10', class: 'Math 101', status: 'Present', time: '8:05 AM', notes: '', date: new Date().toISOString().split('T')[0] },
     { id: 2, studentId: 'STU002', name: 'Emma Davis', grade: '10', class: 'Math 101', status: 'Present', time: '8:02 AM', notes: '', date: new Date().toISOString().split('T')[0] },
@@ -31,6 +34,17 @@ export default function Attendance() {
 
   const [editStatus, setEditStatus] = useState('');
   const [editNotes, setEditNotes] = useState('');
+
+  // Students for bulk attendance (would come from API in real app)
+  const studentsForClass = [
+    { id: 1, studentId: 'STU001', name: 'Alex Johnson', grade: '10' },
+    { id: 2, studentId: 'STU002', name: 'Emma Davis', grade: '10' },
+    { id: 3, studentId: 'STU003', name: 'Michael Brown', grade: '11' },
+    { id: 4, studentId: 'STU004', name: 'Sarah Wilson', grade: '11' },
+    { id: 5, studentId: 'STU005', name: 'James Martinez', grade: '9' },
+  ];
+
+  const [bulkAttendanceStates, setBulkAttendanceStates] = useState<Record<number, string>>({});
 
   const filteredAttendance = useMemo(() => {
     return attendanceData.filter(record => {
@@ -76,6 +90,65 @@ export default function Attendance() {
     }
   };
 
+  const handleExport = () => {
+    // Convert filtered attendance to CSV
+    const headers = ['Student ID', 'Name', 'Grade', 'Class', 'Status', 'Time', 'Notes', 'Date'];
+    const csvData = filteredAttendance.map(record => [
+      record.studentId,
+      record.name,
+      record.grade,
+      record.class,
+      record.status,
+      record.time,
+      record.notes,
+      record.date
+    ]);
+    
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => row.map(cell => `"${cell}"`).join(','))
+    ].join('\n');
+    
+    // Create download link
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `attendance_${selectedDate}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const handleTakeAttendance = () => {
+    setBulkAttendanceGrade('9');
+    setBulkAttendanceClass('Math 101');
+    // Initialize all students as present by default
+    const initialStates: Record<number, string> = {};
+    studentsForClass.forEach(student => {
+      initialStates[student.id] = 'Present';
+    });
+    setBulkAttendanceStates(initialStates);
+    setShowTakeAttendanceModal(true);
+  };
+
+  const saveBulkAttendance = () => {
+    const currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    const newRecords: AttendanceRecord[] = studentsForClass.map(student => ({
+      id: attendanceData.length + student.id,
+      studentId: student.studentId,
+      name: student.name,
+      grade: student.grade,
+      class: bulkAttendanceClass,
+      status: bulkAttendanceStates[student.id] || 'Present',
+      time: bulkAttendanceStates[student.id] === 'Absent' || bulkAttendanceStates[student.id] === 'Excused' ? '-' : currentTime,
+      notes: '',
+      date: selectedDate,
+    }));
+    
+    setAttendanceData([...attendanceData, ...newRecords]);
+    setShowTakeAttendanceModal(false);
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -85,13 +158,19 @@ export default function Attendance() {
           <p className="text-gray-600 mt-2">Track and manage student attendance</p>
         </div>
         <div className="flex space-x-3">
-          <button className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2">
+          <button 
+            onClick={handleExport}
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors flex items-center space-x-2"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
             </svg>
             <span>Export</span>
           </button>
-          <button className="px-6 py-3 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2">
+          <button 
+            onClick={handleTakeAttendance}
+            className="px-6 py-3 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors flex items-center space-x-2"
+          >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
             </svg>
@@ -190,6 +269,114 @@ export default function Attendance() {
           </table>
         </div>
       </div>
+
+      {/* Take Attendance Modal */}
+      {showTakeAttendanceModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Take Attendance</h2>
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Grade</label>
+                  <select
+                    value={bulkAttendanceGrade}
+                    onChange={(e) => setBulkAttendanceGrade(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                  >
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Select Class</label>
+                  <select
+                    value={bulkAttendanceClass}
+                    onChange={(e) => setBulkAttendanceClass(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                  >
+                    <option value="Math 101">Math 101</option>
+                    <option value="English Lit">English Literature</option>
+                    <option value="Physics">Physics</option>
+                    <option value="History">World History</option>
+                    <option value="Biology">Biology</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+                <p className="text-sm text-blue-800">
+                  <span className="font-semibold">Grade {bulkAttendanceGrade}</span> • <span className="font-semibold">{bulkAttendanceClass}</span> • {studentsForClass.length} students enrolled
+                </p>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-3">
+                {studentsForClass.map((student) => (
+                  <div key={student.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+                    <div className="flex items-center space-x-4">
+                      <div className="h-10 w-10 rounded-full bg-authority-purple text-white flex items-center justify-center font-semibold">
+                        {student.name.split(' ').map(n => n[0]).join('')}
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">{student.name}</p>
+                        <p className="text-sm text-gray-500">{student.studentId} • Grade {student.grade}</p>
+                      </div>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => setBulkAttendanceStates({...bulkAttendanceStates, [student.id]: 'Present'})}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                          bulkAttendanceStates[student.id] === 'Present'
+                            ? 'bg-green-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        Present
+                      </button>
+                      <button
+                        onClick={() => setBulkAttendanceStates({...bulkAttendanceStates, [student.id]: 'Absent'})}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                          bulkAttendanceStates[student.id] === 'Absent'
+                            ? 'bg-red-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        Absent
+                      </button>
+                      <button
+                        onClick={() => setBulkAttendanceStates({...bulkAttendanceStates, [student.id]: 'Late'})}
+                        className={`px-4 py-2 rounded-lg transition-colors ${
+                          bulkAttendanceStates[student.id] === 'Late'
+                            ? 'bg-orange-600 text-white'
+                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        }`}
+                      >
+                        Late
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-between">
+              <button 
+                onClick={() => setShowTakeAttendanceModal(false)} 
+                className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={saveBulkAttendance} 
+                className="px-6 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors"
+              >
+                Save Attendance ({studentsForClass.length} students)
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Edit Attendance Modal */}
       {showMarkModal && selectedRecord && (
