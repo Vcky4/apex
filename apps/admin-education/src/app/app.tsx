@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout } from '@apex-providers/ui-components';
 import Dashboard from './pages/Dashboard';
 import Students from './pages/Students';
@@ -68,24 +68,22 @@ const userMenu = (
 
 export function App() {
   return (
-    <Router>
-      <AdminLayout
-        navigation={navigation}
-        logo={logo}
-        userMenu={userMenu}
-        vertical="education"
-      >
-        <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/students" element={<Students />} />
-          <Route path="/teachers" element={<Teachers />} />
-          <Route path="/classes" element={<Classes />} />
-          <Route path="/attendance" element={<Attendance />} />
-          <Route path="/grades" element={<Grades />} />
-        </Routes>
-      </AdminLayout>
-    </Router>
+    <AdminLayout
+      navigation={navigation}
+      logo={logo}
+      userMenu={userMenu}
+      vertical="education"
+    >
+      <Routes>
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/students" element={<Students />} />
+        <Route path="/teachers" element={<Teachers />} />
+        <Route path="/classes" element={<Classes />} />
+        <Route path="/attendance" element={<Attendance />} />
+        <Route path="/grades" element={<Grades />} />
+      </Routes>
+    </AdminLayout>
   );
 }
 
