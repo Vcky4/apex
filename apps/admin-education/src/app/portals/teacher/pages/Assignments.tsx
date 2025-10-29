@@ -12,6 +12,8 @@ interface Assignment {
 
 export default function Assignments() {
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showSubmissionsModal, setShowSubmissionsModal] = useState(false);
+  const [selectedAssignment, setSelectedAssignment] = useState<Assignment | null>(null);
   const [assignments, setAssignments] = useState<Assignment[]>([
     { id: 1, title: 'Math Quiz #5', class: 'Math 101', dueDate: '2025-03-15', submissions: 20, total: 28, type: 'Quiz' },
     { id: 2, title: 'Algebra Homework #12', class: 'Algebra II', dueDate: '2025-03-18', submissions: 30, total: 32, type: 'Homework' },
@@ -40,6 +42,20 @@ export default function Assignments() {
     setAssignments([...assignments, newAssignment]);
     setShowAddModal(false);
   };
+
+  const viewSubmissions = (assignment: Assignment) => {
+    setSelectedAssignment(assignment);
+    setShowSubmissionsModal(true);
+  };
+
+  // Mock submissions data
+  const submissionsData = [
+    { student: 'Alex Johnson', studentId: 'STU001', submitted: true, submittedDate: '2025-03-14 10:30 AM', grade: 92, status: 'Graded' },
+    { student: 'Emma Davis', studentId: 'STU002', submitted: true, submittedDate: '2025-03-14 2:15 PM', grade: null, status: 'Pending' },
+    { student: 'Michael Brown', studentId: 'STU003', submitted: true, submittedDate: '2025-03-15 9:00 AM', grade: null, status: 'Pending' },
+    { student: 'Sarah Wilson', studentId: 'STU004', submitted: false, submittedDate: null, grade: null, status: 'Not Submitted' },
+    { student: 'James Martinez', studentId: 'STU005', submitted: true, submittedDate: '2025-03-13 4:45 PM', grade: 88, status: 'Graded' },
+  ];
 
   return (
     <div className="space-y-6">
@@ -83,7 +99,10 @@ export default function Assignments() {
             </div>
 
             <div className="mt-4 flex space-x-2">
-              <button className="flex-1 px-4 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors text-sm">
+              <button 
+                onClick={() => viewSubmissions(assignment)}
+                className="flex-1 px-4 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors text-sm"
+              >
                 View Submissions
               </button>
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
@@ -137,6 +156,90 @@ export default function Assignments() {
             <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
               <button onClick={() => setShowAddModal(false)} className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
               <button onClick={saveAssignment} className="px-6 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors">Create Assignment</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* View Submissions Modal */}
+      {showSubmissionsModal && selectedAssignment && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Submissions: {selectedAssignment.title}</h2>
+              <p className="text-sm text-gray-600 mt-1">{selectedAssignment.class} • Due: {selectedAssignment.dueDate}</p>
+              <div className="mt-2 flex items-center space-x-4 text-sm">
+                <span className="text-gray-600">Submitted: <span className="font-bold text-green-600">{selectedAssignment.submissions}/{selectedAssignment.total}</span></span>
+                <span className="text-gray-600">Pending: <span className="font-bold text-orange-600">{submissionsData.filter(s => s.submitted && !s.grade).length}</span></span>
+                <span className="text-gray-600">Not Submitted: <span className="font-bold text-red-600">{submissionsData.filter(s => !s.submitted).length}</span></span>
+              </div>
+            </div>
+            <div className="p-6">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b border-gray-200">
+                  <tr>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Student</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Submitted</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date/Time</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Grade</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {submissionsData.map((sub, idx) => (
+                    <tr key={idx} className="hover:bg-gray-50">
+                      <td className="px-4 py-3">
+                        <div>
+                          <p className="font-medium text-gray-900">{sub.student}</p>
+                          <p className="text-sm text-gray-500">{sub.studentId}</p>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3">
+                        {sub.submitted ? (
+                          <span className="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Yes</span>
+                        ) : (
+                          <span className="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">No</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-gray-900">{sub.submittedDate || '-'}</td>
+                      <td className="px-4 py-3">
+                        {sub.grade ? (
+                          <span className={`px-3 py-1 text-xs rounded-full font-semibold ${
+                            sub.grade >= 90 ? 'bg-green-100 text-green-800' :
+                            sub.grade >= 80 ? 'bg-blue-100 text-blue-800' :
+                            'bg-orange-100 text-orange-800'
+                          }`}>
+                            {sub.grade}%
+                          </span>
+                        ) : (
+                          <span className="text-sm text-gray-400">-</span>
+                        )}
+                      </td>
+                      <td className="px-4 py-3">
+                        <span className={`px-2 py-1 text-xs rounded-full ${
+                          sub.status === 'Graded' ? 'bg-green-100 text-green-800' :
+                          sub.status === 'Pending' ? 'bg-orange-100 text-orange-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {sub.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3">
+                        {sub.submitted && (
+                          <div className="flex space-x-2">
+                            <button className="text-blue-600 hover:text-blue-900 text-sm">View</button>
+                            {!sub.grade && <button className="text-authority-purple hover:text-opacity-80 text-sm">Grade</button>}
+                          </div>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-end">
+              <button onClick={() => setShowSubmissionsModal(false)} className="px-6 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors">Close</button>
             </div>
           </div>
         </div>

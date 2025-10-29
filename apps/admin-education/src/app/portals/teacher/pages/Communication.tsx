@@ -12,7 +12,9 @@ interface Message {
 
 export default function Communication() {
   const [showNewMessageModal, setShowNewMessageModal] = useState(false);
+  const [showReplyModal, setShowReplyModal] = useState(false);
   const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [replyText, setReplyText] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, from: 'Mrs. Johnson (Parent)', fromType: 'parent', subject: 'Question about homework', message: 'Hello, I wanted to ask about the homework assignment...', date: '2025-03-08', read: false },
     { id: 2, from: 'Emma Davis (Student)', fromType: 'student', subject: 'Absent tomorrow', message: 'Hi Mr. Smith, I will be absent tomorrow due to a doctor appointment...', date: '2025-03-07', read: false },
@@ -37,6 +39,17 @@ export default function Communication() {
   const viewMessage = (message: Message) => {
     setSelectedMessage(message);
     setMessages(messages.map(m => m.id === message.id ? { ...m, read: true } : m));
+  };
+
+  const handleReply = () => {
+    setShowReplyModal(true);
+  };
+
+  const sendReply = () => {
+    alert(`Reply sent to ${selectedMessage?.from}`);
+    setShowReplyModal(false);
+    setSelectedMessage(null);
+    setReplyText('');
   };
 
   return (
@@ -167,7 +180,39 @@ export default function Communication() {
             </div>
             <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
               <button onClick={() => setSelectedMessage(null)} className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Close</button>
-              <button className="px-6 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors">Reply</button>
+              <button onClick={handleReply} className="px-6 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors">Reply</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Modal */}
+      {showReplyModal && selectedMessage && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Reply to: {selectedMessage.from}</h2>
+              <p className="text-sm text-gray-600 mt-1">Re: {selectedMessage.subject}</p>
+            </div>
+            <div className="p-6">
+              <div className="mb-4 p-4 bg-gray-50 rounded-lg border-l-4 border-gray-300">
+                <p className="text-sm text-gray-600 font-medium mb-2">Original Message:</p>
+                <p className="text-sm text-gray-900">{selectedMessage.message}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Your Reply *</label>
+                <textarea
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  rows={6}
+                  placeholder="Type your reply here..."
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                />
+              </div>
+            </div>
+            <div className="p-6 border-t border-gray-200 flex justify-end space-x-3">
+              <button onClick={() => { setShowReplyModal(false); setReplyText(''); }} className="px-6 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">Cancel</button>
+              <button onClick={sendReply} className="px-6 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors">Send Reply</button>
             </div>
           </div>
         </div>
