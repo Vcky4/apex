@@ -1,4 +1,3 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
 import Login from './auth/Login';
 import AdminPortal from './portals/admin/AdminPortal';
@@ -64,11 +63,7 @@ export function App() {
     }
   };
 
-  return (
-    <Router>
-      {getPortalByRole(user.role)}
-    </Router>
-  );
+  return getPortalByRole(user.role);
 }
 
 export default App;
