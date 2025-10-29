@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState } from 'react';
+// @ts-ignore
 import { AdminLayout } from '@apex-providers/ui-components';
 import Dashboard from './pages/Dashboard';
 import Students from './pages/Students';
