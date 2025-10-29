@@ -8,6 +8,7 @@ import Students from './pages/Students';
 import Grading from './pages/Grading';
 import Attendance from './pages/Attendance';
 import Assignments from './pages/Assignments';
+import Communication from './pages/Communication';
 
 interface TeacherPortalProps {
   user: any;
@@ -47,6 +48,11 @@ export default function TeacherPortal({ user, onLogout }: TeacherPortalProps) {
       label: 'Assignments',
       href: '/assignments',
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>,
+    },
+    {
+      label: 'Communication',
+      href: '/communication',
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" /></svg>,
     },
   ];
 
@@ -121,6 +127,7 @@ export default function TeacherPortal({ user, onLogout }: TeacherPortalProps) {
         <Route path="/grading" element={<Grading />} />
         <Route path="/attendance" element={<Attendance />} />
         <Route path="/assignments" element={<Assignments />} />
+        <Route path="/communication" element={<Communication />} />
       </Routes>
     </AdminLayout>
   );
