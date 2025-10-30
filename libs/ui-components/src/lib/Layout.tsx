@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 export interface NavItem {
@@ -31,6 +31,14 @@ export const AdminLayout: React.FC<LayoutProps> = ({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const location = useLocation();
+  const mainContentRef = useRef<HTMLElement>(null);
+
+  // Scroll to top when route changes
+  useEffect(() => {
+    if (mainContentRef.current) {
+      mainContentRef.current.scrollTop = 0;
+    }
+  }, [location.pathname]);
 
   const notifications = [
     { id: 1, title: 'New grade posted', message: 'Math Quiz #5 graded', time: '2 hours ago', read: false, type: 'grade' },
@@ -281,7 +289,7 @@ export const AdminLayout: React.FC<LayoutProps> = ({
         </header>
         
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto">
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto">
           {/* Breadcrumbs */}
           <div className="bg-white border-b border-gray-200 px-6 py-3">
             <nav className="flex items-center space-x-2 text-sm">
