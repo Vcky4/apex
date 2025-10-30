@@ -178,7 +178,7 @@ export default function OwnerDashboard() {
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-charcoal-gray">Action Center</h2>
           <div className="flex gap-2">
-            <button className="px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition">
+            <button className="px-4 py-2 bg-executive-gold text-white rounded-lg font-medium hover:bg-opacity-90 transition">
               Generate Report
             </button>
             <button className="px-4 py-2 bg-apex-deep-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition">
@@ -190,7 +190,7 @@ export default function OwnerDashboard() {
           <Card className="cursor-pointer hover:shadow-lg transition">
             <div className="flex items-start justify-between mb-3">
               <div className="text-executive-gold text-3xl">💰</div>
-              <button className="px-3 py-1 bg-executive-gold text-apex-deep-blue rounded text-sm font-medium hover:bg-opacity-90">
+              <button className="px-3 py-1 bg-executive-gold text-white rounded text-sm font-medium hover:bg-opacity-90">
                 View
               </button>
             </div>
@@ -208,7 +208,7 @@ export default function OwnerDashboard() {
           <Card className="cursor-pointer hover:shadow-lg transition">
             <div className="flex items-start justify-between mb-3">
               <div className="text-executive-gold text-3xl">📊</div>
-              <button className="px-3 py-1 bg-executive-gold text-apex-deep-blue rounded text-sm font-medium hover:bg-opacity-90">
+              <button className="px-3 py-1 bg-executive-gold text-white rounded text-sm font-medium hover:bg-opacity-90">
                 View
               </button>
             </div>
@@ -226,7 +226,7 @@ export default function OwnerDashboard() {
           <Card className="cursor-pointer hover:shadow-lg transition">
             <div className="flex items-start justify-between mb-3">
               <div className="text-executive-gold text-3xl">🏗️</div>
-              <button className="px-3 py-1 bg-executive-gold text-apex-deep-blue rounded text-sm font-medium hover:bg-opacity-90">
+              <button className="px-3 py-1 bg-executive-gold text-white rounded text-sm font-medium hover:bg-opacity-90">
                 View
               </button>
             </div>
@@ -266,7 +266,7 @@ export default function OwnerDashboard() {
                   }`}>
                     {item.priority}
                   </span>
-                  <button className="px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition">
+                  <button className="px-4 py-2 bg-executive-gold text-white rounded-lg font-medium hover:bg-opacity-90 transition">
                     Review
                   </button>
                 </div>

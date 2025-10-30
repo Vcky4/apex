@@ -57,7 +57,7 @@ export default function BudgetPlanning() {
             <div className="space-y-2">
               <button 
                 onClick={() => alert('Create Budget Request form would open here')}
-                className="w-full px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition"
+                className="w-full px-4 py-2 bg-executive-gold text-white rounded-lg font-medium hover:bg-opacity-90 transition"
               >
                 Create Budget Request
               </button>
