@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './auth/Login';
 import AdminPortal from './portals/admin/AdminPortal';
-import OwnerPortal from './portals/owner/OwnerPortal';
-import PrincipalPortal from './portals/principal/PrincipalPortal';
+import HRPortal from './portals/hr/HRPortal';
+import FinancePortal from './portals/owner/OwnerPortal';
+import AcademicPortal from './portals/principal/PrincipalPortal';
 import DepartmentPortal from './portals/department/DepartmentPortal';
-import VicePrincipalPortal from './portals/vice-principal/VicePrincipalPortal';
+import StudentAffairsPortal from './portals/vice-principal/VicePrincipalPortal';
 import OperationsPortal from './portals/operations/OperationsPortal';
 import StudentPortal from './portals/student/StudentPortal';
 import TeacherPortal from './portals/teacher/TeacherPortal';
@@ -14,14 +15,20 @@ import ParentPortal from './portals/parent/ParentPortal';
 // Helper function to get the correct route for a role
 const getRouteForRole = (role: string): string => {
   switch (role) {
+    case 'HR_EXECUTIVE':
+      return '/admin/hr/dashboard';
+    case 'FINANCE_EXECUTIVE':
     case 'OWNER':
-      return '/admin/owner/dashboard';
+      return '/admin/finance/dashboard';
+    case 'ACADEMIC_EXECUTIVE':
     case 'PRINCIPAL':
-      return '/admin/principal/dashboard';
+      return '/admin/academics/dashboard';
     case 'DEPARTMENT_HEAD':
       return '/admin/department/science/dashboard';
+    case 'STUDENT_AFFAIRS_EXECUTIVE':
     case 'VICE_PRINCIPAL':
-      return '/admin/vice-principal/student-affairs/dashboard';
+      return '/admin/student-affairs/dashboard';
+    case 'OPERATIONS_EXECUTIVE':
     case 'OPERATIONS_MANAGER':
       return '/admin/operations/dashboard';
     case 'STUDENT':
@@ -39,20 +46,20 @@ const getRouteForRole = (role: string): string => {
 // OWNER can also access principal and operations portals
 const isPathForRole = (pathname: string, role: string): boolean => {
   switch (role) {
+    case 'HR_EXECUTIVE':
+      return pathname.startsWith('/admin/hr');
+    case 'FINANCE_EXECUTIVE':
     case 'OWNER':
-      // Owner can access their own portal, principal portal (academic oversight), operations portal,
-      // department portals, and vice-principal portal (student affairs)
-      return pathname.startsWith('/admin/owner') || 
-             pathname.startsWith('/admin/principal') || 
-             pathname.startsWith('/admin/operations') ||
-             pathname.startsWith('/admin/department') ||
-             pathname.startsWith('/admin/vice-principal');
+      return pathname.startsWith('/admin/finance');
+    case 'ACADEMIC_EXECUTIVE':
     case 'PRINCIPAL':
-      return pathname.startsWith('/admin/principal');
+      return pathname.startsWith('/admin/academics');
     case 'DEPARTMENT_HEAD':
       return pathname.startsWith('/admin/department');
+    case 'STUDENT_AFFAIRS_EXECUTIVE':
     case 'VICE_PRINCIPAL':
-      return pathname.startsWith('/admin/vice-principal');
+      return pathname.startsWith('/admin/student-affairs');
+    case 'OPERATIONS_EXECUTIVE':
     case 'OPERATIONS_MANAGER':
       return pathname.startsWith('/admin/operations');
     case 'STUDENT':
@@ -62,9 +69,10 @@ const isPathForRole = (pathname: string, role: string): boolean => {
     case 'PARENT':
       return pathname.startsWith('/parent');
     default:
-      return pathname.startsWith('/admin') && !pathname.startsWith('/admin/owner') && 
-             !pathname.startsWith('/admin/principal') && !pathname.startsWith('/admin/department') &&
-             !pathname.startsWith('/admin/vice-principal') && !pathname.startsWith('/admin/operations');
+      return pathname.startsWith('/admin') && !pathname.startsWith('/admin/hr') &&
+             !pathname.startsWith('/admin/finance') && !pathname.startsWith('/admin/academics') &&
+             !pathname.startsWith('/admin/department') && !pathname.startsWith('/admin/student-affairs') &&
+             !pathname.startsWith('/admin/operations');
   }
 };
 
@@ -113,20 +121,23 @@ const useAuth = () => {
 function AppRouter({ user, logout }: { user: any; logout: () => void }) {
   return (
     <Routes>
-      {/* Owner Portal Routes */}
-      <Route path="/admin/owner/*" element={<OwnerPortal user={user} onLogout={logout} />} />
+      {/* HR Administration Portal Routes */}
+      <Route path="/admin/hr/*" element={<HRPortal user={user} onLogout={logout} />} />
       
-      {/* Principal Portal Routes */}
-      <Route path="/admin/principal/*" element={<PrincipalPortal user={user} onLogout={logout} />} />
+      {/* Finance & Accounting Portal Routes */}
+      <Route path="/admin/finance/*" element={<FinancePortal user={user} onLogout={logout} />} />
+      
+      {/* Academic Administration Portal Routes */}
+      <Route path="/admin/academics/*" element={<AcademicPortal user={user} onLogout={logout} />} />
+      
+      {/* Operations & Facilities Portal Routes */}
+      <Route path="/admin/operations/*" element={<OperationsPortal user={user} onLogout={logout} />} />
+      
+      {/* Student Affairs Administration Portal Routes */}
+      <Route path="/admin/student-affairs/*" element={<StudentAffairsPortal user={user} onLogout={logout} />} />
       
       {/* Department Head Portal Routes */}
       <Route path="/admin/department/:deptName/*" element={<DepartmentPortal user={user} onLogout={logout} />} />
-      
-      {/* Vice Principal Portal Routes */}
-      <Route path="/admin/vice-principal/*" element={<VicePrincipalPortal user={user} onLogout={logout} />} />
-      
-      {/* Operations Manager Portal Routes */}
-      <Route path="/admin/operations/*" element={<OperationsPortal user={user} onLogout={logout} />} />
       
       {/* General Admin Portal Routes */}
       <Route path="/admin/*" element={<AdminPortal user={user} onLogout={logout} />} />
@@ -172,15 +183,25 @@ export function App() {
   };
 
   // Handle navigation when user changes (e.g., on page refresh or role change)
+  // Only redirect on initial load or if user is on root/login page
+  // Don't redirect if user is already navigating within their allowed portal
   useEffect(() => {
     if (isAuthenticated && user?.role) {
       const correctRoute = getRouteForRole(user.role);
       const currentPath = location.pathname;
       
-      // Only navigate if current path doesn't match role
-      if (!isPathForRole(currentPath, user.role) && currentPath !== correctRoute) {
+      // Only redirect if:
+      // 1. User is on root path (/)
+      // 2. User is on login path
+      // 3. Current path is not valid for this role
+      // Do NOT redirect if user is already on a valid path for their role (allows sub-route navigation)
+      if (currentPath === '/' || currentPath === '/login') {
+        navigate(correctRoute, { replace: true });
+      } else if (!isPathForRole(currentPath, user.role)) {
+        // Only redirect if path is completely invalid for this role
         navigate(correctRoute, { replace: true });
       }
+      // If path is valid for role, do nothing - allow navigation
     }
   }, [isAuthenticated, user?.role, location.pathname, navigate]);
 

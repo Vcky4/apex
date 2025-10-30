@@ -44,7 +44,7 @@ export default function Login({ onLogin }: LoginProps) {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple placeholder:text-gray-400"
                 placeholder="you@school.edu"
                 required
               />
@@ -58,7 +58,7 @@ export default function Login({ onLogin }: LoginProps) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple placeholder:text-gray-400"
                 placeholder="••••••••"
                 required
               />
@@ -71,13 +71,16 @@ export default function Login({ onLogin }: LoginProps) {
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
               >
+                <option value="HR_EXECUTIVE">HR Executive</option>
+                <option value="FINANCE_EXECUTIVE">Finance Executive</option>
+                <option value="ACADEMIC_EXECUTIVE">Academic Executive</option>
+                <option value="STUDENT_AFFAIRS_EXECUTIVE">Student Affairs Executive</option>
+                <option value="OPERATIONS_EXECUTIVE">Operations Executive</option>
                 <option value="OWNER">School Owner</option>
                 <option value="PRINCIPAL">Principal</option>
                 <option value="DEPARTMENT_HEAD">Department Head</option>
-                <option value="VICE_PRINCIPAL">Vice Principal</option>
-                <option value="OPERATIONS_MANAGER">Operations Manager</option>
                 <option value="ADMIN">Administrator</option>
                 <option value="TEACHER">Teacher</option>
                 <option value="STUDENT">Student</option>
@@ -92,55 +95,90 @@ export default function Login({ onLogin }: LoginProps) {
 
           <div className="mt-6">
             <p className="text-center text-sm text-gray-600 mb-4">Quick Demo Login:</p>
-            <div className="grid grid-cols-2 gap-2">
-              <button
-                onClick={() => quickLogin('OWNER', 'owner@school.edu')}
-                className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 text-sm font-medium"
-              >
-                👑 Owner
-              </button>
-              <button
-                onClick={() => quickLogin('PRINCIPAL', 'principal@school.edu')}
-                className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-sm font-medium"
-              >
-                🎓 Principal
-              </button>
-              <button
-                onClick={() => quickLogin('DEPARTMENT_HEAD', 'depthead@school.edu')}
-                className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium"
-              >
-                📚 Dept Head
-              </button>
-              <button
-                onClick={() => quickLogin('VICE_PRINCIPAL', 'viceprincipal@school.edu')}
-                className="px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm font-medium"
-              >
-                👨‍👦 VP Student Affairs
-              </button>
-              <button
-                onClick={() => quickLogin('OPERATIONS_MANAGER', 'operations@school.edu')}
-                className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-sm font-medium"
-              >
-                🏗️ Operations
-              </button>
-              <button
-                onClick={() => quickLogin('TEACHER', 'teacher@school.edu')}
-                className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-lg hover:bg-cyan-100 text-sm font-medium"
-              >
-                👨‍🏫 Teacher
-              </button>
-              <button
-                onClick={() => quickLogin('STUDENT', 'student@school.edu')}
-                className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 text-sm font-medium"
-              >
-                🎒 Student
-              </button>
-              <button
-                onClick={() => quickLogin('PARENT', 'parent@school.edu')}
-                className="px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 text-sm font-medium"
-              >
-                👨‍👩‍👧 Parent
-              </button>
+            <div className="space-y-2">
+              <div>
+                <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Administrative Portals</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => quickLogin('HR_EXECUTIVE', 'hr@school.edu')}
+                    className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-sm font-medium text-left"
+                  >
+                    👥 HR Executive
+                  </button>
+                  <button
+                    onClick={() => quickLogin('FINANCE_EXECUTIVE', 'finance@school.edu')}
+                    className="px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm font-medium text-left"
+                  >
+                    💰 Finance Executive
+                  </button>
+                  <button
+                    onClick={() => quickLogin('ACADEMIC_EXECUTIVE', 'academic@school.edu')}
+                    className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 text-sm font-medium text-left"
+                  >
+                    📖 Academic Executive
+                  </button>
+                  <button
+                    onClick={() => quickLogin('STUDENT_AFFAIRS_EXECUTIVE', 'studentaffairs@school.edu')}
+                    className="px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm font-medium text-left"
+                  >
+                    🎓 Student Affairs
+                  </button>
+                  <button
+                    onClick={() => quickLogin('OPERATIONS_EXECUTIVE', 'operations@school.edu')}
+                    className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-sm font-medium text-left"
+                  >
+                    🏗️ Operations Executive
+                  </button>
+                  <button
+                    onClick={() => quickLogin('OWNER', 'owner@school.edu')}
+                    className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 text-sm font-medium text-left"
+                  >
+                    👑 Owner
+                  </button>
+                </div>
+              </div>
+              
+              <div className="pt-2 border-t">
+                <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Other Roles</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    onClick={() => quickLogin('PRINCIPAL', 'principal@school.edu')}
+                    className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-sm font-medium text-left"
+                  >
+                    🎓 Principal
+                  </button>
+                  <button
+                    onClick={() => quickLogin('DEPARTMENT_HEAD', 'depthead@school.edu')}
+                    className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium text-left"
+                  >
+                    📚 Dept Head
+                  </button>
+                  <button
+                    onClick={() => quickLogin('TEACHER', 'teacher@school.edu')}
+                    className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-lg hover:bg-cyan-100 text-sm font-medium text-left"
+                  >
+                    👨‍🏫 Teacher
+                  </button>
+                  <button
+                    onClick={() => quickLogin('STUDENT', 'student@school.edu')}
+                    className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 text-sm font-medium text-left"
+                  >
+                    🎒 Student
+                  </button>
+                  <button
+                    onClick={() => quickLogin('PARENT', 'parent@school.edu')}
+                    className="px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 text-sm font-medium text-left"
+                  >
+                    👨‍👩‍👧 Parent
+                  </button>
+                  <button
+                    onClick={() => quickLogin('ADMIN', 'admin@school.edu')}
+                    className="px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-sm font-medium text-left"
+                  >
+                    ⚙️ Admin
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
