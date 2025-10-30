@@ -103,6 +103,7 @@ export default function VicePrincipalPortal({ user, onLogout }: VicePrincipalPor
       logo={logo}
       userMenu={userMenu}
       vertical="education"
+      sidebarColor="bg-student-green"
     >
       <Routes>
         <Route path="student-affairs/dashboard" element={<VicePrincipalDashboard />} />

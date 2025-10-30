@@ -104,6 +104,7 @@ export default function OperationsPortal({ user, onLogout }: OperationsPortalPro
       logo={logo}
       userMenu={userMenu}
       vertical="education"
+      sidebarColor="bg-production-blue"
     >
       <Routes>
         <Route path="dashboard" element={<OperationsDashboard />} />

@@ -36,19 +36,26 @@ export default function CurriculumOversight() {
             { subject: 'Social Studies', coverage: 95, alignment: 97, resources: 'Pending' },
             { subject: 'Physical Education', coverage: 94, alignment: 95, resources: 'Approved' },
             { subject: 'Arts', coverage: 92, alignment: 93, resources: 'Pending' },
-          ].map((item) => (
-            <div key={item.subject} className="p-4 border rounded-lg">
-              <div className="flex justify-between items-start mb-3">
-                <div>
-                  <div className="font-semibold text-lg text-charcoal-gray">{item.subject}</div>
-                  <div className="text-sm text-gray-600 mt-1">Standards Alignment: {item.alignment}%</div>
-                </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  item.resources === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
-                  {item.resources}
-                </span>
-              </div>
+              ].map((item) => (
+                <div key={item.subject} className="p-4 border rounded-lg hover:shadow-md transition">
+                  <div className="flex justify-between items-start mb-3">
+                    <div>
+                      <div className="font-semibold text-lg text-charcoal-gray">{item.subject}</div>
+                      <div className="text-sm text-gray-600 mt-1">Standards Alignment: {item.alignment}%</div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        item.resources === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                      }`}>
+                        {item.resources}
+                      </span>
+                      {item.resources === 'Pending' && (
+                        <button className="px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                          Review
+                        </button>
+                      )}
+                    </div>
+                  </div>
               <div className="space-y-2">
                 <div>
                   <div className="flex justify-between mb-1">
@@ -77,18 +84,35 @@ export default function CurriculumOversight() {
               { title: 'Math Workbook Series', dept: 'Mathematics', status: 'Approved', date: '1 week ago' },
               { title: 'Literature Anthology', dept: 'English', status: 'Pending', date: '3 days ago' },
             ].map((item) => (
-              <div key={item.title} className="p-3 border rounded-lg">
+              <div key={item.title} className="p-3 border rounded-lg hover:bg-gray-50 transition">
                 <div className="flex justify-between items-start">
-                  <div>
+                  <div className="flex-1">
                     <div className="font-medium text-charcoal-gray">{item.title}</div>
                     <div className="text-sm text-gray-600">{item.dept} Department</div>
                     <div className="text-xs text-gray-500 mt-1">{item.date}</div>
                   </div>
-                  <span className={`px-2 py-1 rounded text-xs ${
-                    item.status === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {item.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className={`px-2 py-1 rounded text-xs ${
+                      item.status === 'Approved' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {item.status}
+                    </span>
+                    {item.status === 'Pending' && (
+                      <div className="flex gap-1">
+                        <button className="px-2 py-1 text-xs bg-green-50 text-green-700 rounded hover:bg-green-100">
+                          Approve
+                        </button>
+                        <button className="px-2 py-1 text-xs bg-red-50 text-red-700 rounded hover:bg-red-100">
+                          Reject
+                        </button>
+                      </div>
+                    )}
+                    {item.status === 'Approved' && (
+                      <button className="px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                        View
+                      </button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

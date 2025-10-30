@@ -107,35 +107,159 @@ export default function OperationsDashboard() {
         </DashboardGrid>
       </section>
 
+      {/* Action Center */}
+      <section>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-charcoal-gray">Quick Actions</h2>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 bg-operations-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition">
+              Create Work Order
+            </button>
+            <button className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-opacity-90 transition">
+              Generate Report
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening facilities management...')}
+              className="w-full text-left"
+            >
+              <div className="text-blue-600 text-2xl mb-2">🏢</div>
+              <div className="font-semibold text-charcoal-gray">Facilities</div>
+              <div className="text-sm text-gray-600 mt-1">8 requests pending</div>
+            </button>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening transport management...')}
+              className="w-full text-left"
+            >
+              <div className="text-green-600 text-2xl mb-2">🚌</div>
+              <div className="font-semibold text-charcoal-gray">Transport</div>
+              <div className="text-sm text-gray-600 mt-1">12 vehicles active</div>
+            </button>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening support staff...')}
+              className="w-full text-left"
+            >
+              <div className="text-purple-600 text-2xl mb-2">👥</div>
+              <div className="font-semibold text-charcoal-gray">Support Staff</div>
+              <div className="text-sm text-gray-600 mt-1">24 staff members</div>
+            </button>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening maintenance schedule...')}
+              className="w-full text-left"
+            >
+              <div className="text-orange-600 text-2xl mb-2">🔧</div>
+              <div className="font-semibold text-charcoal-gray">Maintenance</div>
+              <div className="text-sm text-gray-600 mt-1">5 scheduled tasks</div>
+            </button>
+          </Card>
+        </div>
+      </section>
+
       {/* Support Services */}
       <section>
-        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Support Services</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-charcoal-gray">Support Services</h2>
+          <button className="px-4 py-2 bg-operations-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition">
+            Manage Services
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <Card>
-            <h3 className="text-lg font-semibold text-charcoal-gray mb-4">Library Management</h3>
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-semibold text-charcoal-gray">Library Management</h3>
+              <button className="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                View
+              </button>
+            </div>
             <div className="space-y-2">
               <div className="text-2xl font-bold text-blue-600">12,450</div>
               <div className="text-sm text-gray-600">Total books in collection</div>
               <div className="text-sm text-green-600 mt-2">↑ 320 new additions this term</div>
+              <button className="mt-3 w-full px-3 py-2 bg-blue-50 text-blue-700 rounded text-sm hover:bg-blue-100">
+                Manage Inventory
+              </button>
             </div>
           </Card>
           <Card>
-            <h3 className="text-lg font-semibold text-charcoal-gray mb-4">IT Infrastructure</h3>
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-semibold text-charcoal-gray">IT Infrastructure</h3>
+              <button className="px-3 py-1 text-sm bg-green-50 text-green-700 rounded hover:bg-green-100">
+                Monitor
+              </button>
+            </div>
             <div className="space-y-2">
               <div className="text-2xl font-bold text-green-600">98.5%</div>
               <div className="text-sm text-gray-600">System uptime</div>
               <div className="text-sm text-gray-600 mt-2">All systems operational</div>
+              <button className="mt-3 w-full px-3 py-2 bg-green-50 text-green-700 rounded text-sm hover:bg-green-100">
+                View System Status
+              </button>
             </div>
           </Card>
           <Card>
-            <h3 className="text-lg font-semibold text-charcoal-gray mb-4">Canteen Operations</h3>
+            <div className="flex justify-between items-start mb-4">
+              <h3 className="text-lg font-semibold text-charcoal-gray">Canteen Operations</h3>
+              <button className="px-3 py-1 text-sm bg-orange-50 text-orange-700 rounded hover:bg-orange-100">
+                Review
+              </button>
+            </div>
             <div className="space-y-2">
               <div className="text-2xl font-bold text-orange-600">4.2/5</div>
               <div className="text-sm text-gray-600">Satisfaction rating</div>
               <div className="text-sm text-green-600 mt-2">↑ 0.3 improvement</div>
+              <button className="mt-3 w-full px-3 py-2 bg-orange-50 text-orange-700 rounded text-sm hover:bg-orange-100">
+                View Feedback
+              </button>
             </div>
           </Card>
         </div>
+      </section>
+
+      {/* Pending Tasks */}
+      <section>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Pending Tasks</h2>
+        <Card>
+          <div className="space-y-3">
+            {[
+              { task: 'Classroom Maintenance Request', facility: 'Room 201', type: 'Facilities', priority: 'High', days: 2 },
+              { task: 'Vehicle Inspection Due', facility: 'Bus #3', type: 'Transport', priority: 'Medium', days: 5 },
+              { task: 'IT System Update', facility: 'Server Room', type: 'IT', priority: 'Low', days: 7 },
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex-1">
+                  <div className="font-semibold text-charcoal-gray">{item.task}</div>
+                  <div className="text-sm text-gray-600 mt-1">{item.facility} • {item.type}</div>
+                  <div className="text-xs text-gray-500 mt-1">{item.days} day(s) remaining</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    item.priority === 'High' ? 'bg-red-100 text-red-800' : 
+                    item.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
+                    {item.priority}
+                  </span>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 bg-blue-50 text-blue-700 rounded text-sm hover:bg-blue-100">
+                      View
+                    </button>
+                    <button className="px-3 py-1 bg-green-50 text-green-700 rounded text-sm hover:bg-green-100">
+                      Assign
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </section>
     </div>
   );

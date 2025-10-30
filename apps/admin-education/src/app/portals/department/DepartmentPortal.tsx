@@ -113,6 +113,7 @@ function DepartmentRoutes({ user, onLogout }: DepartmentPortalProps) {
       logo={logo}
       userMenu={userMenu}
       vertical="education"
+      sidebarColor="bg-authority-purple"
     >
       <Routes>
         <Route path="dashboard" element={<DepartmentDashboard deptName={deptName || 'science'} />} />

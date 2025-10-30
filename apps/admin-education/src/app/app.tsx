@@ -36,10 +36,14 @@ const getRouteForRole = (role: string): string => {
 };
 
 // Helper function to check if current path matches the role
+// OWNER can also access principal and operations portals
 const isPathForRole = (pathname: string, role: string): boolean => {
   switch (role) {
     case 'OWNER':
-      return pathname.startsWith('/admin/owner');
+      // Owner can access their own portal, principal portal (academic oversight), and operations portal
+      return pathname.startsWith('/admin/owner') || 
+             pathname.startsWith('/admin/principal') || 
+             pathname.startsWith('/admin/operations');
     case 'PRINCIPAL':
       return pathname.startsWith('/admin/principal');
     case 'DEPARTMENT_HEAD':

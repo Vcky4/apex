@@ -173,26 +173,107 @@ export default function OwnerDashboard() {
         </Card>
       </section>
 
-      {/* Quick Navigation */}
+      {/* Action Center */}
       <section>
-        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Quick Navigation</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <a href="/admin/owner/finance/budget" className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-            <div className="text-executive-gold text-2xl mb-2">💰</div>
-            <div className="font-semibold text-charcoal-gray">Budget Planning</div>
-            <div className="text-sm text-gray-600">Manage annual budgets</div>
-          </a>
-          <a href="/admin/owner/finance/revenue" className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-            <div className="text-executive-gold text-2xl mb-2">📊</div>
-            <div className="font-semibold text-charcoal-gray">Revenue Analytics</div>
-            <div className="text-sm text-gray-600">Fee collection insights</div>
-          </a>
-          <a href="/admin/owner/finance/investments" className="p-4 bg-white rounded-lg shadow-md hover:shadow-lg transition">
-            <div className="text-executive-gold text-2xl mb-2">🏗️</div>
-            <div className="font-semibold text-charcoal-gray">Investment Tracking</div>
-            <div className="text-sm text-gray-600">Infrastructure development</div>
-          </a>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-charcoal-gray">Action Center</h2>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition">
+              Generate Report
+            </button>
+            <button className="px-4 py-2 bg-apex-deep-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition">
+              Export Data
+            </button>
+          </div>
         </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <div className="flex items-start justify-between mb-3">
+              <div className="text-executive-gold text-3xl">💰</div>
+              <button className="px-3 py-1 bg-executive-gold text-apex-deep-blue rounded text-sm font-medium hover:bg-opacity-90">
+                View
+              </button>
+            </div>
+            <div className="font-semibold text-charcoal-gray mb-1">Budget Planning</div>
+            <div className="text-sm text-gray-600">Manage annual budgets</div>
+            <div className="mt-3 pt-3 border-t flex gap-2">
+              <button className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-700 rounded text-sm hover:bg-blue-100">
+                Approve Requests
+              </button>
+              <button className="flex-1 px-3 py-1.5 bg-green-50 text-green-700 rounded text-sm hover:bg-green-100">
+                Create Budget
+              </button>
+            </div>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <div className="flex items-start justify-between mb-3">
+              <div className="text-executive-gold text-3xl">📊</div>
+              <button className="px-3 py-1 bg-executive-gold text-apex-deep-blue rounded text-sm font-medium hover:bg-opacity-90">
+                View
+              </button>
+            </div>
+            <div className="font-semibold text-charcoal-gray mb-1">Revenue Analytics</div>
+            <div className="text-sm text-gray-600">Fee collection insights</div>
+            <div className="mt-3 pt-3 border-t flex gap-2">
+              <button className="flex-1 px-3 py-1.5 bg-purple-50 text-purple-700 rounded text-sm hover:bg-purple-100">
+                View Reports
+              </button>
+              <button className="flex-1 px-3 py-1.5 bg-orange-50 text-orange-700 rounded text-sm hover:bg-orange-100">
+                Send Reminders
+              </button>
+            </div>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <div className="flex items-start justify-between mb-3">
+              <div className="text-executive-gold text-3xl">🏗️</div>
+              <button className="px-3 py-1 bg-executive-gold text-apex-deep-blue rounded text-sm font-medium hover:bg-opacity-90">
+                View
+              </button>
+            </div>
+            <div className="font-semibold text-charcoal-gray mb-1">Investment Tracking</div>
+            <div className="text-sm text-gray-600">Infrastructure development</div>
+            <div className="mt-3 pt-3 border-t flex gap-2">
+              <button className="flex-1 px-3 py-1.5 bg-indigo-50 text-indigo-700 rounded text-sm hover:bg-indigo-100">
+                New Project
+              </button>
+              <button className="flex-1 px-3 py-1.5 bg-teal-50 text-teal-700 rounded text-sm hover:bg-teal-100">
+                Track Progress
+              </button>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      {/* Pending Actions */}
+      <section>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Pending Actions Requiring Your Attention</h2>
+        <Card>
+          <div className="space-y-3">
+            {[
+              { action: 'Approve Budget Request', dept: 'Academic Department', amount: '$45,000', priority: 'High', days: 2 },
+              { action: 'Review Investment Proposal', dept: 'Infrastructure', amount: '$180,000', priority: 'Medium', days: 5 },
+              { action: 'License Renewal Application', dept: 'Administration', amount: 'N/A', priority: 'High', days: 45 },
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex-1">
+                  <div className="font-semibold text-charcoal-gray">{item.action}</div>
+                  <div className="text-sm text-gray-600 mt-1">{item.dept} • {item.amount !== 'N/A' ? `Amount: ${item.amount}` : 'Administrative'}</div>
+                  <div className="text-xs text-gray-500 mt-1">{item.days} days remaining</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    item.priority === 'High' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.priority}
+                  </span>
+                  <button className="px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition">
+                    Review
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </section>
     </div>
   );

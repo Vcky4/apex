@@ -6,6 +6,7 @@ export interface NavItem {
   href: string;
   icon?: React.ReactNode;
   children?: NavItem[];
+  onClick?: () => void;
 }
 
 export interface LayoutProps {
@@ -15,6 +16,7 @@ export interface LayoutProps {
   userMenu: React.ReactNode;
   organizationSwitcher?: React.ReactNode;
   vertical?: 'education' | 'healthcare' | 'manufacturing' | 'super-admin';
+  sidebarColor?: string; // Custom sidebar color class (e.g., 'bg-executive-gold', 'bg-authority-purple')
 }
 
 export const AdminLayout: React.FC<LayoutProps> = ({
@@ -24,6 +26,7 @@ export const AdminLayout: React.FC<LayoutProps> = ({
   userMenu,
   organizationSwitcher,
   vertical = 'super-admin',
+  sidebarColor,
 }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -56,11 +59,78 @@ export const AdminLayout: React.FC<LayoutProps> = ({
     manufacturing: 'bg-industrial-gray',
     'super-admin': 'bg-apex-deep-blue',
   };
+
+  // Use custom sidebar color if provided, otherwise use vertical default
+  const sidebarBgClass = sidebarColor || verticalColors[vertical];
+
+  // Breadcrumbs helper with better label mapping
+  const getBreadcrumbs = () => {
+    const pathSegments = location.pathname.split('/').filter(Boolean);
+    const breadcrumbs = [{ label: 'Home', href: '/' }];
+    
+    const labelMap: { [key: string]: string } = {
+      'admin': 'Admin',
+      'owner': 'Owner Portal',
+      'principal': 'Principal Portal',
+      'vice-principal': 'Vice Principal Portal',
+      'operations': 'Operations Portal',
+      'department': 'Department Portal',
+      'student': 'Student Portal',
+      'teacher': 'Teacher Portal',
+      'parent': 'Parent Portal',
+      'dashboard': 'Dashboard',
+      'finance': 'Financial Management',
+      'budget': 'Budget Planning',
+      'revenue': 'Revenue Analytics',
+      'investments': 'Investment Tracking',
+      'academics': 'Academic Administration',
+      'curriculum': 'Curriculum Oversight',
+      'performance': 'Teacher Performance',
+      'calendar': 'Academic Calendar',
+      'discipline': 'Discipline Management',
+      'support': 'Student Support',
+      'activities': 'Activities Coordination',
+      'facilities': 'Facilities Management',
+      'transport': 'Transport Administration',
+      'staff': 'Support Staff Management',
+      'quality': 'Academic Quality',
+      'resources': 'Resource Management',
+      'student-affairs': 'Student Affairs',
+    };
+    
+    let currentPath = '';
+    pathSegments.forEach((segment, index) => {
+      currentPath += `/${segment}`;
+      // Check if segment is a department name (dynamic route param)
+      let label = labelMap[segment] || segment
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+      
+      // Handle department names specially
+      if (segment === 'department' && pathSegments[index + 1]) {
+        const deptName = pathSegments[index + 1];
+        const deptNames: { [key: string]: string } = {
+          science: 'Science',
+          mathematics: 'Mathematics',
+          english: 'English',
+          social: 'Social Studies',
+        };
+        label = `${deptNames[deptName] || deptName} Department`;
+      }
+      
+      breadcrumbs.push({ label, href: currentPath });
+    });
+    
+    return breadcrumbs;
+  };
+
+  const breadcrumbs = getBreadcrumbs();
   
   return (
     <div className="flex h-screen bg-light-gray">
       {/* Sidebar */}
-      <aside className={`w-64 ${verticalColors[vertical]} text-white flex flex-col`}>
+      <aside className={`w-64 ${sidebarBgClass} text-white flex flex-col`}>
         {/* Logo */}
         <div className="p-6 border-b border-white/10">
           {logo}
@@ -71,17 +141,20 @@ export const AdminLayout: React.FC<LayoutProps> = ({
           <ul className="space-y-2">
             {navigation.map((item, idx) => {
               const isActive = location.pathname === item.href || location.pathname.startsWith(item.href + '/');
+              const NavComponent = item.onClick ? 'button' : Link;
+              const navProps = item.onClick 
+                ? { onClick: item.onClick, className: `flex items-center px-4 py-3 rounded-lg transition-colors w-full text-left ${
+                    isActive ? 'bg-white/20' : 'hover:bg-white/10'
+                  }` }
+                : { to: item.href, className: `flex items-center px-4 py-3 rounded-lg transition-colors ${
+                    isActive ? 'bg-white/20' : 'hover:bg-white/10'
+                  }` };
               return (
                 <li key={idx}>
-                  <Link
-                    to={item.href}
-                    className={`flex items-center px-4 py-3 rounded-lg transition-colors ${
-                      isActive ? 'bg-white/20' : 'hover:bg-white/10'
-                    }`}
-                  >
+                  <NavComponent {...navProps}>
                     {item.icon && <span className="mr-3">{item.icon}</span>}
                     <span className="font-medium">{item.label}</span>
-                  </Link>
+                  </NavComponent>
                   {item.children && (
                     <ul className="ml-8 mt-2 space-y-1">
                       {item.children.map((child, childIdx) => {
@@ -208,8 +281,32 @@ export const AdminLayout: React.FC<LayoutProps> = ({
         </header>
         
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {children}
+        <main className="flex-1 overflow-y-auto">
+          {/* Breadcrumbs */}
+          <div className="bg-white border-b border-gray-200 px-6 py-3">
+            <nav className="flex items-center space-x-2 text-sm">
+              {breadcrumbs.map((crumb, index) => (
+                <React.Fragment key={crumb.href}>
+                  {index > 0 && (
+                    <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  )}
+                  {index === breadcrumbs.length - 1 ? (
+                    <span className="text-charcoal-gray font-medium">{crumb.label}</span>
+                  ) : (
+                    <Link to={crumb.href} className="text-gray-600 hover:text-charcoal-gray transition">
+                      {crumb.label}
+                    </Link>
+                  )}
+                </React.Fragment>
+              ))}
+            </nav>
+          </div>
+          
+          <div className="p-6">
+            {children}
+          </div>
         </main>
       </div>
     </div>

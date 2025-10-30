@@ -43,6 +43,7 @@ export default function TeacherPerformance() {
                 <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Student Avg GPA</th>
                 <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Observations</th>
                 <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Status</th>
+                <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -79,6 +80,16 @@ export default function TeacherPerformance() {
                     }`}>
                       {teacher.status}
                     </span>
+                  </td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-2">
+                      <button className="px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                        Review
+                      </button>
+                      <button className="px-2 py-1 text-xs bg-purple-50 text-purple-700 rounded hover:bg-purple-100">
+                        Schedule
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}

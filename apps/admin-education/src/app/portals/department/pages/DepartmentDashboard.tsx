@@ -125,14 +125,81 @@ export default function DepartmentDashboard({ deptName }: DepartmentDashboardPro
         </div>
       </section>
 
+      {/* Action Center */}
+      <section>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-charcoal-gray">Quick Actions</h2>
+          <div className="flex gap-2">
+            <button className="px-4 py-2 bg-authority-purple text-white rounded-lg font-medium hover:bg-opacity-90 transition">
+              Schedule Meeting
+            </button>
+            <button className="px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition">
+              Request Resources
+            </button>
+          </div>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening staff coordination...')}
+              className="w-full text-left"
+            >
+              <div className="text-purple-600 text-2xl mb-2">👥</div>
+              <div className="font-semibold text-charcoal-gray">Staff Coordination</div>
+              <div className="text-sm text-gray-600 mt-1">{dept.teachers} teachers</div>
+            </button>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening resource management...')}
+              className="w-full text-left"
+            >
+              <div className="text-blue-600 text-2xl mb-2">📚</div>
+              <div className="font-semibold text-charcoal-gray">Resources</div>
+              <div className="text-sm text-gray-600 mt-1">Manage materials</div>
+            </button>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening quality management...')}
+              className="w-full text-left"
+            >
+              <div className="text-green-600 text-2xl mb-2">⭐</div>
+              <div className="font-semibold text-charcoal-gray">Quality Control</div>
+              <div className="text-sm text-gray-600 mt-1">Monitor standards</div>
+            </button>
+          </Card>
+          <Card className="cursor-pointer hover:shadow-lg transition">
+            <button 
+              onClick={() => alert('Opening department reports...')}
+              className="w-full text-left"
+            >
+              <div className="text-orange-600 text-2xl mb-2">📊</div>
+              <div className="font-semibold text-charcoal-gray">Reports</div>
+              <div className="text-sm text-gray-600 mt-1">View analytics</div>
+            </button>
+          </Card>
+        </div>
+      </section>
+
       {/* Department Planning */}
       <section>
-        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Department Planning</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold text-charcoal-gray">Department Planning</h2>
+          <button className="px-4 py-2 bg-authority-purple text-white rounded-lg font-medium hover:bg-opacity-90 transition">
+            Create Plan
+          </button>
+        </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
-            <h3 className="text-lg font-semibold text-charcoal-gray mb-4">Staffing Requirements</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-charcoal-gray">Staffing Requirements</h3>
+              <button className="px-3 py-1 text-sm bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                Request Hire
+              </button>
+            </div>
             <div className="space-y-3">
-              <div className="p-3 border rounded-lg">
+              <div className="p-3 border rounded-lg hover:bg-gray-50 transition">
                 <div className="flex justify-between items-center">
                   <div>
                     <div className="font-medium text-charcoal-gray">Current Staff</div>
@@ -141,21 +208,85 @@ export default function DepartmentDashboard({ deptName }: DepartmentDashboardPro
                   <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs">Optimal</span>
                 </div>
               </div>
-              <div className="p-3 border rounded-lg">
-                <div className="font-medium text-charcoal-gray">Next Term Hiring Needs</div>
-                <div className="text-sm text-gray-600 mt-1">No immediate requirements</div>
+              <div className="p-3 border rounded-lg hover:bg-gray-50 transition">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="font-medium text-charcoal-gray">Next Term Hiring Needs</div>
+                    <div className="text-sm text-gray-600 mt-1">No immediate requirements</div>
+                  </div>
+                  <button className="px-3 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                    Project
+                  </button>
+                </div>
               </div>
             </div>
           </Card>
           <Card>
-            <h3 className="text-lg font-semibold text-charcoal-gray mb-4">Professional Development Needs</h3>
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-charcoal-gray">Professional Development Needs</h3>
+              <button className="px-3 py-1 text-sm bg-purple-50 text-purple-700 rounded hover:bg-purple-100">
+                Schedule PD
+              </button>
+            </div>
             <div className="space-y-2">
-              <div className="p-2 bg-purple-50 rounded text-sm">Advanced teaching methodologies - Q2</div>
-              <div className="p-2 bg-blue-50 rounded text-sm">Assessment strategies workshop - Q2</div>
-              <div className="p-2 bg-green-50 rounded text-sm">Curriculum alignment training - Q3</div>
+              <div className="p-2 bg-purple-50 rounded text-sm flex justify-between items-center hover:bg-purple-100 transition">
+                <span>Advanced teaching methodologies - Q2</span>
+                <button className="px-2 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200">
+                  Plan
+                </button>
+              </div>
+              <div className="p-2 bg-blue-50 rounded text-sm flex justify-between items-center hover:bg-blue-100 transition">
+                <span>Assessment strategies workshop - Q2</span>
+                <button className="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
+                  Plan
+                </button>
+              </div>
+              <div className="p-2 bg-green-50 rounded text-sm flex justify-between items-center hover:bg-green-100 transition">
+                <span>Curriculum alignment training - Q3</span>
+                <button className="px-2 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200">
+                  Plan
+                </button>
+              </div>
             </div>
           </Card>
         </div>
+      </section>
+
+      {/* Pending Requests */}
+      <section>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Pending Requests</h2>
+        <Card>
+          <div className="space-y-3">
+            {[
+              { request: 'Resource Request', item: 'Lab Equipment', type: 'Equipment', priority: 'High', days: 3 },
+              { request: 'Budget Allocation', item: 'Field Trip Funds', type: 'Budget', priority: 'Medium', days: 5 },
+              { request: 'Staff Training', item: 'Professional Development', type: 'Development', priority: 'Medium', days: 7 },
+            ].map((item, idx) => (
+              <div key={idx} className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50">
+                <div className="flex-1">
+                  <div className="font-semibold text-charcoal-gray">{item.request}</div>
+                  <div className="text-sm text-gray-600 mt-1">{item.item} • {item.type}</div>
+                  <div className="text-xs text-gray-500 mt-1">{item.days} day(s) pending</div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                    item.priority === 'High' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.priority}
+                  </span>
+                  <div className="flex gap-2">
+                    <button className="px-3 py-1 bg-blue-50 text-blue-700 rounded text-sm hover:bg-blue-100">
+                      View
+                    </button>
+                    <button className="px-3 py-1 bg-green-50 text-green-700 rounded text-sm hover:bg-green-100">
+                      Follow Up
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
       </section>
     </div>
   );

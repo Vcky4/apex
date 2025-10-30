@@ -113,6 +113,7 @@ export default function PrincipalPortal({ user, onLogout }: PrincipalPortalProps
       logo={logo}
       userMenu={userMenu}
       vertical="education"
+      sidebarColor="bg-authority-purple"
     >
       <Routes>
         <Route path="dashboard" element={<PrincipalDashboard />} />

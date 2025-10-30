@@ -21,9 +21,14 @@ export default function BudgetPlanning() {
               { dept: 'Sports & Activities', budget: 120000, spent: 98000, percentage: 82 },
             ].map((item) => (
               <div key={item.dept} className="p-4 border rounded-lg">
-                <div className="flex justify-between mb-2">
+                <div className="flex justify-between items-start mb-2">
                   <span className="font-medium text-charcoal-gray">{item.dept}</span>
-                  <span className="text-sm text-gray-600">${item.spent.toLocaleString()} / ${item.budget.toLocaleString()}</span>
+                  <div className="text-right">
+                    <span className="text-sm text-gray-600 block">${item.spent.toLocaleString()} / ${item.budget.toLocaleString()}</span>
+                    <button className="mt-1 px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                      Adjust
+                    </button>
+                  </div>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
                   <div 
@@ -50,14 +55,29 @@ export default function BudgetPlanning() {
           <Card>
             <h3 className="text-lg font-semibold text-charcoal-gray mb-4">Quick Actions</h3>
             <div className="space-y-2">
-              <button className="w-full px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition">
+              <button 
+                onClick={() => alert('Create Budget Request form would open here')}
+                className="w-full px-4 py-2 bg-executive-gold text-apex-deep-blue rounded-lg font-medium hover:bg-opacity-90 transition"
+              >
                 Create Budget Request
               </button>
-              <button className="w-full px-4 py-2 bg-apex-deep-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition">
-                Approve Pending Requests
+              <button 
+                onClick={() => alert('Opening pending approvals...')}
+                className="w-full px-4 py-2 bg-apex-deep-blue text-white rounded-lg font-medium hover:bg-opacity-90 transition"
+              >
+                Approve Pending (3)
               </button>
-              <button className="w-full px-4 py-2 border border-gray-300 text-charcoal-gray rounded-lg font-medium hover:bg-gray-50 transition">
+              <button 
+                onClick={() => alert('Budget report will be generated...')}
+                className="w-full px-4 py-2 border border-gray-300 text-charcoal-gray rounded-lg font-medium hover:bg-gray-50 transition"
+              >
                 Export Report
+              </button>
+              <button 
+                onClick={() => alert('Opening department budget allocation form...')}
+                className="w-full px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700 transition"
+              >
+                Allocate Budget
               </button>
             </div>
           </Card>
@@ -90,6 +110,7 @@ export default function BudgetPlanning() {
                 <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Allocated</th>
                 <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Status</th>
                 <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Timeline</th>
+                <th className="text-left py-3 px-4 font-semibold text-charcoal-gray">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -100,7 +121,7 @@ export default function BudgetPlanning() {
                 { project: 'IT Infrastructure', allocated: 150000, status: 'Completed', timeline: 'Q1 2025' },
               ].map((item) => (
                 <tr key={item.project} className="border-b hover:bg-gray-50">
-                  <td className="py-3 px-4">{item.project}</td>
+                  <td className="py-3 px-4 font-medium">{item.project}</td>
                   <td className="py-3 px-4">${item.allocated.toLocaleString()}</td>
                   <td className="py-3 px-4">
                     <span className={`px-2 py-1 rounded-full text-xs ${
@@ -112,6 +133,16 @@ export default function BudgetPlanning() {
                     </span>
                   </td>
                   <td className="py-3 px-4 text-gray-600">{item.timeline}</td>
+                  <td className="py-3 px-4">
+                    <div className="flex gap-2">
+                      <button className="px-2 py-1 text-xs bg-blue-50 text-blue-700 rounded hover:bg-blue-100">
+                        Edit
+                      </button>
+                      <button className="px-2 py-1 text-xs bg-green-50 text-green-700 rounded hover:bg-green-100">
+                        View
+                      </button>
+                    </div>
+                  </td>
                 </tr>
               ))}
             </tbody>
