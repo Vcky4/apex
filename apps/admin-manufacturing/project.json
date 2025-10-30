@@ -1,0 +1,9 @@
+{
+  "name": "admin-manufacturing",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/admin-manufacturing/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project admin-manufacturing --web",
+  "targets": {}
+}
