@@ -42,7 +42,7 @@ export const StatCard: React.FC<StatCardProps> = ({
         </div>
         {icon && (
           <div className={`p-3 rounded-full ${colorClasses[color]}`}>
-            {icon}
+            {icon}add
           </div>
         )}
       </div>
