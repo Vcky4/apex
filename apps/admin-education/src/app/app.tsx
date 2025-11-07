@@ -3,7 +3,8 @@ import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-
 import Login from './auth/Login';
 import AdminPortal from './portals/admin/AdminPortal';
 import HRPortal from './portals/hr/HRPortal';
-import FinancePortal from './portals/owner/OwnerPortal';
+import FinancePortal from './portals/finance/FinancePortal';
+import OwnerPortal from './portals/owner/OwnerPortal';
 import AcademicPortal from './portals/principal/PrincipalPortal';
 import DepartmentPortal from './portals/department/DepartmentPortal';
 import StudentAffairsPortal from './portals/vice-principal/VicePrincipalPortal';
@@ -18,8 +19,9 @@ const getRouteForRole = (role: string): string => {
     case 'HR_EXECUTIVE':
       return '/admin/hr/dashboard';
     case 'FINANCE_EXECUTIVE':
-    case 'OWNER':
       return '/admin/finance/dashboard';
+    case 'OWNER':
+      return '/admin/owner/dashboard';
     case 'ACADEMIC_EXECUTIVE':
     case 'PRINCIPAL':
       return '/admin/academics/dashboard';
@@ -43,17 +45,27 @@ const getRouteForRole = (role: string): string => {
 };
 
 // Helper function to check if current path matches the role
-// OWNER can also access principal and operations portals
+// Hierarchy roles can access their downlines
 const isPathForRole = (pathname: string, role: string): boolean => {
   switch (role) {
+    case 'OWNER':
+      // Owner can access all admin portals (all downlines)
+      return pathname.startsWith('/admin/owner') ||
+             pathname.startsWith('/admin/finance') ||
+             pathname.startsWith('/admin/hr') ||
+             pathname.startsWith('/admin/academics') ||
+             pathname.startsWith('/admin/student-affairs') ||
+             pathname.startsWith('/admin/operations') ||
+             pathname.startsWith('/admin/department');
     case 'HR_EXECUTIVE':
       return pathname.startsWith('/admin/hr');
     case 'FINANCE_EXECUTIVE':
-    case 'OWNER':
       return pathname.startsWith('/admin/finance');
     case 'ACADEMIC_EXECUTIVE':
     case 'PRINCIPAL':
-      return pathname.startsWith('/admin/academics');
+      // Academic executives and principals can access department portals (their downlines)
+      return pathname.startsWith('/admin/academics') ||
+             pathname.startsWith('/admin/department');
     case 'DEPARTMENT_HEAD':
       return pathname.startsWith('/admin/department');
     case 'STUDENT_AFFAIRS_EXECUTIVE':
@@ -70,9 +82,9 @@ const isPathForRole = (pathname: string, role: string): boolean => {
       return pathname.startsWith('/parent');
     default:
       return pathname.startsWith('/admin') && !pathname.startsWith('/admin/hr') &&
-             !pathname.startsWith('/admin/finance') && !pathname.startsWith('/admin/academics') &&
-             !pathname.startsWith('/admin/department') && !pathname.startsWith('/admin/student-affairs') &&
-             !pathname.startsWith('/admin/operations');
+             !pathname.startsWith('/admin/finance') && !pathname.startsWith('/admin/owner') &&
+             !pathname.startsWith('/admin/academics') && !pathname.startsWith('/admin/department') &&
+             !pathname.startsWith('/admin/student-affairs') && !pathname.startsWith('/admin/operations');
   }
 };
 
@@ -121,6 +133,9 @@ const useAuth = () => {
 function AppRouter({ user, logout }: { user: any; logout: () => void }) {
   return (
     <Routes>
+      {/* Owner Portal Routes */}
+      <Route path="/admin/owner/*" element={<OwnerPortal user={user} onLogout={logout} />} />
+      
       {/* HR Administration Portal Routes */}
       <Route path="/admin/hr/*" element={<HRPortal user={user} onLogout={logout} />} />
       
