@@ -32,6 +32,10 @@ export default function Communication() {
   const [selectedStudent, setSelectedStudent] = useState<string>('All');
   const [activeTab, setActiveTab] = useState<'messages' | 'announcements'>('messages');
   const [selectedMessage, setSelectedMessage] = useState<string | null>(null);
+  const [showComposeModal, setShowComposeModal] = useState(false);
+  const [showReplyModal, setShowReplyModal] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [composeData, setComposeData] = useState({ to: '', subject: '', message: '' });
 
   const messages: Message[] = [
     {
@@ -274,7 +278,11 @@ export default function Communication() {
               </div>
             )}
             <div className="flex items-end">
-              <Button variant="primary" size="sm">
+              <Button 
+                variant="primary" 
+                size="sm"
+                onClick={() => setShowComposeModal(true)}
+              >
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -339,10 +347,20 @@ export default function Communication() {
                       <p className="text-gray-700 whitespace-pre-wrap">{message.message}</p>
                     </div>
                     <div className="flex gap-2 mt-4">
-                      <Button variant="primary" size="sm">
+                      <Button 
+                        variant="primary" 
+                        size="sm"
+                        onClick={() => setShowReplyModal(message.id)}
+                      >
                         Reply
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          alert(`Forwarding message: ${message.subject}`);
+                        }}
+                      >
                         Forward
                       </Button>
                     </div>
@@ -409,6 +427,138 @@ export default function Communication() {
           </div>
         </Card>
       ) : null}
+
+      {/* Compose Message Modal */}
+      {showComposeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">Compose Message</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">To</label>
+                <select
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={composeData.to}
+                  onChange={(e) => setComposeData({ ...composeData, to: e.target.value })}
+                >
+                  <option value="">Select recipient...</option>
+                  <option value="teacher">Teacher</option>
+                  <option value="principal">Principal</option>
+                  <option value="admin">Administration</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  value={composeData.subject}
+                  onChange={(e) => setComposeData({ ...composeData, subject: e.target.value })}
+                  placeholder="Enter subject..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                <textarea
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  rows={6}
+                  value={composeData.message}
+                  onChange={(e) => setComposeData({ ...composeData, message: e.target.value })}
+                  placeholder="Enter your message..."
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => {
+                    setShowComposeModal(false);
+                    setComposeData({ to: '', subject: '', message: '' });
+                  }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => {
+                    if (!composeData.to || !composeData.subject || !composeData.message) {
+                      alert('Please fill in all fields');
+                      return;
+                    }
+                    alert('Message sent successfully!');
+                    setShowComposeModal(false);
+                    setComposeData({ to: '', subject: '', message: '' });
+                  }}
+                >
+                  Send Message
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Reply Modal */}
+      {showReplyModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">Reply to Message</h3>
+            {(() => {
+              const message = messages.find(m => m.id === showReplyModal);
+              return message ? (
+                <>
+                  <div className="mb-4 p-3 bg-light-gray rounded-lg">
+                    <p className="text-sm text-gray-600 mb-1">To: {message.from}</p>
+                    <p className="text-sm text-gray-600 mb-1">Subject: Re: {message.subject}</p>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Reply</label>
+                    <textarea
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={6}
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder="Enter your reply..."
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        setShowReplyModal(null);
+                        setReplyText('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        if (!replyText.trim()) {
+                          alert('Please enter your reply');
+                          return;
+                        }
+                        alert('Reply sent successfully!');
+                        setShowReplyModal(null);
+                        setReplyText('');
+                      }}
+                    >
+                      Send Reply
+                    </Button>
+                  </div>
+                </>
+              ) : null;
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

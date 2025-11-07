@@ -41,6 +41,8 @@ export default function Payments() {
   const [selectedStudent, setSelectedStudent] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
   const [activeTab, setActiveTab] = useState<'fees' | 'payments' | 'methods'>('fees');
+  const [showPaymentModal, setShowPaymentModal] = useState<string | null>(null);
+  const [showAddMethodModal, setShowAddMethodModal] = useState(false);
 
   const feeItems: FeeItem[] = [
     {
@@ -386,16 +388,32 @@ export default function Payments() {
                 <div className="flex gap-2">
                   {(fee.status === 'Pending' || fee.status === 'Overdue' || fee.status === 'Partial') && (
                     <>
-                      <Button variant="primary" size="sm">
+                      <Button 
+                        variant="primary" 
+                        size="sm"
+                        onClick={() => setShowPaymentModal(fee.id)}
+                      >
                         Pay Now
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          alert(`Invoice Number: ${fee.invoiceNumber}\nAmount: $${fee.amount.toFixed(2)}\nDue Date: ${new Date(fee.dueDate).toLocaleDateString()}`);
+                        }}
+                      >
                         View Invoice
                       </Button>
                     </>
                   )}
                   {fee.status === 'Paid' && (
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        alert(`Receipt for ${fee.invoiceNumber}\nPaid: $${fee.amount.toFixed(2)}\nDate: ${fee.paymentDate ? new Date(fee.paymentDate).toLocaleDateString() : 'N/A'}`);
+                      }}
+                    >
                       View Receipt
                     </Button>
                   )}
@@ -497,7 +515,10 @@ export default function Payments() {
               </div>
             </Card>
           ))}
-          <Card className="border-2 border-dashed border-gray-300 hover:border-blue-500 transition-colors cursor-pointer">
+          <Card 
+            className="border-2 border-dashed border-gray-300 hover:border-blue-500 transition-colors cursor-pointer"
+            onClick={() => setShowAddMethodModal(true)}
+          >
             <div className="p-6 flex flex-col items-center justify-center h-full min-h-[200px]">
               <svg className="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -519,6 +540,126 @@ export default function Payments() {
             <p className="text-gray-500">Try adjusting your filters</p>
           </div>
         </Card>
+      )}
+
+      {/* Payment Modal */}
+      {showPaymentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">Make Payment</h3>
+            {(() => {
+              const fee = feeItems.find(f => f.id === showPaymentModal);
+              return fee ? (
+                <>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 mb-2">Fee: {fee.description}</p>
+                    <p className="text-sm text-gray-600 mb-2">Student: {fee.studentName}</p>
+                    <p className="text-lg font-bold text-charcoal-gray">
+                      Amount: ${fee.status === 'Partial' ? (fee.amount - (fee.paidAmount || 0)).toFixed(2) : fee.amount.toFixed(2)}
+                    </p>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Payment Method</label>
+                    <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                      {paymentMethods.map(method => (
+                        <option key={method.id}>
+                          {method.type} ending in {method.lastFour} {method.isDefault ? '(Default)' : ''}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => setShowPaymentModal(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        alert('Payment processed successfully!');
+                        setShowPaymentModal(null);
+                      }}
+                    >
+                      Process Payment
+                    </Button>
+                  </div>
+                </>
+              ) : null;
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* Add Payment Method Modal */}
+      {showAddMethodModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">Add Payment Method</h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Payment Type</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  <option>Credit Card</option>
+                  <option>Debit Card</option>
+                  <option>Bank Account</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Card Number</label>
+                <input
+                  type="text"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  placeholder="1234 5678 9012 3456"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="MM/YY"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">CVV</label>
+                  <input
+                    type="text"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    placeholder="123"
+                  />
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => setShowAddMethodModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  className="flex-1"
+                  onClick={() => {
+                    alert('Payment method added successfully!');
+                    setShowAddMethodModal(false);
+                  }}
+                >
+                  Add Method
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

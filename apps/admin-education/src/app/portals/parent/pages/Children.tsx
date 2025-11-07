@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button, StatCard, DashboardGrid } from '@apex-providers/ui-components';
 
 interface Child {
@@ -22,7 +23,9 @@ interface Child {
 }
 
 export default function Children() {
+  const navigate = useNavigate();
   const [selectedChild, setSelectedChild] = useState<string | null>(null);
+  const [showContactModal, setShowContactModal] = useState<string | null>(null);
 
   const children: Child[] = [
     {
@@ -179,7 +182,11 @@ export default function Children() {
                 >
                   {selectedChild === child.id ? 'Hide Details' : 'View Details'}
                 </Button>
-                <Button variant="outline" size="sm">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={() => setShowContactModal(child.id)}
+                >
                   Contact Teacher
                 </Button>
               </div>
@@ -201,13 +208,28 @@ export default function Children() {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate('/parent/grades', { state: { studentId: child.studentId } })}
+                    >
                       View Grades
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => navigate('/parent/attendance', { state: { studentId: child.studentId } })}
+                    >
                       View Attendance
                     </Button>
-                    <Button variant="outline" size="sm" className="flex-1">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="flex-1"
+                      onClick={() => alert(`Schedule for ${child.name} would be displayed here`)}
+                    >
                       View Schedule
                     </Button>
                   </div>
@@ -244,6 +266,58 @@ export default function Children() {
           </div>
         </div>
       </Card>
+
+      {/* Contact Teacher Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">
+              Contact Teacher
+            </h3>
+            {(() => {
+              const child = children.find(c => c.id === showContactModal);
+              return child ? (
+                <>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 mb-2">Child: {child.name}</p>
+                    <p className="text-sm text-gray-600 mb-2">Homeroom Teacher: {child.homeroomTeacher}</p>
+                    <p className="text-sm text-gray-600">Email: {child.homeroomTeacherEmail}</p>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={4}
+                      placeholder="Enter your message..."
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => setShowContactModal(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        alert('Message sent successfully!');
+                        setShowContactModal(null);
+                      }}
+                    >
+                      Send Message
+                    </Button>
+                  </div>
+                </>
+              ) : null;
+            })()}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

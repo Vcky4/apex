@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, Button, StatCard, DashboardGrid } from '@apex-providers/ui-components';
 
 interface Assignment {
@@ -21,9 +22,13 @@ interface Assignment {
 }
 
 export default function Assignments() {
+  const navigate = useNavigate();
   const [filterStatus, setFilterStatus] = useState<string>('All');
   const [filterCourse, setFilterCourse] = useState<string>('All');
   const [sortBy, setSortBy] = useState<string>('dueDate');
+  const [showSubmissionModal, setShowSubmissionModal] = useState<string | null>(null);
+  const [showContactModal, setShowContactModal] = useState<string | null>(null);
+  const [submissionText, setSubmissionText] = useState('');
 
   const assignments: Assignment[] = [
     {
@@ -356,30 +361,60 @@ export default function Assignments() {
                 <div className="flex gap-2">
                   {(assignment.status === 'Not Started' || assignment.status === 'In Progress') && (
                     <>
-                      <Button variant="primary" size="sm">
+                      <Button 
+                        variant="primary" 
+                        size="sm"
+                        onClick={() => setShowSubmissionModal(assignment.id)}
+                      >
                         Start Assignment
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => {
+                          navigate(`/student/assignments/${assignment.id}`);
+                        }}
+                      >
                         View Details
                       </Button>
                     </>
                   )}
                   {assignment.status === 'Submitted' && (
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        alert(`Submission Date: ${assignment.submittedDate}\nAssignment: ${assignment.assignmentName}`);
+                      }}
+                    >
                       View Submission
                     </Button>
                   )}
                   {assignment.status === 'Graded' && (
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => {
+                        alert(`Feedback: ${assignment.feedback || 'No feedback available'}\nGrade: ${assignment.grade}/${assignment.points}`);
+                      }}
+                    >
                       View Feedback
                     </Button>
                   )}
                   {assignment.status === 'Overdue' && (
                     <>
-                      <Button variant="primary" size="sm">
+                      <Button 
+                        variant="primary" 
+                        size="sm"
+                        onClick={() => setShowSubmissionModal(assignment.id)}
+                      >
                         Submit Now
                       </Button>
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setShowContactModal(assignment.id)}
+                      >
                         Contact Instructor
                       </Button>
                     </>
@@ -401,6 +436,132 @@ export default function Assignments() {
             <p className="text-gray-500">Try adjusting your filters</p>
           </div>
         </Card>
+      )}
+
+      {/* Submission Modal */}
+      {showSubmissionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">
+              Submit Assignment
+            </h3>
+            {(() => {
+              const assignment = assignments.find(a => a.id === showSubmissionModal);
+              return assignment ? (
+                <>
+                  <div className="mb-4">
+                    <p className="font-semibold text-charcoal-gray">{assignment.assignmentName}</p>
+                    <p className="text-sm text-gray-600">{assignment.courseCode} - {assignment.courseName}</p>
+                    {assignment.instructions && (
+                      <div className="mt-2 p-3 bg-blue-50 rounded-lg">
+                        <p className="text-sm text-blue-800">{assignment.instructions}</p>
+                      </div>
+                    )}
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Your Submission</label>
+                    <textarea
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={8}
+                      placeholder="Enter your assignment submission..."
+                      value={submissionText}
+                      onChange={(e) => setSubmissionText(e.target.value)}
+                    />
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Attach Files (Optional)</label>
+                    <input
+                      type="file"
+                      multiple
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        setShowSubmissionModal(null);
+                        setSubmissionText('');
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        if (!submissionText.trim()) {
+                          alert('Please enter your submission');
+                          return;
+                        }
+                        alert('Assignment submitted successfully!');
+                        setShowSubmissionModal(null);
+                        setSubmissionText('');
+                        // In a real app, update the assignment status here
+                      }}
+                    >
+                      Submit Assignment
+                    </Button>
+                  </div>
+                </>
+              ) : null;
+            })()}
+          </div>
+        </div>
+      )}
+
+      {/* Contact Instructor Modal */}
+      {showContactModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-bold text-charcoal-gray mb-4">
+              Contact Instructor
+            </h3>
+            {(() => {
+              const assignment = assignments.find(a => a.id === showContactModal);
+              return assignment ? (
+                <>
+                  <div className="mb-4">
+                    <p className="text-sm text-gray-600 mb-2">Assignment: {assignment.assignmentName}</p>
+                    <p className="text-sm text-gray-600 mb-2">Course: {assignment.courseCode} - {assignment.courseName}</p>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Message</label>
+                    <textarea
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      rows={4}
+                      placeholder="Enter your message..."
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => setShowContactModal(null)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => {
+                        alert('Message sent successfully!');
+                        setShowContactModal(null);
+                      }}
+                    >
+                      Send Message
+                    </Button>
+                  </div>
+                </>
+              ) : null;
+            })()}
+          </div>
+        </div>
       )}
     </div>
   );
