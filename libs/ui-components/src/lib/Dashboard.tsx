@@ -8,7 +8,7 @@ export interface StatCardProps {
     value: number;
     isPositive: boolean;
   };
-  color?: 'blue' | 'green' | 'orange' | 'purple' | 'red' | 'gold';
+  color?: 'blue' | 'green' | 'orange' | 'purple' | 'red' | 'gold' | 'yellow';
 }
 
 export const StatCard: React.FC<StatCardProps> = ({
@@ -25,6 +25,7 @@ export const StatCard: React.FC<StatCardProps> = ({
     purple: 'bg-purple-50 text-purple-600',
     red: 'bg-red-50 text-red-600',
     gold: 'bg-gold-50 text-gold-600',
+    yellow: 'bg-yellow-50 text-yellow-600',
   };
   
   return (
