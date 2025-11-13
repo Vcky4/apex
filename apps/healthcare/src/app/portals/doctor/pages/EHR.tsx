@@ -1,10 +1,16 @@
 import { Card, Button } from '@apex-providers/ui-components';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { Modal } from '../../../shared/Modal';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function EHR() {
+  const { toasts, showToast, removeToast } = useToast();
   const { patientId } = useParams();
   const [selectedPatient] = useState(patientId || '1');
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [showPlanModal, setShowPlanModal] = useState(false);
+  const [formData, setFormData] = useState<any>({});
 
   const patients = [
     { id: '1', name: 'John Doe', dob: '1980-05-15', mrn: 'MRN-001', lastVisit: '2025-01-18' },
@@ -41,7 +47,10 @@ export default function EHR() {
               <div>Last Visit: {patient.lastVisit}</div>
             </div>
           </div>
-          <Button onClick={() => alert('Adding new clinical note...')}>Add Clinical Note</Button>
+          <Button onClick={() => {
+            setFormData({ patient: patient.name, date: new Date().toISOString().split('T')[0], note: '' });
+            setShowNoteModal(true);
+          }}>Add Clinical Note</Button>
         </div>
       </Card>
 
@@ -77,7 +86,7 @@ export default function EHR() {
               </div>
             ))}
           </div>
-          <Button size="sm" className="mt-4" variant="outline" onClick={() => alert('Opening prescription management...')}>
+          <Button size="sm" className="mt-4" variant="outline" onClick={() => showToast('Opening prescription management...', 'info')}>
             Manage Medications
           </Button>
         </Card>
@@ -87,7 +96,10 @@ export default function EHR() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-lg font-semibold">Clinical Notes & Observations</h3>
-          <Button size="sm" onClick={() => alert('Adding new clinical note...')}>Add Note</Button>
+          <Button size="sm" onClick={() => {
+            setFormData({ patient: patient.name, date: new Date().toISOString().split('T')[0], note: '' });
+            setShowNoteModal(true);
+          }}>Add Note</Button>
         </div>
         <div className="space-y-4">
           <div className="p-4 border border-gray-200 rounded-lg">
@@ -119,10 +131,115 @@ export default function EHR() {
             </div>
           </div>
         </div>
-        <Button size="sm" className="mt-4" onClick={() => alert('Updating treatment plan...')}>
+        <Button size="sm" className="mt-4" onClick={() => {
+          setFormData({ plan: 'Continue Lisinopril 10mg daily\nMonitor blood pressure weekly\nFollow-up appointment scheduled\nLifestyle modifications: Diet and exercise' });
+          setShowPlanModal(true);
+        }}>
           Update Treatment Plan
         </Button>
       </Card>
+
+      {/* Add Clinical Note Modal */}
+      <Modal
+        isOpen={showNoteModal}
+        onClose={() => {
+          setShowNoteModal(false);
+          setFormData({});
+        }}
+        title="Add Clinical Note"
+        size="lg"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => {
+              setShowNoteModal(false);
+              setFormData({});
+            }}>Cancel</Button>
+            <Button onClick={() => {
+              if (!formData.note) {
+                showToast('Please enter a note', 'error');
+                return;
+              }
+              showToast('Clinical note added successfully', 'success');
+              setShowNoteModal(false);
+              setFormData({});
+            }}>Save Note</Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Patient</label>
+            <input
+              type="text"
+              value={formData.patient || ''}
+              disabled
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+            <input
+              type="date"
+              value={formData.date || ''}
+              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Clinical Note *</label>
+            <textarea
+              required
+              value={formData.note || ''}
+              onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              rows={8}
+              placeholder="Enter clinical notes, observations, and findings..."
+            />
+          </div>
+        </div>
+      </Modal>
+
+      {/* Update Treatment Plan Modal */}
+      <Modal
+        isOpen={showPlanModal}
+        onClose={() => {
+          setShowPlanModal(false);
+          setFormData({});
+        }}
+        title="Update Treatment Plan"
+        size="lg"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => {
+              setShowPlanModal(false);
+              setFormData({});
+            }}>Cancel</Button>
+            <Button onClick={() => {
+              if (!formData.plan) {
+                showToast('Please enter treatment plan details', 'error');
+                return;
+              }
+              showToast('Treatment plan updated successfully', 'success');
+              setShowPlanModal(false);
+              setFormData({});
+            }}>Save Plan</Button>
+          </div>
+        }
+      >
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Treatment Plan *</label>
+          <textarea
+            required
+            value={formData.plan || ''}
+            onChange={(e) => setFormData({ ...formData, plan: e.target.value })}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            rows={8}
+            placeholder="Enter treatment plan details..."
+          />
+        </div>
+      </Modal>
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

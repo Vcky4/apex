@@ -1,8 +1,13 @@
 import { Card, Button } from '@apex-providers/ui-components';
 import { useState } from 'react';
+import { Modal } from '../../../shared/Modal';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function DiagnosticReview() {
+  const { toasts, showToast, removeToast } = useToast();
   const [selectedTest, setSelectedTest] = useState<any>(null);
+  const [showReviewModal, setShowReviewModal] = useState(false);
+  const [formData, setFormData] = useState<any>({});
 
   const pendingResults = [
     { id: 1, patient: 'John Doe', test: 'Complete Blood Count', date: '2025-01-18', status: 'Pending Review', priority: 'Normal' },
@@ -12,7 +17,22 @@ export default function DiagnosticReview() {
 
   const handleReview = (test: any) => {
     setSelectedTest(test);
-    alert(`Reviewing ${test.test} for ${test.patient}...`);
+    setFormData({
+      interpretation: '',
+      signed: false,
+    });
+    setShowReviewModal(true);
+  };
+
+  const handleSignResult = () => {
+    if (!formData.interpretation) {
+      showToast('Please enter your interpretation', 'error');
+      return;
+    }
+    showToast(`Result for ${selectedTest.test} signed successfully`, 'success');
+    setShowReviewModal(false);
+    setSelectedTest(null);
+    setFormData({});
   };
 
   return (
@@ -52,32 +72,70 @@ export default function DiagnosticReview() {
           <h3 className="text-lg font-semibold mb-4">Imaging Studies</h3>
           <div className="p-4 bg-blue-50 rounded-lg">
             <div className="font-medium text-blue-900">3 studies pending review</div>
-            <Button size="sm" className="mt-3" onClick={() => alert('Opening imaging viewer...')}>View Studies</Button>
+            <Button size="sm" className="mt-3" onClick={() => showToast('Opening imaging viewer...', 'info')}>View Studies</Button>
           </div>
         </Card>
         <Card>
           <h3 className="text-lg font-semibold mb-4">Pathology Reports</h3>
           <div className="p-4 bg-purple-50 rounded-lg">
             <div className="font-medium text-purple-900">1 report pending review</div>
-            <Button size="sm" className="mt-3" onClick={() => alert('Opening pathology reports...')}>View Reports</Button>
+            <Button size="sm" className="mt-3" onClick={() => showToast('Opening pathology reports...', 'info')}>View Reports</Button>
           </div>
         </Card>
       </div>
 
-      {selectedTest && (
-        <Card>
-          <h3 className="text-lg font-semibold mb-4">Test Result Details</h3>
-          <div className="p-4 bg-gray-50 rounded-lg">
-            <div className="font-medium mb-2">{selectedTest.test}</div>
-            <div className="text-sm text-gray-600">Patient: {selectedTest.patient}</div>
-            <div className="text-sm text-gray-600">Date: {selectedTest.date}</div>
-            <div className="mt-4">
-              <Button onClick={() => alert('Signing result...')}>Sign Result</Button>
-              <Button variant="outline" className="ml-2" onClick={() => setSelectedTest(null)}>Close</Button>
+      {/* Review Result Modal */}
+      <Modal
+        isOpen={showReviewModal}
+        onClose={() => {
+          setShowReviewModal(false);
+          setSelectedTest(null);
+          setFormData({});
+        }}
+        title={`Review Result: ${selectedTest?.test}`}
+        size="lg"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => {
+              setShowReviewModal(false);
+              setSelectedTest(null);
+              setFormData({});
+            }}>Cancel</Button>
+            <Button onClick={handleSignResult}>Sign Result</Button>
+          </div>
+        }
+      >
+        {selectedTest && (
+          <div className="space-y-4">
+            <div className="p-3 bg-blue-50 rounded-lg">
+              <div className="text-sm font-medium text-blue-900">Patient: {selectedTest.patient}</div>
+              <div className="text-sm text-blue-800 mt-1">Test: {selectedTest.test}</div>
+              <div className="text-sm text-blue-800 mt-1">Date: {selectedTest.date}</div>
+            </div>
+            <div className="p-4 bg-gray-50 rounded-lg">
+              <div className="text-sm font-medium mb-2">Test Results:</div>
+              <div className="text-sm text-gray-700">
+                {selectedTest.test === 'Complete Blood Count' && 'WBC: 6.5, RBC: 4.8, Hemoglobin: 14.2, Platelets: 250'}
+                {selectedTest.test === 'Lipid Panel' && 'Total Cholesterol: 180, LDL: 110, HDL: 55, Triglycerides: 120'}
+                {selectedTest.test === 'Chest X-Ray' && 'No acute findings. Heart size normal. Lungs clear.'}
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Interpretation & Notes *</label>
+              <textarea
+                required
+                value={formData.interpretation || ''}
+                onChange={(e) => setFormData({ ...formData, interpretation: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                rows={6}
+                placeholder="Enter your interpretation and clinical notes..."
+              />
             </div>
           </div>
-        </Card>
-      )}
+        )}
+      </Modal>
+
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

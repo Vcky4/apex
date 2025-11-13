@@ -1,7 +1,9 @@
 import { Card, Button } from '@apex-providers/ui-components';
 import { useState } from 'react';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function AppointmentManagement() {
+  const { toasts, showToast, removeToast } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
 
   const appointments = [
@@ -27,7 +29,7 @@ export default function AppointmentManagement() {
               onChange={(e) => setSelectedDate(e.target.value)}
               className="px-3 py-2 border border-gray-300 rounded-lg"
             />
-            <Button onClick={() => alert('Opening schedule settings...')}>Manage Availability</Button>
+            <Button onClick={() => showToast('Opening schedule settings...', 'info')}>Manage Availability</Button>
           </div>
         </div>
         <div className="space-y-3">
@@ -41,8 +43,12 @@ export default function AppointmentManagement() {
                 <div className="text-right">
                   <div className="font-medium text-gray-900">{apt.time}</div>
                   <div className="flex space-x-2 mt-2">
-                    <Button size="sm" variant="outline" onClick={() => alert('Rescheduling appointment...')}>Reschedule</Button>
-                    <Button size="sm" variant="outline" onClick={() => alert('Canceling appointment...')}>Cancel</Button>
+                    <Button size="sm" variant="outline" onClick={() => showToast(`Rescheduling appointment with ${apt.patient}...`, 'info')}>Reschedule</Button>
+                    <Button size="sm" variant="outline" onClick={() => {
+                      if (confirm(`Cancel appointment with ${apt.patient}?`)) {
+                        showToast(`Appointment with ${apt.patient} cancelled`, 'success');
+                      }
+                    }}>Cancel</Button>
                   </div>
                 </div>
               </div>
@@ -57,7 +63,7 @@ export default function AppointmentManagement() {
           <div className="p-4 bg-blue-50 rounded-lg">
             <div className="font-medium text-blue-900">Next On-Call</div>
             <div className="text-sm text-blue-800 mt-2">January 25, 2025 - 7:00 PM to 7:00 AM</div>
-            <Button size="sm" className="mt-3" variant="outline" onClick={() => alert('Viewing on-call schedule...')}>View Schedule</Button>
+            <Button size="sm" className="mt-3" variant="outline" onClick={() => showToast('Opening on-call schedule...', 'info')}>View Schedule</Button>
           </div>
         </Card>
         <Card>
@@ -65,10 +71,11 @@ export default function AppointmentManagement() {
           <div className="p-4 bg-green-50 rounded-lg">
             <div className="font-medium text-green-900">Availability Status</div>
             <div className="text-sm text-green-800 mt-2">Available for appointments</div>
-            <Button size="sm" className="mt-3" variant="outline" onClick={() => alert('Managing availability...')}>Manage</Button>
+            <Button size="sm" className="mt-3" variant="outline" onClick={() => showToast('Opening availability management...', 'info')}>Manage</Button>
           </div>
         </Card>
       </div>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

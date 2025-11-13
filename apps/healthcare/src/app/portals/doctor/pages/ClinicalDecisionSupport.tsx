@@ -1,14 +1,17 @@
 import { Card, Button } from '@apex-providers/ui-components';
 import { useState } from 'react';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function ClinicalDecisionSupport() {
   const [drug1, setDrug1] = useState('');
   const [drug2, setDrug2] = useState('');
   const [checkResult, setCheckResult] = useState<any>(null);
 
+  const { toasts, showToast, removeToast } = useToast();
+
   const handleDrugInteractionCheck = () => {
     if (!drug1 || !drug2) {
-      alert('Please enter both medications');
+      showToast('Please enter both medications', 'error');
       return;
     }
     // Simulate drug interaction check
@@ -90,22 +93,23 @@ export default function ClinicalDecisionSupport() {
         <div className="grid grid-cols-2 gap-4">
           <div className="p-4 border border-gray-200 rounded-lg">
             <div className="font-medium mb-2">BMI Calculator</div>
-            <Button size="sm" variant="outline" onClick={() => alert('Opening BMI calculator...')}>Open Calculator</Button>
+            <Button size="sm" variant="outline" onClick={() => showToast('Opening BMI calculator...', 'info')}>Open Calculator</Button>
           </div>
           <div className="p-4 border border-gray-200 rounded-lg">
             <div className="font-medium mb-2">Dosage Calculator</div>
-            <Button size="sm" variant="outline" onClick={() => alert('Opening dosage calculator...')}>Open Calculator</Button>
+            <Button size="sm" variant="outline" onClick={() => showToast('Opening dosage calculator...', 'info')}>Open Calculator</Button>
           </div>
           <div className="p-4 border border-gray-200 rounded-lg">
             <div className="font-medium mb-2">Risk Assessment Tools</div>
-            <Button size="sm" variant="outline" onClick={() => alert('Opening risk assessment...')}>View Tools</Button>
+            <Button size="sm" variant="outline" onClick={() => showToast('Opening risk assessment...', 'info')}>View Tools</Button>
           </div>
           <div className="p-4 border border-gray-200 rounded-lg">
             <div className="font-medium mb-2">Medical Reference</div>
-            <Button size="sm" variant="outline" onClick={() => alert('Opening medical reference...')}>Access Library</Button>
+            <Button size="sm" variant="outline" onClick={() => showToast('Opening medical reference...', 'info')}>Access Library</Button>
           </div>
         </div>
       </Card>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

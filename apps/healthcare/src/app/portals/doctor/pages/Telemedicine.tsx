@@ -1,6 +1,8 @@
 import { Card, Button } from '@apex-providers/ui-components';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function Telemedicine() {
+  const { toasts, showToast, removeToast } = useToast();
   const upcomingSessions = [
     { id: 1, patient: 'John Doe', time: '10:00 AM', date: '2025-01-21', status: 'Scheduled' },
     { id: 2, patient: 'Jane Smith', time: '02:30 PM', date: '2025-01-21', status: 'Scheduled' },
@@ -26,8 +28,8 @@ export default function Telemedicine() {
                     <div className="text-sm text-gray-600 mt-1">{session.date} at {session.time}</div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button size="sm" onClick={() => alert('Starting video consultation...')}>Start Session</Button>
-                    <Button size="sm" variant="outline" onClick={() => alert('Viewing patient details...')}>Details</Button>
+                    <Button size="sm" onClick={() => showToast(`Starting video consultation with ${session.patient}...`, 'info')}>Start Session</Button>
+                    <Button size="sm" variant="outline" onClick={() => showToast(`Viewing details for ${session.patient}...`, 'info')}>Details</Button>
                   </div>
                 </div>
               </div>
@@ -42,12 +44,12 @@ export default function Telemedicine() {
             <div className="p-4 bg-blue-50 rounded-lg">
               <div className="font-medium text-blue-900">Active Monitoring</div>
               <div className="text-sm text-blue-800 mt-2">5 patients being monitored</div>
-              <Button size="sm" className="mt-3" onClick={() => alert('Viewing monitoring dashboard...')}>View Dashboard</Button>
+              <Button size="sm" className="mt-3" onClick={() => showToast('Opening monitoring dashboard...', 'info')}>View Dashboard</Button>
             </div>
             <div className="p-4 bg-green-50 rounded-lg">
               <div className="font-medium text-green-900">Vital Signs Alerts</div>
               <div className="text-sm text-green-800 mt-2">2 alerts requiring attention</div>
-              <Button size="sm" variant="outline" className="mt-3" onClick={() => alert('Reviewing alerts...')}>Review Alerts</Button>
+              <Button size="sm" variant="outline" className="mt-3" onClick={() => showToast('Reviewing vital signs alerts...', 'info')}>Review Alerts</Button>
             </div>
           </div>
         </Card>
@@ -58,9 +60,10 @@ export default function Telemedicine() {
         <h2 className="text-xl font-semibold mb-4">Digital Prescription Writing</h2>
         <div className="p-4 bg-gray-50 rounded-lg">
           <p className="text-gray-700 mb-4">Create and send prescriptions electronically to pharmacies</p>
-          <Button onClick={() => alert('Opening prescription writer...')}>Write Prescription</Button>
+          <Button onClick={() => showToast('Opening digital prescription writer...', 'info')}>Write Prescription</Button>
         </div>
       </Card>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }
