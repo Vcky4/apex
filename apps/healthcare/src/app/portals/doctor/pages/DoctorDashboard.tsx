@@ -1,8 +1,10 @@
 import { Card, Button, DashboardGrid, StatCard } from '@apex-providers/ui-components';
 import { useNavigate } from 'react-router-dom';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function DoctorDashboard() {
   const navigate = useNavigate();
+  const { toasts, showToast, removeToast } = useToast();
 
   const appointments = [
     { id: 1, patient: 'John Doe', time: '09:00 AM', type: 'Follow-up', status: 'Upcoming' },
@@ -88,7 +90,15 @@ export default function DoctorDashboard() {
           </div>
           <div className="space-y-3">
             {pendingTasks.map((task) => (
-              <div key={task.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50">
+              <div key={task.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => {
+                if (task.type === 'Test Results') {
+                  navigate('/doctor/diagnostics');
+                } else if (task.type === 'Prescription Renewal') {
+                  navigate('/doctor/clinical-support');
+                } else {
+                  navigate('/doctor/patients/ehr');
+                }
+              }}>
                 <div className="flex justify-between items-start">
                   <div>
                     <div className="font-semibold text-gray-900">{task.type}</div>
@@ -150,6 +160,7 @@ export default function DoctorDashboard() {
           </div>
         </DashboardGrid>
       </Card>
+      <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
 }

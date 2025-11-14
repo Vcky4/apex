@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { AdminLayout } from '@apex-providers/ui-components';
 import DoctorDashboard from './pages/DoctorDashboard';
@@ -69,12 +69,24 @@ export default function DoctorPortal({ user, onLogout }: DoctorPortalProps) {
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsMenuOpen(false)} />
           <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-50">
-            <a href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsMenuOpen(false)}>
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                // Navigate to profile (placeholder)
+              }}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
               Profile
-            </a>
-            <a href="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onClick={() => setIsMenuOpen(false)}>
+            </button>
+            <button
+              onClick={() => {
+                setIsMenuOpen(false);
+                // Navigate to settings (placeholder)
+              }}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+            >
               Settings
-            </a>
+            </button>
             <hr className="my-2" />
             <button
               onClick={() => {

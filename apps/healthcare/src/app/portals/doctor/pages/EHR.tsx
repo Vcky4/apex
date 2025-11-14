@@ -1,21 +1,29 @@
 import { Card, Button } from '@apex-providers/ui-components';
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Modal } from '../../../shared/Modal';
 import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function EHR() {
   const { toasts, showToast, removeToast } = useToast();
   const { patientId } = useParams();
-  const [selectedPatient] = useState(patientId || '1');
+  const navigate = useNavigate();
+  const [selectedPatient, setSelectedPatient] = useState(patientId || '1');
+
+  useEffect(() => {
+    if (patientId) {
+      setSelectedPatient(patientId);
+    }
+  }, [patientId]);
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [formData, setFormData] = useState<any>({});
 
-  const patients = [
+  const [patients] = useState([
     { id: '1', name: 'John Doe', dob: '1980-05-15', mrn: 'MRN-001', lastVisit: '2025-01-18' },
     { id: '2', name: 'Jane Smith', dob: '1975-08-22', mrn: 'MRN-002', lastVisit: '2025-01-17' },
-  ];
+    { id: '3', name: 'Bob Johnson', dob: '1985-03-10', mrn: 'MRN-003', lastVisit: '2025-01-19' },
+  ]);
 
   const patient = patients.find(p => p.id === selectedPatient) || patients[0];
 
@@ -37,6 +45,30 @@ export default function EHR() {
         <p className="text-gray-600 mt-2">Comprehensive patient medical history, clinical notes, treatment plan management, progress tracking</p>
       </div>
 
+      {/* Patient Selection */}
+      <Card>
+        <div className="flex justify-between items-center mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Select Patient</label>
+            <select
+              value={selectedPatient}
+              onChange={(e) => {
+                const newPatientId = e.target.value;
+                setSelectedPatient(newPatientId);
+                navigate(`/doctor/patients/ehr/${newPatientId}`);
+              }}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+            >
+              {patients.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name} - {p.mrn}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
+      </Card>
+
       {/* Patient Info */}
       <Card>
         <div className="flex justify-between items-start mb-4">
@@ -47,10 +79,13 @@ export default function EHR() {
               <div>Last Visit: {patient.lastVisit}</div>
             </div>
           </div>
-          <Button onClick={() => {
-            setFormData({ patient: patient.name, date: new Date().toISOString().split('T')[0], note: '' });
-            setShowNoteModal(true);
-          }}>Add Clinical Note</Button>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => showToast('Opening patient chart...', 'info')}>View Full Chart</Button>
+            <Button onClick={() => {
+              setFormData({ patient: patient.name, date: new Date().toISOString().split('T')[0], note: '' });
+              setShowNoteModal(true);
+            }}>Add Clinical Note</Button>
+          </div>
         </div>
       </Card>
 
