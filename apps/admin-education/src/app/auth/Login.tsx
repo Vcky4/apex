@@ -110,10 +110,10 @@ export default function Login({ onLogin }: LoginProps) {
                     💰 Finance Executive
                   </button>
                   <button
-                    onClick={() => quickLogin('ACADEMIC_EXECUTIVE', 'academic@school.edu')}
+                    onClick={() => quickLogin('PRINCIPAL', 'principal@school.edu')}
                     className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 text-sm font-medium text-left"
                   >
-                    📖 Academic Executive
+                    📖 Principal
                   </button>
                   <button
                     onClick={() => quickLogin('STUDENT_AFFAIRS_EXECUTIVE', 'studentaffairs@school.edu')}
@@ -150,12 +150,6 @@ export default function Login({ onLogin }: LoginProps) {
                     className="px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 text-sm font-medium text-left"
                   >
                     👨‍👩‍👧 Parent
-                  </button>
-                  <button
-                    onClick={() => quickLogin('PRINCIPAL', 'principal@school.edu')}
-                    className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-sm font-medium text-left"
-                  >
-                    🎓 Principal
                   </button>
                 </div>
               </div>

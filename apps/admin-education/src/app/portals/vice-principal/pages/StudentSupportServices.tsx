@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { Card, Button, StatCard, DashboardGrid } from '@apex-providers/ui-components';
 
+interface Document {
+  id: string;
+  name: string;
+  type: string;
+  uploadedDate: string;
+  uploadedBy: string;
+  size: string;
+  url: string;
+}
+
 interface CounselingSession {
   id: string;
   studentName: string;
@@ -12,6 +22,8 @@ interface CounselingSession {
   status: 'Scheduled' | 'Completed' | 'Cancelled' | 'No Show';
   notes: string;
   priority: 'Low' | 'Medium' | 'High' | 'Urgent';
+  documents: Document[];
+  sessionNotes?: string;
 }
 
 interface SpecialNeedsAccommodation {
@@ -24,6 +36,8 @@ interface SpecialNeedsAccommodation {
   reviewDate: string;
   status: 'Active' | 'Pending Review' | 'Expired';
   assignedStaff: string;
+  documents: Document[];
+  assessmentReports: Document[];
 }
 
 interface TutoringSession {
@@ -52,6 +66,44 @@ interface CrisisIntervention {
 }
 
 export default function StudentSupportServices() {
+  const [showNewSupportModal, setShowNewSupportModal] = useState(false);
+  const [showSessionModal, setShowSessionModal] = useState(false);
+  const [showScheduleSessionModal, setShowScheduleSessionModal] = useState(false);
+  const [showAccommodationModal, setShowAccommodationModal] = useState(false);
+  const [showAddAccommodationModal, setShowAddAccommodationModal] = useState(false);
+  const [selectedSession, setSelectedSession] = useState<CounselingSession | null>(null);
+  const [selectedAccommodation, setSelectedAccommodation] = useState<SpecialNeedsAccommodation | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [supportFormData, setSupportFormData] = useState({
+    studentName: '',
+    studentId: '',
+    supportType: 'Counseling' as 'Counseling' | 'Accommodation' | 'Tutoring' | 'Crisis',
+    description: '',
+    priority: 'Medium' as 'Low' | 'Medium' | 'High' | 'Urgent',
+  });
+
+  const [sessionFormData, setSessionFormData] = useState({
+    studentName: '',
+    studentId: '',
+    grade: '',
+    counselor: '',
+    sessionType: 'Individual' as CounselingSession['sessionType'],
+    scheduledDate: '',
+    scheduledTime: '',
+    notes: '',
+    priority: 'Medium' as CounselingSession['priority'],
+  });
+
+  const [accommodationFormData, setAccommodationFormData] = useState({
+    studentName: '',
+    studentId: '',
+    accommodationType: 'IEP' as SpecialNeedsAccommodation['accommodationType'],
+    accommodationDetails: '',
+    startDate: '',
+    reviewDate: '',
+    assignedStaff: '',
+  });
+
   const [counselingSessions, setCounselingSessions] = useState<CounselingSession[]>([
     {
       id: '1',
@@ -63,7 +115,8 @@ export default function StudentSupportServices() {
       scheduledDate: '2024-01-25',
       status: 'Scheduled',
       notes: 'Follow-up on academic stress concerns',
-      priority: 'Medium'
+      priority: 'Medium',
+      documents: [],
     },
     {
       id: '2',
@@ -75,7 +128,10 @@ export default function StudentSupportServices() {
       scheduledDate: '2024-01-24',
       status: 'Completed',
       notes: 'Immediate intervention for family crisis',
-      priority: 'Urgent'
+      priority: 'Urgent',
+      documents: [
+        { id: '1', name: 'Crisis_Report.pdf', type: 'Report', uploadedDate: '2024-01-24', uploadedBy: 'Mr. Brown', size: '145 KB', url: '#' },
+      ],
     },
     {
       id: '3',
@@ -87,7 +143,8 @@ export default function StudentSupportServices() {
       scheduledDate: '2024-01-26',
       status: 'Scheduled',
       notes: 'Social skills group session',
-      priority: 'Low'
+      priority: 'Low',
+      documents: [],
     }
   ]);
 
@@ -101,7 +158,14 @@ export default function StudentSupportServices() {
       startDate: '2023-09-01',
       reviewDate: '2024-03-15',
       status: 'Active',
-      assignedStaff: 'Ms. Davis'
+      assignedStaff: 'Ms. Davis',
+      documents: [
+        { id: '1', name: 'IEP_Plan.pdf', type: 'IEP', uploadedDate: '2023-09-01', uploadedBy: 'Ms. Davis', size: '320 KB', url: '#' },
+        { id: '2', name: 'Assessment_Report.pdf', type: 'Assessment', uploadedDate: '2023-08-15', uploadedBy: 'Psychologist', size: '450 KB', url: '#' },
+      ],
+      assessmentReports: [
+        { id: '2', name: 'Assessment_Report.pdf', type: 'Assessment', uploadedDate: '2023-08-15', uploadedBy: 'Psychologist', size: '450 KB', url: '#' },
+      ],
     },
     {
       id: '2',
@@ -112,7 +176,11 @@ export default function StudentSupportServices() {
       startDate: '2023-09-01',
       reviewDate: '2024-06-30',
       status: 'Active',
-      assignedStaff: 'Mr. Wilson'
+      assignedStaff: 'Mr. Wilson',
+      documents: [
+        { id: '3', name: '504_Plan.pdf', type: '504 Plan', uploadedDate: '2023-09-01', uploadedBy: 'Mr. Wilson', size: '280 KB', url: '#' },
+      ],
+      assessmentReports: [],
     },
     {
       id: '3',
@@ -123,7 +191,13 @@ export default function StudentSupportServices() {
       startDate: '2024-01-10',
       reviewDate: '2024-04-10',
       status: 'Active',
-      assignedStaff: 'Ms. Martinez'
+      assignedStaff: 'Ms. Martinez',
+      documents: [
+        { id: '4', name: 'ELL_Assessment.pdf', type: 'Assessment', uploadedDate: '2024-01-10', uploadedBy: 'Ms. Martinez', size: '195 KB', url: '#' },
+      ],
+      assessmentReports: [
+        { id: '4', name: 'ELL_Assessment.pdf', type: 'Assessment', uploadedDate: '2024-01-10', uploadedBy: 'Ms. Martinez', size: '195 KB', url: '#' },
+      ],
     }
   ]);
 
@@ -225,6 +299,109 @@ export default function StudentSupportServices() {
     }
   };
 
+  const handleFileUpload = (files: FileList | null, sessionId?: string, accommodationId?: string) => {
+    if (!files) return;
+    const fileArray = Array.from(files);
+    setUploadedFiles([...uploadedFiles, ...fileArray]);
+    
+    const newDocuments: Document[] = fileArray.map((file, index) => ({
+      id: `doc-${Date.now()}-${index}`,
+      name: file.name,
+      type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+      uploadedDate: new Date().toISOString().split('T')[0],
+      uploadedBy: 'Admin',
+      size: `${(file.size / 1024).toFixed(0)} KB`,
+      url: '#',
+    }));
+    
+    if (sessionId) {
+      setCounselingSessions(counselingSessions.map(session => 
+        session.id === sessionId 
+          ? { ...session, documents: [...session.documents, ...newDocuments] }
+          : session
+      ));
+    }
+    
+    if (accommodationId) {
+      setAccommodations(accommodations.map(acc => 
+        acc.id === accommodationId 
+          ? { ...acc, documents: [...acc.documents, ...newDocuments] }
+          : acc
+      ));
+    }
+    
+    alert(`${fileArray.length} file(s) uploaded successfully!`);
+  };
+
+  const handleCompleteSession = (sessionId: string, notes: string) => {
+    setCounselingSessions(counselingSessions.map(session => 
+      session.id === sessionId 
+        ? { ...session, status: 'Completed' as const, sessionNotes: notes }
+        : session
+    ));
+    alert('Session marked as completed!');
+  };
+
+  const handleScheduleSession = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newSession: CounselingSession = {
+      id: `session-${Date.now()}`,
+      studentName: sessionFormData.studentName,
+      studentId: sessionFormData.studentId,
+      grade: sessionFormData.grade,
+      counselor: sessionFormData.counselor,
+      sessionType: sessionFormData.sessionType,
+      scheduledDate: sessionFormData.scheduledDate,
+      status: 'Scheduled',
+      notes: sessionFormData.notes,
+      priority: sessionFormData.priority,
+      documents: [],
+    };
+    setCounselingSessions([newSession, ...counselingSessions]);
+    setSessionFormData({
+      studentName: '',
+      studentId: '',
+      grade: '',
+      counselor: '',
+      sessionType: 'Individual',
+      scheduledDate: '',
+      scheduledTime: '',
+      notes: '',
+      priority: 'Medium',
+    });
+    setShowScheduleSessionModal(false);
+    alert('Counseling session scheduled successfully!');
+  };
+
+  const handleAddAccommodation = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newAccommodation: SpecialNeedsAccommodation = {
+      id: `acc-${Date.now()}`,
+      studentName: accommodationFormData.studentName,
+      studentId: accommodationFormData.studentId,
+      accommodationType: accommodationFormData.accommodationType,
+      accommodationDetails: accommodationFormData.accommodationDetails,
+      startDate: accommodationFormData.startDate,
+      reviewDate: accommodationFormData.reviewDate,
+      status: 'Active',
+      assignedStaff: accommodationFormData.assignedStaff,
+      documents: [],
+      assessmentReports: [],
+    };
+    setAccommodations([newAccommodation, ...accommodations]);
+    setAccommodationFormData({
+      studentName: '',
+      studentId: '',
+      accommodationType: 'IEP',
+      accommodationDetails: '',
+      startDate: '',
+      reviewDate: '',
+      assignedStaff: '',
+    });
+    setShowAddAccommodationModal(false);
+    alert('Accommodation added successfully!');
+  };
+
   const activeCounselingSessions = counselingSessions.filter(s => s.status === 'Scheduled').length;
   const activeAccommodations = accommodations.filter(a => a.status === 'Active').length;
   const activeTutoringSessions = tutoringSessions.filter(t => t.status === 'Scheduled').length;
@@ -237,7 +414,7 @@ export default function StudentSupportServices() {
           <h1 className="text-3xl font-bold text-charcoal-gray">Student Support Services</h1>
           <p className="text-gray-600 mt-2">Counseling, special needs accommodation, and academic support</p>
         </div>
-        <Button>New Support Request</Button>
+        <Button onClick={() => setShowNewSupportModal(true)}>New Support Request</Button>
       </div>
 
       {/* Overview Stats */}
@@ -295,7 +472,7 @@ export default function StudentSupportServices() {
               <option>Group</option>
               <option>Crisis</option>
             </select>
-            <Button size="sm" variant="secondary">Schedule Session</Button>
+            <Button size="sm" variant="secondary" onClick={() => setShowScheduleSessionModal(true)}>Schedule Session</Button>
           </div>
         </div>
 
@@ -348,9 +525,27 @@ export default function StudentSupportServices() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
+                      <button 
+                        onClick={() => {
+                          setSelectedSession(session);
+                          setShowSessionModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
                       {session.status === 'Scheduled' && (
-                        <button className="text-green-600 hover:text-green-900">Complete</button>
+                        <button 
+                          onClick={() => {
+                            const notes = prompt('Enter session notes:');
+                            if (notes) {
+                              handleCompleteSession(session.id, notes);
+                            }
+                          }}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Complete
+                        </button>
                       )}
                     </div>
                   </td>
@@ -365,7 +560,7 @@ export default function StudentSupportServices() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Special Needs Accommodation Tracking</h2>
-          <Button size="sm" variant="secondary">Add Accommodation</Button>
+          <Button size="sm" variant="secondary" onClick={() => setShowAddAccommodationModal(true)}>Add Accommodation</Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -402,8 +597,28 @@ export default function StudentSupportServices() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
-                      <button className="text-green-600 hover:text-green-900">Review</button>
+                      <button 
+                        onClick={() => {
+                          setSelectedAccommodation(accommodation);
+                          setShowAccommodationModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
+                      <button 
+                        onClick={() => {
+                          setAccommodations(accommodations.map(acc => 
+                            acc.id === accommodation.id 
+                              ? { ...acc, status: 'Pending Review' as const }
+                              : acc
+                          ));
+                          alert('Accommodation marked for review!');
+                        }}
+                        className="text-green-600 hover:text-green-900"
+                      >
+                        Review
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -509,10 +724,675 @@ export default function StudentSupportServices() {
           </div>
 
           <div className="mt-4">
-            <Button variant="outline" fullWidth>Report New Crisis</Button>
+            <Button variant="outline" fullWidth onClick={() => {
+              setShowNewSupportModal(true);
+              setSupportFormData({...supportFormData, supportType: 'Crisis'});
+            }}>Report New Crisis</Button>
           </div>
         </Card>
       </div>
+
+      {/* New Support Request Modal */}
+      {showNewSupportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">New Support Request</h2>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              if (supportFormData.supportType === 'Counseling') {
+                const newSession: CounselingSession = {
+                  id: `session-${Date.now()}`,
+                  studentName: supportFormData.studentName,
+                  studentId: supportFormData.studentId,
+                  grade: 'Grade 10',
+                  counselor: 'Ms. Johnson',
+                  sessionType: 'Individual',
+                  scheduledDate: new Date().toISOString().split('T')[0],
+                  status: 'Scheduled',
+                  notes: supportFormData.description,
+                  priority: supportFormData.priority,
+                  documents: uploadedFiles.map((file, index) => ({
+                    id: `doc-${Date.now()}-${index}`,
+                    name: file.name,
+                    type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+                    uploadedDate: new Date().toISOString().split('T')[0],
+                    uploadedBy: 'Admin',
+                    size: `${(file.size / 1024).toFixed(0)} KB`,
+                    url: '#',
+                  })),
+                };
+                setCounselingSessions([newSession, ...counselingSessions]);
+              }
+              setSupportFormData({
+                studentName: '',
+                studentId: '',
+                supportType: 'Counseling',
+                description: '',
+                priority: 'Medium',
+              });
+              setUploadedFiles([]);
+              setShowNewSupportModal(false);
+              alert('Support request created successfully!');
+            }} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={supportFormData.studentName}
+                    onChange={(e) => setSupportFormData({...supportFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={supportFormData.studentId}
+                    onChange={(e) => setSupportFormData({...supportFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Support Type *</label>
+                  <select
+                    value={supportFormData.supportType}
+                    onChange={(e) => setSupportFormData({...supportFormData, supportType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Counseling">Counseling</option>
+                    <option value="Accommodation">Accommodation</option>
+                    <option value="Tutoring">Tutoring</option>
+                    <option value="Crisis">Crisis Intervention</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Priority *</label>
+                  <select
+                    value={supportFormData.priority}
+                    onChange={(e) => setSupportFormData({...supportFormData, priority: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  value={supportFormData.description}
+                  onChange={(e) => setSupportFormData({...supportFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={4}
+                  required
+                  placeholder="Describe the support needed..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Documents</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+                      }
+                    }}
+                    className="hidden"
+                    id="support-docs"
+                  />
+                  <label htmlFor="support-docs" className="cursor-pointer flex items-center gap-2">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm text-gray-600">Click to upload documents</span>
+                  </label>
+                  {uploadedFiles.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {uploadedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                          <span>{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setUploadedFiles(uploadedFiles.filter((_, i) => i !== index))}
+                            className="text-red-600"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowNewSupportModal(false);
+                    setSupportFormData({
+                      studentName: '',
+                      studentId: '',
+                      supportType: 'Counseling',
+                      description: '',
+                      priority: 'Medium',
+                    });
+                    setUploadedFiles([]);
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Create Request</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Session Details Modal */}
+      {showSessionModal && selectedSession && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Counseling Session - {selectedSession.studentName}</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedSession.studentName} ({selectedSession.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Session Type</label>
+                  <p className="text-gray-900">{selectedSession.sessionType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Counselor</label>
+                  <p className="text-gray-900">{selectedSession.counselor}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Scheduled Date</label>
+                  <p className="text-gray-900">{selectedSession.scheduledDate}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <p className="text-gray-900">{selectedSession.notes}</p>
+              </div>
+              {selectedSession.sessionNotes && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Session Notes</label>
+                  <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedSession.sessionNotes}</p>
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Session Documents</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => handleFileUpload(e.target.files, selectedSession.id)}
+                    className="hidden"
+                    id="session-docs"
+                  />
+                  <label htmlFor="session-docs" className="cursor-pointer flex items-center gap-2">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm text-gray-600">Upload session notes or reports</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-3">Session Documents ({selectedSession.documents.length})</h3>
+                <div className="space-y-2">
+                  {selectedSession.documents.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div>
+                          <div className="font-medium text-gray-900">{doc.name}</div>
+                          <div className="text-xs text-gray-500">{doc.size} • {doc.uploadedDate}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="text-blue-600 hover:text-blue-900 text-sm">View</button>
+                        <button className="text-green-600 hover:text-green-900 text-sm">Download</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowSessionModal(false);
+                    setSelectedSession(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Accommodation Details Modal */}
+      {showAccommodationModal && selectedAccommodation && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Accommodation - {selectedAccommodation.studentName}</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedAccommodation.studentName} ({selectedAccommodation.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Accommodation Type</label>
+                  <p className="text-gray-900">{selectedAccommodation.accommodationType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                  <p className="text-gray-900">{selectedAccommodation.startDate}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Review Date</label>
+                  <p className="text-gray-900">{selectedAccommodation.reviewDate}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Accommodation Details</label>
+                <p className="text-gray-900">{selectedAccommodation.accommodationDetails}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Assessment Reports</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => handleFileUpload(e.target.files, undefined, selectedAccommodation.id)}
+                    className="hidden"
+                    id="accommodation-docs"
+                  />
+                  <label htmlFor="accommodation-docs" className="cursor-pointer flex items-center gap-2">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm text-gray-600">Upload assessment reports or documents</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-3">Accommodation Documents ({selectedAccommodation.documents.length})</h3>
+                <div className="space-y-2">
+                  {selectedAccommodation.documents.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div>
+                          <div className="font-medium text-gray-900">{doc.name}</div>
+                          <div className="text-xs text-gray-500">{doc.type} • {doc.size} • {doc.uploadedDate}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="text-blue-600 hover:text-blue-900 text-sm">View</button>
+                        <button className="text-green-600 hover:text-green-900 text-sm">Download</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowAccommodationModal(false);
+                    setSelectedAccommodation(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Schedule Session Modal */}
+      {showScheduleSessionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Schedule Counseling Session</h2>
+            </div>
+            <form onSubmit={handleScheduleSession} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={sessionFormData.studentName}
+                    onChange={(e) => setSessionFormData({...sessionFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={sessionFormData.studentId}
+                    onChange={(e) => setSessionFormData({...sessionFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Grade *</label>
+                  <select
+                    value={sessionFormData.grade}
+                    onChange={(e) => setSessionFormData({...sessionFormData, grade: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="">Select Grade</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Counselor *</label>
+                  <input
+                    type="text"
+                    value={sessionFormData.counselor}
+                    onChange={(e) => setSessionFormData({...sessionFormData, counselor: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="e.g., Ms. Johnson"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Session Type *</label>
+                  <select
+                    value={sessionFormData.sessionType}
+                    onChange={(e) => setSessionFormData({...sessionFormData, sessionType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Individual">Individual</option>
+                    <option value="Group">Group</option>
+                    <option value="Crisis">Crisis</option>
+                    <option value="Follow-up">Follow-up</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Priority *</label>
+                  <select
+                    value={sessionFormData.priority}
+                    onChange={(e) => setSessionFormData({...sessionFormData, priority: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Urgent">Urgent</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Scheduled Date *</label>
+                  <input
+                    type="date"
+                    value={sessionFormData.scheduledDate}
+                    onChange={(e) => setSessionFormData({...sessionFormData, scheduledDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Scheduled Time *</label>
+                  <input
+                    type="time"
+                    value={sessionFormData.scheduledTime}
+                    onChange={(e) => setSessionFormData({...sessionFormData, scheduledTime: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                <textarea
+                  value={sessionFormData.notes}
+                  onChange={(e) => setSessionFormData({...sessionFormData, notes: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  placeholder="Enter session notes or reason for scheduling..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowScheduleSessionModal(false);
+                    setSessionFormData({
+                      studentName: '',
+                      studentId: '',
+                      grade: '',
+                      counselor: '',
+                      sessionType: 'Individual',
+                      scheduledDate: '',
+                      scheduledTime: '',
+                      notes: '',
+                      priority: 'Medium',
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Schedule Session</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Add Accommodation Modal */}
+      {showAddAccommodationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Add Special Needs Accommodation</h2>
+            </div>
+            <form onSubmit={handleAddAccommodation} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={accommodationFormData.studentName}
+                    onChange={(e) => setAccommodationFormData({...accommodationFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={accommodationFormData.studentId}
+                    onChange={(e) => setAccommodationFormData({...accommodationFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Accommodation Type *</label>
+                  <select
+                    value={accommodationFormData.accommodationType}
+                    onChange={(e) => setAccommodationFormData({...accommodationFormData, accommodationType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="IEP">IEP</option>
+                    <option value="504 Plan">504 Plan</option>
+                    <option value="ELL Support">ELL Support</option>
+                    <option value="Gifted Program">Gifted Program</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Assigned Staff *</label>
+                  <input
+                    type="text"
+                    value={accommodationFormData.assignedStaff}
+                    onChange={(e) => setAccommodationFormData({...accommodationFormData, assignedStaff: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="e.g., Ms. Davis"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
+                  <input
+                    type="date"
+                    value={accommodationFormData.startDate}
+                    onChange={(e) => setAccommodationFormData({...accommodationFormData, startDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Review Date *</label>
+                  <input
+                    type="date"
+                    value={accommodationFormData.reviewDate}
+                    onChange={(e) => setAccommodationFormData({...accommodationFormData, reviewDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Accommodation Details *</label>
+                <textarea
+                  value={accommodationFormData.accommodationDetails}
+                  onChange={(e) => setAccommodationFormData({...accommodationFormData, accommodationDetails: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={4}
+                  required
+                  placeholder="Describe the accommodation details, e.g., Extended time for tests, note-taking support, preferential seating..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Assessment Reports</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+                        alert(`${e.target.files.length} file(s) selected. They will be uploaded when you submit the form.`);
+                      }
+                    }}
+                    className="hidden"
+                    id="accommodation-assessment"
+                  />
+                  <label htmlFor="accommodation-assessment" className="cursor-pointer flex items-center gap-2">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm text-gray-600">Click to upload assessment reports</span>
+                  </label>
+                  {uploadedFiles.length > 0 && (
+                    <div className="mt-2 space-y-1">
+                      {uploadedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded text-sm">
+                          <span>{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setUploadedFiles(uploadedFiles.filter((_, i) => i !== index))}
+                            className="text-red-600"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowAddAccommodationModal(false);
+                    setAccommodationFormData({
+                      studentName: '',
+                      studentId: '',
+                      accommodationType: 'IEP',
+                      accommodationDetails: '',
+                      startDate: '',
+                      reviewDate: '',
+                      assignedStaff: '',
+                    });
+                    setUploadedFiles([]);
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Add Accommodation</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

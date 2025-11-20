@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { Card, Button, StatCard, DashboardGrid } from '@apex-providers/ui-components';
 
+interface Document {
+  id: string;
+  name: string;
+  type: string;
+  uploadedDate: string;
+  uploadedBy: string;
+  size: string;
+  url: string;
+}
+
 interface DisciplineIncident {
   id: string;
   incidentNumber: string;
@@ -17,6 +27,8 @@ interface DisciplineIncident {
   resolution: string | null;
   resolutionDate: string | null;
   actionsTaken: string[];
+  evidence: Document[];
+  witnessStatements: Document[];
 }
 
 interface CodeOfConductRule {
@@ -54,6 +66,22 @@ interface ParentCommunication {
 }
 
 export default function DisciplineManagement() {
+  const [showReportIncidentModal, setShowReportIncidentModal] = useState(false);
+  const [showIncidentDetailsModal, setShowIncidentDetailsModal] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState<DisciplineIncident | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+  const [incidentFormData, setIncidentFormData] = useState({
+    studentName: '',
+    studentId: '',
+    grade: '',
+    incidentType: 'Disruption' as 'Disruption' | 'Tardiness' | 'Absenteeism' | 'Bullying' | 'Academic Dishonesty' | 'Violence' | 'Other',
+    description: '',
+    reportedBy: '',
+    severity: 'Medium' as 'Low' | 'Medium' | 'High' | 'Critical',
+    location: '',
+    witnesses: '',
+  });
+
   const [incidents, setIncidents] = useState<DisciplineIncident[]>([
     {
       id: '1',
@@ -70,7 +98,9 @@ export default function DisciplineManagement() {
       assignedTo: 'Vice Principal',
       resolution: 'Verbal warning and parent notification',
       resolutionDate: '2024-01-23',
-      actionsTaken: ['Verbal Warning', 'Parent Notification']
+      actionsTaken: ['Verbal Warning', 'Parent Notification'],
+      evidence: [],
+      witnessStatements: [],
     },
     {
       id: '2',
@@ -87,7 +117,14 @@ export default function DisciplineManagement() {
       assignedTo: 'Counselor - Ms. Johnson',
       resolution: null,
       resolutionDate: null,
-      actionsTaken: []
+      actionsTaken: [],
+      evidence: [
+        { id: '1', name: 'Witness_Statement_1.pdf', type: 'Witness Statement', uploadedDate: '2024-01-23', uploadedBy: 'Student', size: '125 KB', url: '#' },
+        { id: '2', name: 'Incident_Photo.jpg', type: 'Photo', uploadedDate: '2024-01-23', uploadedBy: 'Teacher', size: '450 KB', url: '#' },
+      ],
+      witnessStatements: [
+        { id: '1', name: 'Witness_Statement_1.pdf', type: 'Witness Statement', uploadedDate: '2024-01-23', uploadedBy: 'Student', size: '125 KB', url: '#' },
+      ],
     },
     {
       id: '3',
@@ -104,7 +141,9 @@ export default function DisciplineManagement() {
       assignedTo: 'Vice Principal',
       resolution: 'Parent meeting scheduled and attendance contract created',
       resolutionDate: '2024-01-21',
-      actionsTaken: ['Parent Meeting', 'Attendance Contract']
+      actionsTaken: ['Parent Meeting', 'Attendance Contract'],
+      evidence: [],
+      witnessStatements: [],
     },
     {
       id: '4',
@@ -121,7 +160,11 @@ export default function DisciplineManagement() {
       assignedTo: null,
       resolution: null,
       resolutionDate: null,
-      actionsTaken: []
+      actionsTaken: [],
+      evidence: [
+        { id: '3', name: 'Exam_Paper_Evidence.pdf', type: 'Evidence', uploadedDate: '2024-01-24', uploadedBy: 'Mr. Brown', size: '280 KB', url: '#' },
+      ],
+      witnessStatements: [],
     }
   ]);
 
@@ -260,6 +303,83 @@ export default function DisciplineManagement() {
     }
   };
 
+  const handleFileUpload = (files: FileList | null, incidentId?: string, fileType: 'evidence' | 'witness' = 'evidence') => {
+    if (!files) return;
+    const fileArray = Array.from(files);
+    setUploadedFiles([...uploadedFiles, ...fileArray]);
+    
+    const newDocuments: Document[] = fileArray.map((file, index) => ({
+      id: `doc-${Date.now()}-${index}`,
+      name: file.name,
+      type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+      uploadedDate: new Date().toISOString().split('T')[0],
+      uploadedBy: 'Admin',
+      size: `${(file.size / 1024).toFixed(0)} KB`,
+      url: '#',
+    }));
+    
+    if (incidentId) {
+      setIncidents(incidents.map(incident => {
+        if (incident.id === incidentId) {
+          if (fileType === 'evidence') {
+            return { ...incident, evidence: [...incident.evidence, ...newDocuments] };
+          } else {
+            return { ...incident, witnessStatements: [...incident.witnessStatements, ...newDocuments] };
+          }
+        }
+        return incident;
+      }));
+    }
+    
+    alert(`${fileArray.length} file(s) uploaded successfully!`);
+  };
+
+  const handleReportIncident = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newIncident: DisciplineIncident = {
+      id: `inc-${Date.now()}`,
+      incidentNumber: `INC-${new Date().getFullYear()}-${String(incidents.length + 1).padStart(3, '0')}`,
+      studentName: incidentFormData.studentName,
+      studentId: incidentFormData.studentId,
+      grade: incidentFormData.grade,
+      incidentType: incidentFormData.incidentType,
+      description: incidentFormData.description,
+      reportedBy: incidentFormData.reportedBy,
+      reportedDate: new Date().toISOString().split('T')[0],
+      severity: incidentFormData.severity,
+      status: 'Open',
+      assignedTo: null,
+      resolution: null,
+      resolutionDate: null,
+      actionsTaken: [],
+      evidence: uploadedFiles.map((file, index) => ({
+        id: `doc-${Date.now()}-${index}`,
+        name: file.name,
+        type: file.name.split('.').pop()?.toUpperCase() || 'FILE',
+        uploadedDate: new Date().toISOString().split('T')[0],
+        uploadedBy: incidentFormData.reportedBy,
+        size: `${(file.size / 1024).toFixed(0)} KB`,
+        url: '#',
+      })),
+      witnessStatements: [],
+    };
+    setIncidents([newIncident, ...incidents]);
+    setIncidentFormData({
+      studentName: '',
+      studentId: '',
+      grade: '',
+      incidentType: 'Disruption',
+      description: '',
+      reportedBy: '',
+      severity: 'Medium',
+      location: '',
+      witnesses: '',
+    });
+    setUploadedFiles([]);
+    setShowReportIncidentModal(false);
+    alert('Incident reported successfully!');
+  };
+
   const totalIncidents = incidents.length;
   const resolvedIncidents = incidents.filter(i => i.status === 'Resolved' || i.status === 'Closed').length;
   const pendingIncidents = incidents.filter(i => i.status === 'Open' || i.status === 'Under Review').length;
@@ -272,7 +392,7 @@ export default function DisciplineManagement() {
           <h1 className="text-3xl font-bold text-charcoal-gray">Discipline & Behavior Management</h1>
           <p className="text-gray-600 mt-2">Code of conduct, incident reporting, and behavior intervention</p>
         </div>
-        <Button>Report Incident</Button>
+        <Button onClick={() => setShowReportIncidentModal(true)}>Report Incident</Button>
       </div>
 
       {/* Overview Stats */}
@@ -331,7 +451,7 @@ export default function DisciplineManagement() {
               <option>Under Review</option>
               <option>Resolved</option>
             </select>
-            <Button size="sm" variant="secondary">Report Incident</Button>
+            <Button size="sm" variant="secondary" onClick={() => setShowReportIncidentModal(true)}>Report Incident</Button>
           </div>
         </div>
 
@@ -387,12 +507,55 @@ export default function DisciplineManagement() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
+                      <button 
+                        onClick={() => {
+                          setSelectedIncident(incident);
+                          setShowIncidentDetailsModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
                       {incident.status === 'Open' && (
-                        <button className="text-green-600 hover:text-green-900">Assign</button>
+                        <button 
+                          onClick={() => {
+                            const assignee = prompt('Assign to (e.g., Vice Principal, Counselor):');
+                            if (assignee) {
+                              setIncidents(incidents.map(i => 
+                                i.id === incident.id 
+                                  ? { ...i, status: 'Under Review' as const, assignedTo: assignee }
+                                  : i
+                              ));
+                              alert(`Incident assigned to ${assignee}`);
+                            }
+                          }}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Assign
+                        </button>
                       )}
                       {incident.status === 'Under Review' && (
-                        <button className="text-purple-600 hover:text-purple-900">Resolve</button>
+                        <button 
+                          onClick={() => {
+                            const resolution = prompt('Enter resolution details:');
+                            if (resolution) {
+                              setIncidents(incidents.map(i => 
+                                i.id === incident.id 
+                                  ? { 
+                                      ...i, 
+                                      status: 'Resolved' as const, 
+                                      resolution,
+                                      resolutionDate: new Date().toISOString().split('T')[0],
+                                    }
+                                  : i
+                              ));
+                              alert('Incident resolved!');
+                            }
+                          }}
+                          className="text-purple-600 hover:text-purple-900"
+                        >
+                          Resolve
+                        </button>
                       )}
                     </div>
                   </td>
@@ -514,7 +677,9 @@ export default function DisciplineManagement() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Parent Communication Logs</h2>
-          <Button size="sm" variant="secondary">Log Communication</Button>
+          <Button size="sm" variant="secondary" onClick={() => {
+            alert('Parent communication logging form would open here');
+          }}>Log Communication</Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -563,6 +728,355 @@ export default function DisciplineManagement() {
           </table>
         </div>
       </Card>
+
+      {/* Report Incident Modal */}
+      {showReportIncidentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Report Discipline Incident</h2>
+            </div>
+            <form onSubmit={handleReportIncident} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={incidentFormData.studentName}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={incidentFormData.studentId}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Grade *</label>
+                  <select
+                    value={incidentFormData.grade}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, grade: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="">Select Grade</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Incident Type *</label>
+                  <select
+                    value={incidentFormData.incidentType}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, incidentType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Disruption">Disruption</option>
+                    <option value="Tardiness">Tardiness</option>
+                    <option value="Absenteeism">Absenteeism</option>
+                    <option value="Bullying">Bullying</option>
+                    <option value="Academic Dishonesty">Academic Dishonesty</option>
+                    <option value="Violence">Violence</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Reported By *</label>
+                  <input
+                    type="text"
+                    value={incidentFormData.reportedBy}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, reportedBy: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="e.g., Ms. Green - Math Teacher"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Severity *</label>
+                  <select
+                    value={incidentFormData.severity}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, severity: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input
+                  type="text"
+                  value={incidentFormData.location}
+                  onChange={(e) => setIncidentFormData({...incidentFormData, location: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  placeholder="e.g., Classroom 301, Cafeteria"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  value={incidentFormData.description}
+                  onChange={(e) => setIncidentFormData({...incidentFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={4}
+                  required
+                  placeholder="Describe the incident in detail..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Witnesses</label>
+                <input
+                  type="text"
+                  value={incidentFormData.witnesses}
+                  onChange={(e) => setIncidentFormData({...incidentFormData, witnesses: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  placeholder="List witnesses (comma-separated)"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Evidence</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.mov"
+                    onChange={(e) => {
+                      if (e.target.files) {
+                        setUploadedFiles([...uploadedFiles, ...Array.from(e.target.files)]);
+                      }
+                    }}
+                    className="hidden"
+                    id="incident-evidence"
+                  />
+                  <label htmlFor="incident-evidence" className="cursor-pointer">
+                    <svg className="w-12 h-12 mx-auto text-gray-400 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <p className="text-sm text-gray-600 text-center">Click to upload evidence</p>
+                    <p className="text-xs text-gray-500 text-center mt-1">Photos, videos, documents, witness statements</p>
+                  </label>
+                  {uploadedFiles.length > 0 && (
+                    <div className="mt-4 space-y-2">
+                      {uploadedFiles.map((file, index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                          <span className="text-sm text-gray-700">{file.name}</span>
+                          <button
+                            type="button"
+                            onClick={() => setUploadedFiles(uploadedFiles.filter((_, i) => i !== index))}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowReportIncidentModal(false);
+                    setIncidentFormData({
+                      studentName: '',
+                      studentId: '',
+                      grade: '',
+                      incidentType: 'Disruption',
+                      description: '',
+                      reportedBy: '',
+                      severity: 'Medium',
+                      location: '',
+                      witnesses: '',
+                    });
+                    setUploadedFiles([]);
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Report Incident</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Incident Details Modal */}
+      {showIncidentDetailsModal && selectedIncident && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Incident Details - {selectedIncident.incidentNumber}</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedIncident.studentName} ({selectedIncident.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+                  <p className="text-gray-900">{selectedIncident.grade}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Incident Type</label>
+                  <p className="text-gray-900">{selectedIncident.incidentType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getSeverityColor(selectedIncident.severity)}`}>
+                    {selectedIncident.severity}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Reported By</label>
+                  <p className="text-gray-900">{selectedIncident.reportedBy}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Reported Date</label>
+                  <p className="text-gray-900">{selectedIncident.reportedDate}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedIncident.description}</p>
+              </div>
+              {selectedIncident.resolution && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Resolution</label>
+                  <p className="text-gray-900 bg-green-50 p-3 rounded">{selectedIncident.resolution}</p>
+                </div>
+              )}
+              {selectedIncident.actionsTaken.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Actions Taken</label>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedIncident.actionsTaken.map((action, index) => (
+                      <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+                        {action}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Additional Evidence</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.mp4,.mov"
+                    onChange={(e) => handleFileUpload(e.target.files, selectedIncident.id, 'evidence')}
+                    className="hidden"
+                    id="additional-evidence"
+                  />
+                  <label htmlFor="additional-evidence" className="cursor-pointer flex items-center gap-2">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm text-gray-600">Upload evidence files</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Upload Witness Statements</label>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-4">
+                  <input
+                    type="file"
+                    multiple
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => handleFileUpload(e.target.files, selectedIncident.id, 'witness')}
+                    className="hidden"
+                    id="witness-statements"
+                  />
+                  <label htmlFor="witness-statements" className="cursor-pointer flex items-center gap-2">
+                    <svg className="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    </svg>
+                    <span className="text-sm text-gray-600">Upload witness statements</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-3">Evidence Files ({selectedIncident.evidence.length})</h3>
+                <div className="space-y-2">
+                  {selectedIncident.evidence.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div>
+                          <div className="font-medium text-gray-900">{doc.name}</div>
+                          <div className="text-xs text-gray-500">{doc.type} • {doc.size} • {doc.uploadedDate}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="text-blue-600 hover:text-blue-900 text-sm">View</button>
+                        <button className="text-green-600 hover:text-green-900 text-sm">Download</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <h3 className="font-semibold text-gray-900 mb-3">Witness Statements ({selectedIncident.witnessStatements.length})</h3>
+                <div className="space-y-2">
+                  {selectedIncident.witnessStatements.map((doc) => (
+                    <div key={doc.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex items-center gap-3">
+                        <svg className="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        <div>
+                          <div className="font-medium text-gray-900">{doc.name}</div>
+                          <div className="text-xs text-gray-500">{doc.size} • {doc.uploadedDate} • {doc.uploadedBy}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <button className="text-blue-600 hover:text-blue-900 text-sm">View</button>
+                        <button className="text-green-600 hover:text-green-900 text-sm">Download</button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowIncidentDetailsModal(false);
+                    setSelectedIncident(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

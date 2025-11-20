@@ -5,6 +5,8 @@ import StudentAffairsDashboard from './pages/StudentAffairsDashboard';
 import EnrollmentManagement from './pages/EnrollmentManagement';
 import StudentSupportServices from './pages/StudentSupportServices';
 import DisciplineBehavior from './pages/DisciplineBehavior';
+import CurriculumDevelopment from './pages/CurriculumDevelopment';
+import StudentAccreditation from './pages/StudentAccreditation';
 import UserManagementPage from './pages/UserManagementPage';
 
 interface User {
@@ -42,6 +44,8 @@ export default function VicePrincipalPortal({ user, onLogout }: VicePrincipalPor
         { label: 'Enrollment Management', href: '/admin/student-affairs/enrollment' },
         { label: 'Student Support Services', href: '/admin/student-affairs/support' },
         { label: 'Discipline & Behavior Management', href: '/admin/student-affairs/discipline' },
+        { label: 'Curriculum Development', href: '/admin/student-affairs/curriculum' },
+        { label: 'Student Accreditation', href: '/admin/student-affairs/accreditation' },
       ],
     },
   ];
@@ -125,6 +129,8 @@ export default function VicePrincipalPortal({ user, onLogout }: VicePrincipalPor
         <Route path="enrollment" element={<EnrollmentManagement />} />
         <Route path="support" element={<StudentSupportServices />} />
         <Route path="discipline" element={<DisciplineBehavior />} />
+        <Route path="curriculum" element={<CurriculumDevelopment />} />
+        <Route path="accreditation" element={<StudentAccreditation />} />
         <Route path="" element={<Navigate to="dashboard" replace />} />
       </Routes>
     </AdminLayout>

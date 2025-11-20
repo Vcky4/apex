@@ -75,6 +75,61 @@ interface BehaviorAnalytics {
 }
 
 export default function DisciplineBehavior() {
+  const [showReportIncidentModal, setShowReportIncidentModal] = useState(false);
+  const [showManageRulesModal, setShowManageRulesModal] = useState(false);
+  const [showSchedulePracticeModal, setShowSchedulePracticeModal] = useState(false);
+  const [showCreateInterventionModal, setShowCreateInterventionModal] = useState(false);
+  const [showLogCommunicationModal, setShowLogCommunicationModal] = useState(false);
+  const [showIncidentDetailsModal, setShowIncidentDetailsModal] = useState(false);
+  const [showPracticeDetailsModal, setShowPracticeDetailsModal] = useState(false);
+  const [showInterventionDetailsModal, setShowInterventionDetailsModal] = useState(false);
+  const [showCommunicationDetailsModal, setShowCommunicationDetailsModal] = useState(false);
+  const [selectedIncident, setSelectedIncident] = useState<DisciplineIncident | null>(null);
+  const [selectedPractice, setSelectedPractice] = useState<RestorativePractice | null>(null);
+  const [selectedIntervention, setSelectedIntervention] = useState<BehaviorIntervention | null>(null);
+  const [selectedCommunication, setSelectedCommunication] = useState<ParentCommunication | null>(null);
+  const [editingRule, setEditingRule] = useState<CodeOfConductRule | null>(null);
+  
+  const [incidentFormData, setIncidentFormData] = useState({
+    studentName: '',
+    studentId: '',
+    grade: '',
+    incidentType: 'Disruption' as DisciplineIncident['incidentType'],
+    description: '',
+    reportedBy: '',
+    severity: 'Medium' as DisciplineIncident['severity'],
+    location: '',
+  });
+
+  const [practiceFormData, setPracticeFormData] = useState({
+    studentName: '',
+    studentId: '',
+    practiceType: 'Mediation' as RestorativePractice['practiceType'],
+    scheduledDate: '',
+    facilitator: '',
+    notes: '',
+  });
+
+  const [interventionFormData, setInterventionFormData] = useState({
+    studentName: '',
+    studentId: '',
+    interventionType: 'Behavior Plan' as BehaviorIntervention['interventionType'],
+    startDate: '',
+    assignedTo: '',
+    goals: [''],
+  });
+
+  const [communicationFormData, setCommunicationFormData] = useState({
+    studentName: '',
+    studentId: '',
+    parentName: '',
+    communicationType: 'Phone Call' as ParentCommunication['communicationType'],
+    date: new Date().toISOString().split('T')[0],
+    topic: '',
+    notes: '',
+    followUpRequired: false,
+  });
+
   const [incidents, setIncidents] = useState<DisciplineIncident[]>([
     {
       id: '1',
@@ -341,6 +396,129 @@ export default function DisciplineBehavior() {
     }
   };
 
+  const handleReportIncident = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newIncident: DisciplineIncident = {
+      id: `inc-${Date.now()}`,
+      incidentNumber: `INC-${new Date().getFullYear()}-${String(incidents.length + 1).padStart(3, '0')}`,
+      studentName: incidentFormData.studentName,
+      studentId: incidentFormData.studentId,
+      grade: incidentFormData.grade,
+      incidentType: incidentFormData.incidentType,
+      description: incidentFormData.description,
+      reportedBy: incidentFormData.reportedBy,
+      reportedDate: new Date().toISOString().split('T')[0],
+      severity: incidentFormData.severity,
+      status: 'Open',
+      assignedTo: null,
+      resolution: null,
+      resolutionDate: null,
+      actionsTaken: [],
+    };
+    setIncidents([newIncident, ...incidents]);
+    setIncidentFormData({
+      studentName: '',
+      studentId: '',
+      grade: '',
+      incidentType: 'Disruption',
+      description: '',
+      reportedBy: '',
+      severity: 'Medium',
+      location: '',
+    });
+    setShowReportIncidentModal(false);
+    alert('Incident reported successfully!');
+  };
+
+  const handleSchedulePractice = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newPractice: RestorativePractice = {
+      id: `practice-${Date.now()}`,
+      practiceType: practiceFormData.practiceType,
+      studentName: practiceFormData.studentName,
+      studentId: practiceFormData.studentId,
+      scheduledDate: practiceFormData.scheduledDate,
+      facilitator: practiceFormData.facilitator,
+      status: 'Scheduled',
+      outcome: null,
+      success: null,
+    };
+    setRestorativePractices([newPractice, ...restorativePractices]);
+    setPracticeFormData({
+      studentName: '',
+      studentId: '',
+      practiceType: 'Mediation',
+      scheduledDate: '',
+      facilitator: '',
+      notes: '',
+    });
+    setShowSchedulePracticeModal(false);
+    alert('Restorative practice scheduled successfully!');
+  };
+
+  const handleCreateIntervention = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newIntervention: BehaviorIntervention = {
+      id: `intervention-${Date.now()}`,
+      studentName: interventionFormData.studentName,
+      studentId: interventionFormData.studentId,
+      interventionType: interventionFormData.interventionType,
+      startDate: interventionFormData.startDate,
+      endDate: null,
+      status: 'Active',
+      assignedTo: interventionFormData.assignedTo,
+      progress: 0,
+      goals: interventionFormData.goals.filter(g => g.trim() !== ''),
+    };
+    setBehaviorInterventions([newIntervention, ...behaviorInterventions]);
+    setInterventionFormData({
+      studentName: '',
+      studentId: '',
+      interventionType: 'Behavior Plan',
+      startDate: '',
+      assignedTo: '',
+      goals: [''],
+    });
+    setShowCreateInterventionModal(false);
+    alert('Behavior intervention created successfully!');
+  };
+
+  const handleLogCommunication = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newCommunication: ParentCommunication = {
+      id: `comm-${Date.now()}`,
+      studentName: communicationFormData.studentName,
+      studentId: communicationFormData.studentId,
+      parentName: communicationFormData.parentName,
+      communicationType: communicationFormData.communicationType,
+      date: communicationFormData.date,
+      topic: communicationFormData.topic,
+      notes: communicationFormData.notes,
+      followUpRequired: communicationFormData.followUpRequired,
+    };
+    setParentCommunications([newCommunication, ...parentCommunications]);
+    setCommunicationFormData({
+      studentName: '',
+      studentId: '',
+      parentName: '',
+      communicationType: 'Phone Call',
+      date: new Date().toISOString().split('T')[0],
+      topic: '',
+      notes: '',
+      followUpRequired: false,
+    });
+    setShowLogCommunicationModal(false);
+    alert('Parent communication logged successfully!');
+  };
+
+  const handleUpdateRule = (rule: CodeOfConductRule) => {
+    setCodeOfConductRules(codeOfConductRules.map(r => 
+      r.id === rule.id ? rule : r
+    ));
+    setEditingRule(null);
+    alert('Code of conduct rule updated successfully!');
+  };
+
   const totalIncidents = incidents.length;
   const resolvedIncidents = incidents.filter(i => i.status === 'Resolved' || i.status === 'Closed').length;
   const pendingIncidents = incidents.filter(i => i.status === 'Open' || i.status === 'Under Review').length;
@@ -354,7 +532,7 @@ export default function DisciplineBehavior() {
           <h1 className="text-3xl font-bold text-charcoal-gray">Discipline & Behavior Management</h1>
           <p className="text-gray-600 mt-2">Code of conduct, incident reporting, and behavior intervention</p>
         </div>
-        <Button>Report Incident</Button>
+        <Button onClick={() => setShowReportIncidentModal(true)}>Report Incident</Button>
       </div>
 
       {/* Overview Stats */}
@@ -483,7 +661,7 @@ export default function DisciplineBehavior() {
               <option>Under Review</option>
               <option>Resolved</option>
             </select>
-            <Button size="sm" variant="secondary">Report Incident</Button>
+            <Button size="sm" variant="secondary" onClick={() => setShowReportIncidentModal(true)}>Report Incident</Button>
           </div>
         </div>
 
@@ -539,12 +717,55 @@ export default function DisciplineBehavior() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
+                      <button 
+                        onClick={() => {
+                          setSelectedIncident(incident);
+                          setShowIncidentDetailsModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
                       {incident.status === 'Open' && (
-                        <button className="text-green-600 hover:text-green-900">Assign</button>
+                        <button 
+                          onClick={() => {
+                            const assignee = prompt('Assign to (e.g., Vice Principal, Counselor):');
+                            if (assignee) {
+                              setIncidents(incidents.map(i => 
+                                i.id === incident.id 
+                                  ? { ...i, status: 'Under Review' as const, assignedTo: assignee }
+                                  : i
+                              ));
+                              alert(`Incident assigned to ${assignee}`);
+                            }
+                          }}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Assign
+                        </button>
                       )}
                       {incident.status === 'Under Review' && (
-                        <button className="text-purple-600 hover:text-purple-900">Resolve</button>
+                        <button 
+                          onClick={() => {
+                            const resolution = prompt('Enter resolution details:');
+                            if (resolution) {
+                              setIncidents(incidents.map(i => 
+                                i.id === incident.id 
+                                  ? { 
+                                      ...i, 
+                                      status: 'Resolved' as const, 
+                                      resolution,
+                                      resolutionDate: new Date().toISOString().split('T')[0],
+                                    }
+                                  : i
+                              ));
+                              alert('Incident resolved!');
+                            }
+                          }}
+                          className="text-purple-600 hover:text-purple-900"
+                        >
+                          Resolve
+                        </button>
                       )}
                     </div>
                   </td>
@@ -560,7 +781,7 @@ export default function DisciplineBehavior() {
         <Card>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Code of Conduct Enforcement</h2>
-            <Button size="sm" variant="secondary">Manage Rules</Button>
+            <Button size="sm" variant="secondary" onClick={() => setShowManageRulesModal(true)}>Manage Rules</Button>
           </div>
 
           <div className="space-y-4">
@@ -603,7 +824,7 @@ export default function DisciplineBehavior() {
         <Card>
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-xl font-semibold">Restorative Practice Programs</h2>
-            <Button size="sm" variant="secondary">Schedule Practice</Button>
+            <Button size="sm" variant="secondary" onClick={() => setShowSchedulePracticeModal(true)}>Schedule Practice</Button>
           </div>
 
           <div className="space-y-3">
@@ -635,7 +856,17 @@ export default function DisciplineBehavior() {
                   </div>
                 )}
                 <div className="flex gap-2">
-                  <Button size="sm" variant="outline" fullWidth>View Details</Button>
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    fullWidth
+                    onClick={() => {
+                      setSelectedPractice(practice);
+                      setShowPracticeDetailsModal(true);
+                    }}
+                  >
+                    View Details
+                  </Button>
                 </div>
               </div>
             ))}
@@ -666,7 +897,7 @@ export default function DisciplineBehavior() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Behavior Intervention Plans</h2>
-          <Button size="sm" variant="secondary">Create Intervention</Button>
+          <Button size="sm" variant="secondary" onClick={() => setShowCreateInterventionModal(true)}>Create Intervention</Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -711,9 +942,33 @@ export default function DisciplineBehavior() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
+                      <button 
+                        onClick={() => {
+                          setSelectedIntervention(intervention);
+                          setShowInterventionDetailsModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
                       {intervention.status === 'Active' && (
-                        <button className="text-green-600 hover:text-green-900">Update</button>
+                        <button 
+                          onClick={() => {
+                            const progress = prompt('Update progress (0-100):');
+                            if (progress && !isNaN(Number(progress))) {
+                              const progressNum = Math.min(100, Math.max(0, Number(progress)));
+                              setBehaviorInterventions(behaviorInterventions.map(i => 
+                                i.id === intervention.id 
+                                  ? { ...i, progress: progressNum }
+                                  : i
+                              ));
+                              alert(`Progress updated to ${progressNum}%`);
+                            }
+                          }}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Update
+                        </button>
                       )}
                     </div>
                   </td>
@@ -728,7 +983,7 @@ export default function DisciplineBehavior() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Parent Communication Logs</h2>
-          <Button size="sm" variant="secondary">Log Communication</Button>
+          <Button size="sm" variant="secondary" onClick={() => setShowLogCommunicationModal(true)}>Log Communication</Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -765,9 +1020,29 @@ export default function DisciplineBehavior() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex gap-2">
-                      <button className="text-blue-600 hover:text-blue-900">View</button>
+                      <button 
+                        onClick={() => {
+                          setSelectedCommunication(communication);
+                          setShowCommunicationDetailsModal(true);
+                        }}
+                        className="text-blue-600 hover:text-blue-900"
+                      >
+                        View
+                      </button>
                       {communication.followUpRequired && (
-                        <button className="text-green-600 hover:text-green-900">Follow-up</button>
+                        <button 
+                          onClick={() => {
+                            setParentCommunications(parentCommunications.map(c => 
+                              c.id === communication.id 
+                                ? { ...c, followUpRequired: false }
+                                : c
+                            ));
+                            alert('Follow-up marked as completed!');
+                          }}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Follow-up
+                        </button>
                       )}
                     </div>
                   </td>
@@ -777,6 +1052,852 @@ export default function DisciplineBehavior() {
           </table>
         </div>
       </Card>
+
+      {/* Report Incident Modal */}
+      {showReportIncidentModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Report Discipline Incident</h2>
+            </div>
+            <form onSubmit={handleReportIncident} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={incidentFormData.studentName}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={incidentFormData.studentId}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Grade *</label>
+                  <select
+                    value={incidentFormData.grade}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, grade: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="">Select Grade</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                    <option value="Grade 12">Grade 12</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Incident Type *</label>
+                  <select
+                    value={incidentFormData.incidentType}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, incidentType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Disruption">Disruption</option>
+                    <option value="Tardiness">Tardiness</option>
+                    <option value="Absenteeism">Absenteeism</option>
+                    <option value="Bullying">Bullying</option>
+                    <option value="Academic Dishonesty">Academic Dishonesty</option>
+                    <option value="Violence">Violence</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Reported By *</label>
+                  <input
+                    type="text"
+                    value={incidentFormData.reportedBy}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, reportedBy: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="e.g., Ms. Green - Math Teacher"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Severity *</label>
+                  <select
+                    value={incidentFormData.severity}
+                    onChange={(e) => setIncidentFormData({...incidentFormData, severity: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                    <option value="Critical">Critical</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+                <input
+                  type="text"
+                  value={incidentFormData.location}
+                  onChange={(e) => setIncidentFormData({...incidentFormData, location: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  placeholder="e.g., Classroom 301, Cafeteria"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  value={incidentFormData.description}
+                  onChange={(e) => setIncidentFormData({...incidentFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={4}
+                  required
+                  placeholder="Describe the incident in detail..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowReportIncidentModal(false);
+                    setIncidentFormData({
+                      studentName: '',
+                      studentId: '',
+                      grade: '',
+                      incidentType: 'Disruption',
+                      description: '',
+                      reportedBy: '',
+                      severity: 'Medium',
+                      location: '',
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Report Incident</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Manage Rules Modal */}
+      {showManageRulesModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Manage Code of Conduct Rules</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="space-y-3">
+                {codeOfConductRules.map((rule) => (
+                  <div key={rule.id} className="p-4 border rounded-lg">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <div className="font-medium text-gray-900">{rule.ruleName}</div>
+                        <div className="text-sm text-gray-600">{rule.category}</div>
+                      </div>
+                      <button
+                        onClick={() => setEditingRule(rule)}
+                        className="text-blue-600 hover:text-blue-900 text-sm"
+                      >
+                        Edit
+                      </button>
+                    </div>
+                    <div className="text-sm text-gray-600">
+                      Compliance: {rule.complianceRate}% • Violations: {rule.violations} / {rule.totalStudents}
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowManageRulesModal(false);
+                    setEditingRule(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+                <Button
+                  onClick={() => {
+                    const ruleName = prompt('Enter new rule name:');
+                    if (ruleName) {
+                      const newRule: CodeOfConductRule = {
+                        id: `rule-${Date.now()}`,
+                        ruleName,
+                        category: 'Other',
+                        complianceRate: 100,
+                        trend: 0,
+                        violations: 0,
+                        totalStudents: 850,
+                      };
+                      setCodeOfConductRules([...codeOfConductRules, newRule]);
+                      alert('New rule added!');
+                    }
+                  }}
+                  className="flex-1"
+                >
+                  Add New Rule
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Schedule Practice Modal */}
+      {showSchedulePracticeModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Schedule Restorative Practice</h2>
+            </div>
+            <form onSubmit={handleSchedulePractice} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={practiceFormData.studentName}
+                    onChange={(e) => setPracticeFormData({...practiceFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={practiceFormData.studentId}
+                    onChange={(e) => setPracticeFormData({...practiceFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Practice Type *</label>
+                  <select
+                    value={practiceFormData.practiceType}
+                    onChange={(e) => setPracticeFormData({...practiceFormData, practiceType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Mediation">Mediation</option>
+                    <option value="Circle">Circle</option>
+                    <option value="Conference">Conference</option>
+                    <option value="Peer Support">Peer Support</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Scheduled Date *</label>
+                  <input
+                    type="date"
+                    value={practiceFormData.scheduledDate}
+                    onChange={(e) => setPracticeFormData({...practiceFormData, scheduledDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Facilitator *</label>
+                <input
+                  type="text"
+                  value={practiceFormData.facilitator}
+                  onChange={(e) => setPracticeFormData({...practiceFormData, facilitator: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="e.g., Ms. Johnson, Counselor"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Notes</label>
+                <textarea
+                  value={practiceFormData.notes}
+                  onChange={(e) => setPracticeFormData({...practiceFormData, notes: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowSchedulePracticeModal(false);
+                    setPracticeFormData({
+                      studentName: '',
+                      studentId: '',
+                      practiceType: 'Mediation',
+                      scheduledDate: '',
+                      facilitator: '',
+                      notes: '',
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Schedule Practice</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create Intervention Modal */}
+      {showCreateInterventionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Create Behavior Intervention</h2>
+            </div>
+            <form onSubmit={handleCreateIntervention} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={interventionFormData.studentName}
+                    onChange={(e) => setInterventionFormData({...interventionFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={interventionFormData.studentId}
+                    onChange={(e) => setInterventionFormData({...interventionFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Intervention Type *</label>
+                  <select
+                    value={interventionFormData.interventionType}
+                    onChange={(e) => setInterventionFormData({...interventionFormData, interventionType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Behavior Plan">Behavior Plan</option>
+                    <option value="Counseling">Counseling</option>
+                    <option value="Mentoring">Mentoring</option>
+                    <option value="Parent Conference">Parent Conference</option>
+                    <option value="Suspension">Suspension</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Start Date *</label>
+                  <input
+                    type="date"
+                    value={interventionFormData.startDate}
+                    onChange={(e) => setInterventionFormData({...interventionFormData, startDate: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Assigned To *</label>
+                <input
+                  type="text"
+                  value={interventionFormData.assignedTo}
+                  onChange={(e) => setInterventionFormData({...interventionFormData, assignedTo: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="e.g., Counselor - Ms. Johnson"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Goals *</label>
+                {interventionFormData.goals.map((goal, index) => (
+                  <div key={index} className="flex gap-2 mb-2">
+                    <input
+                      type="text"
+                      value={goal}
+                      onChange={(e) => {
+                        const newGoals = [...interventionFormData.goals];
+                        newGoals[index] = e.target.value;
+                        setInterventionFormData({...interventionFormData, goals: newGoals});
+                      }}
+                      className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                      placeholder={`Goal ${index + 1}`}
+                    />
+                    {interventionFormData.goals.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setInterventionFormData({
+                            ...interventionFormData,
+                            goals: interventionFormData.goals.filter((_, i) => i !== index),
+                          });
+                        }}
+                        className="text-red-600 hover:text-red-800"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setInterventionFormData({
+                      ...interventionFormData,
+                      goals: [...interventionFormData.goals, ''],
+                    });
+                  }}
+                  className="text-blue-600 hover:text-blue-800 text-sm mt-2"
+                >
+                  + Add Goal
+                </button>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowCreateInterventionModal(false);
+                    setInterventionFormData({
+                      studentName: '',
+                      studentId: '',
+                      interventionType: 'Behavior Plan',
+                      startDate: '',
+                      assignedTo: '',
+                      goals: [''],
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Create Intervention</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Log Communication Modal */}
+      {showLogCommunicationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Log Parent Communication</h2>
+            </div>
+            <form onSubmit={handleLogCommunication} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student Name *</label>
+                  <input
+                    type="text"
+                    value={communicationFormData.studentName}
+                    onChange={(e) => setCommunicationFormData({...communicationFormData, studentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Student ID *</label>
+                  <input
+                    type="text"
+                    value={communicationFormData.studentId}
+                    onChange={(e) => setCommunicationFormData({...communicationFormData, studentId: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Parent Name *</label>
+                  <input
+                    type="text"
+                    value={communicationFormData.parentName}
+                    onChange={(e) => setCommunicationFormData({...communicationFormData, parentName: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Communication Type *</label>
+                  <select
+                    value={communicationFormData.communicationType}
+                    onChange={(e) => setCommunicationFormData({...communicationFormData, communicationType: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Phone Call">Phone Call</option>
+                    <option value="Email">Email</option>
+                    <option value="Meeting">Meeting</option>
+                    <option value="Letter">Letter</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Date *</label>
+                  <input
+                    type="date"
+                    value={communicationFormData.date}
+                    onChange={(e) => setCommunicationFormData({...communicationFormData, date: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Follow-up Required</label>
+                  <div className="mt-2">
+                    <label className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={communicationFormData.followUpRequired}
+                        onChange={(e) => setCommunicationFormData({...communicationFormData, followUpRequired: e.target.checked})}
+                        className="mr-2"
+                      />
+                      <span className="text-sm text-gray-700">Mark as requiring follow-up</span>
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Topic *</label>
+                <input
+                  type="text"
+                  value={communicationFormData.topic}
+                  onChange={(e) => setCommunicationFormData({...communicationFormData, topic: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="e.g., Disruptive Behavior Incident"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Notes *</label>
+                <textarea
+                  value={communicationFormData.notes}
+                  onChange={(e) => setCommunicationFormData({...communicationFormData, notes: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={4}
+                  required
+                  placeholder="Enter communication details..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowLogCommunicationModal(false);
+                    setCommunicationFormData({
+                      studentName: '',
+                      studentId: '',
+                      parentName: '',
+                      communicationType: 'Phone Call',
+                      date: new Date().toISOString().split('T')[0],
+                      topic: '',
+                      notes: '',
+                      followUpRequired: false,
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Log Communication</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Incident Details Modal */}
+      {showIncidentDetailsModal && selectedIncident && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Incident Details - {selectedIncident.incidentNumber}</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedIncident.studentName} ({selectedIncident.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Grade</label>
+                  <p className="text-gray-900">{selectedIncident.grade}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Incident Type</label>
+                  <p className="text-gray-900">{selectedIncident.incidentType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Severity</label>
+                  <span className={`px-2 py-1 text-xs font-semibold rounded-full ${getSeverityColor(selectedIncident.severity)}`}>
+                    {selectedIncident.severity}
+                  </span>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Reported By</label>
+                  <p className="text-gray-900">{selectedIncident.reportedBy}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Reported Date</label>
+                  <p className="text-gray-900">{selectedIncident.reportedDate}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedIncident.description}</p>
+              </div>
+              {selectedIncident.resolution && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Resolution</label>
+                  <p className="text-gray-900 bg-green-50 p-3 rounded">{selectedIncident.resolution}</p>
+                </div>
+              )}
+              {selectedIncident.actionsTaken.length > 0 && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Actions Taken</label>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedIncident.actionsTaken.map((action, index) => (
+                      <span key={index} className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm">
+                        {action}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowIncidentDetailsModal(false);
+                    setSelectedIncident(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Practice Details Modal */}
+      {showPracticeDetailsModal && selectedPractice && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Restorative Practice Details</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedPractice.studentName} ({selectedPractice.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Practice Type</label>
+                  <p className="text-gray-900">{selectedPractice.practiceType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Facilitator</label>
+                  <p className="text-gray-900">{selectedPractice.facilitator}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Scheduled Date</label>
+                  <p className="text-gray-900">{selectedPractice.scheduledDate}</p>
+                </div>
+              </div>
+              {selectedPractice.outcome && (
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Outcome</label>
+                  <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedPractice.outcome}</p>
+                </div>
+              )}
+              {selectedPractice.status === 'Scheduled' && (
+                <div className="pt-4 border-t">
+                  <Button
+                    onClick={() => {
+                      const outcome = prompt('Enter outcome:');
+                      const success = confirm('Was this practice successful?');
+                      if (outcome) {
+                        setRestorativePractices(restorativePractices.map(p => 
+                          p.id === selectedPractice.id 
+                            ? { ...p, status: 'Completed' as const, outcome, success }
+                            : p
+                        ));
+                        setShowPracticeDetailsModal(false);
+                        alert('Practice marked as completed!');
+                      }
+                    }}
+                    className="w-full"
+                  >
+                    Mark as Completed
+                  </Button>
+                </div>
+              )}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowPracticeDetailsModal(false);
+                    setSelectedPractice(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Intervention Details Modal */}
+      {showInterventionDetailsModal && selectedIntervention && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-3xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Behavior Intervention Details</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedIntervention.studentName} ({selectedIntervention.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Intervention Type</label>
+                  <p className="text-gray-900">{selectedIntervention.interventionType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
+                  <p className="text-gray-900">{selectedIntervention.assignedTo}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Start Date</label>
+                  <p className="text-gray-900">{selectedIntervention.startDate}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Progress</label>
+                <div className="flex items-center">
+                  <div className="w-full bg-gray-200 rounded-full h-3 mr-2">
+                    <div 
+                      className={`h-3 rounded-full ${
+                        selectedIntervention.progress >= 75 ? 'bg-green-600' :
+                        selectedIntervention.progress >= 50 ? 'bg-yellow-600' :
+                        'bg-orange-600'
+                      }`}
+                      style={{ width: `${selectedIntervention.progress}%` }}
+                    ></div>
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">{selectedIntervention.progress}%</span>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Goals</label>
+                <ul className="list-disc list-inside space-y-1">
+                  {selectedIntervention.goals.map((goal, index) => (
+                    <li key={index} className="text-gray-900">{goal}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowInterventionDetailsModal(false);
+                    setSelectedIntervention(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Communication Details Modal */}
+      {showCommunicationDetailsModal && selectedCommunication && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Communication Details</h2>
+            </div>
+            <div className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Student</label>
+                  <p className="text-gray-900">{selectedCommunication.studentName} ({selectedCommunication.studentId})</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Parent</label>
+                  <p className="text-gray-900">{selectedCommunication.parentName}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+                  <p className="text-gray-900">{selectedCommunication.communicationType}</p>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                  <p className="text-gray-900">{selectedCommunication.date}</p>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Topic</label>
+                <p className="text-gray-900">{selectedCommunication.topic}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                <p className="text-gray-900 bg-gray-50 p-3 rounded">{selectedCommunication.notes}</p>
+              </div>
+              <div className="flex gap-3 pt-4 border-t">
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowCommunicationDetailsModal(false);
+                    setSelectedCommunication(null);
+                  }}
+                  className="flex-1"
+                >
+                  Close
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
