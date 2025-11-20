@@ -228,7 +228,7 @@ export default function Children() {
                       variant="outline" 
                       size="sm" 
                       className="flex-1"
-                      onClick={() => alert(`Schedule for ${child.name} would be displayed here`)}
+                      onClick={() => navigate(`/parent/schedule/${child.id}`, { state: { childId: child.id } })}
                     >
                       View Schedule
                     </Button>

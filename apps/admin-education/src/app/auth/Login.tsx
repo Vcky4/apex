@@ -178,6 +178,12 @@ export default function Login({ onLogin }: LoginProps) {
         </div>
 
         <p className="text-center text-white/60 text-sm mt-6">
+          Don't have an account?{' '}
+          <a href="/signup" className="text-white underline font-medium">
+            Sign up here
+          </a>
+        </p>
+        <p className="text-center text-white/40 text-xs mt-2">
           © 2025 Apex Providers. All rights reserved.
         </p>
       </div>

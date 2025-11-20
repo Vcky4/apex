@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './auth/Login';
+import Signup from './auth/Signup';
 import PrincipalPortal from './portals/principal/PrincipalPortal';
 import HRPortal from './portals/hr/HRPortal';
 import FinancePortal from './portals/finance/FinancePortal';
@@ -163,6 +164,9 @@ function AppRouter({ user, logout }: { user: any; logout: () => void }) {
       {/* Parent Portal Routes */}
       <Route path="/parent/*" element={<ParentPortal user={user} onLogout={logout} />} />
       
+      {/* Auth Routes */}
+      <Route path="/signup" element={<Navigate to="/signup" replace />} />
+      
       {/* Default route based on role */}
       <Route
         path="/"
@@ -216,6 +220,14 @@ export function App() {
       // If path is valid for role, do nothing - allow navigation
     }
   }, [isAuthenticated, user?.role, location.pathname, navigate]);
+
+  // Handle signup route separately
+  if (location.pathname === '/signup') {
+    return <Signup onSignup={() => {
+      // After signup, redirect to login
+      navigate('/login');
+    }} />;
+  }
 
   if (!isAuthenticated) {
     return <Login onLogin={handleLogin} />;
