@@ -7,6 +7,7 @@ import Grades from './pages/Grades';
 import Attendance from './pages/Attendance';
 import Assignments from './pages/Assignments';
 import Schedule from './pages/Schedule';
+import MyRoom from './pages/MyRoom';
 
 interface StudentPortalProps {
   user: any;
@@ -46,6 +47,11 @@ export default function StudentPortal({ user, onLogout }: StudentPortalProps) {
       label: 'My Schedule',
       href: '/student/schedule',
       icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,
+    },
+    {
+      label: 'My Room',
+      href: '/student/room',
+      icon: <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>,
     },
   ];
 
@@ -120,6 +126,7 @@ export default function StudentPortal({ user, onLogout }: StudentPortalProps) {
         <Route path="assignments" element={<Assignments />} />
         <Route path="attendance" element={<Attendance />} />
         <Route path="schedule" element={<Schedule />} />
+        <Route path="room" element={<MyRoom />} />
       </Routes>
     </AdminLayout>
   );
