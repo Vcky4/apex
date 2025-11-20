@@ -58,11 +58,11 @@ export default function DoctorPortal({ user, onLogout }: DoctorPortalProps) {
         className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
       >
         <div className="hidden md:block text-right">
-          <div className="text-sm font-medium text-white">{user?.name || 'Dr. User'}</div>
-          <div className="text-xs text-white/80">Physician</div>
+          <div className="text-sm font-medium text-gray-900">{user?.name || 'Dr. User'}</div>
+          <div className="text-xs text-gray-600">Physician</div>
         </div>
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-          <span className="text-doctor-blue font-bold">👨‍⚕️</span>
+        <div className="w-10 h-10 bg-doctor-blue rounded-full flex items-center justify-center">
+          <span className="text-white font-bold">👨‍⚕️</span>
         </div>
       </button>
       {isMenuOpen && (

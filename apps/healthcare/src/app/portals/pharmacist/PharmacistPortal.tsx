@@ -40,11 +40,11 @@ export default function PharmacistPortal({ user, onLogout }: PharmacistPortalPro
         className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
       >
         <div className="hidden md:block text-right">
-          <div className="text-sm font-medium text-white">{user?.name || 'Pharmacist User'}</div>
-          <div className="text-xs text-white/80">Pharmacist</div>
+          <div className="text-sm font-medium text-gray-900">{user?.name || 'Pharmacist User'}</div>
+          <div className="text-xs text-gray-600">Pharmacist</div>
         </div>
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-          <span className="text-teal-600 font-bold">💊</span>
+        <div className="w-10 h-10 bg-teal-600 rounded-full flex items-center justify-center">
+          <span className="text-white font-bold">💊</span>
         </div>
       </button>
       {isMenuOpen && (

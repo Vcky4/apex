@@ -58,11 +58,11 @@ export default function NursePortal({ user, onLogout }: NursePortalProps) {
         className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
       >
         <div className="hidden md:block text-right">
-          <div className="text-sm font-medium text-white">{user?.name || 'Nurse User'}</div>
-          <div className="text-xs text-white/80">Registered Nurse</div>
+          <div className="text-sm font-medium text-gray-900">{user?.name || 'Nurse User'}</div>
+          <div className="text-xs text-gray-600">Registered Nurse</div>
         </div>
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-          <span className="text-purple-600 font-bold">👩‍⚕️</span>
+        <div className="w-10 h-10 bg-purple-600 rounded-full flex items-center justify-center">
+          <span className="text-white font-bold">👩‍⚕️</span>
         </div>
       </button>
       {isMenuOpen && (

@@ -40,11 +40,11 @@ export default function LabPortal({ user, onLogout }: LabPortalProps) {
         className="flex items-center space-x-3 hover:opacity-80 transition-opacity"
       >
         <div className="hidden md:block text-right">
-          <div className="text-sm font-medium text-white">{user?.name || 'Lab User'}</div>
-          <div className="text-xs text-white/80">Lab Assistant</div>
+          <div className="text-sm font-medium text-gray-900">{user?.name || 'Lab User'}</div>
+          <div className="text-xs text-gray-600">Lab Assistant</div>
         </div>
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-          <span className="text-indigo-600 font-bold">🔬</span>
+        <div className="w-10 h-10 bg-indigo-600 rounded-full flex items-center justify-center">
+          <span className="text-white font-bold">🔬</span>
         </div>
       </button>
       {isMenuOpen && (
