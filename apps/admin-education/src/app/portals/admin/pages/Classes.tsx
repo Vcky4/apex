@@ -40,8 +40,22 @@ export default function Classes() {
     capacity: 30,
     schedule: '',
     room: '',
+    venue: '',
+    venueType: 'Classroom',
     status: 'Active',
   });
+
+  const availableVenues = [
+    { id: 1, name: 'Room 201', building: 'Academic Building', capacity: 30, type: 'Classroom' },
+    { id: 2, name: 'Room 105', building: 'Academic Building', capacity: 32, type: 'Classroom' },
+    { id: 3, name: 'Lab 3', building: 'Science Building', capacity: 28, type: 'Lab' },
+    { id: 4, name: 'Lab 2', building: 'Science Building', capacity: 30, type: 'Lab' },
+    { id: 5, name: 'Room 302', building: 'Academic Building', capacity: 30, type: 'Classroom' },
+    { id: 6, name: 'Main Auditorium', building: 'Academic Building', capacity: 500, type: 'Auditorium' },
+    { id: 7, name: 'Lecture Hall A', building: 'Academic Building', capacity: 150, type: 'Lecture Hall' },
+    { id: 8, name: 'Lecture Hall B', building: 'Academic Building', capacity: 150, type: 'Lecture Hall' },
+    { id: 9, name: 'Gym', building: 'Sports Complex', capacity: 120, type: 'Gym' },
+  ];
 
   const filteredClasses = useMemo(() => {
     return classes.filter(cls => {
@@ -80,6 +94,8 @@ export default function Classes() {
       capacity: 30,
       schedule: '',
       room: '',
+      venue: '',
+      venueType: 'Classroom',
       status: 'Active',
     });
     setShowAddModal(true);
@@ -87,6 +103,7 @@ export default function Classes() {
 
   const handleEdit = (cls: Class) => {
     setSelectedClass(cls);
+    const venueMatch = availableVenues.find(v => v.name === cls.room);
     setFormData({
       code: cls.code,
       name: cls.name,
@@ -95,6 +112,8 @@ export default function Classes() {
       capacity: cls.capacity,
       schedule: cls.schedule,
       room: cls.room,
+      venue: venueMatch ? cls.room : '',
+      venueType: venueMatch?.type || 'Classroom',
       status: cls.status,
     });
     setShowEditModal(true);
@@ -115,11 +134,23 @@ export default function Classes() {
       students: 0,
       capacity: formData.capacity,
       schedule: formData.schedule,
-      room: formData.room,
+      room: formData.venue || formData.room,
       status: formData.status,
     };
     setClasses([...classes, newClass]);
     setShowAddModal(false);
+    setFormData({
+      code: '',
+      name: '',
+      teacher: '',
+      grade: '9',
+      capacity: 30,
+      schedule: '',
+      room: '',
+      venue: '',
+      venueType: 'Classroom',
+      status: 'Active',
+    });
   };
 
   const saveEdit = () => {
@@ -316,8 +347,36 @@ export default function Classes() {
                   <input type="number" value={formData.capacity} onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Room *</label>
-                  <input type="text" value={formData.room} onChange={(e) => setFormData({...formData, room: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Venue/Lecture Hall *</label>
+                  <select 
+                    value={formData.venue} 
+                    onChange={(e) => {
+                      const selectedVenue = availableVenues.find(v => v.name === e.target.value);
+                      setFormData({
+                        ...formData, 
+                        venue: e.target.value,
+                        venueType: selectedVenue?.type || 'Classroom',
+                        room: e.target.value,
+                      });
+                    }} 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                  >
+                    <option value="">Select a venue...</option>
+                    {availableVenues.map((venue) => (
+                      <option key={venue.id} value={venue.name}>
+                        {venue.name} ({venue.building}) - {venue.type} - Capacity: {venue.capacity}
+                      </option>
+                    ))}
+                  </select>
+                  {!formData.venue && (
+                    <input 
+                      type="text" 
+                      value={formData.room} 
+                      onChange={(e) => setFormData({...formData, room: e.target.value})} 
+                      placeholder="Or enter custom room..."
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple mt-2"
+                    />
+                  )}
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Schedule *</label>
@@ -369,8 +428,36 @@ export default function Classes() {
                   <input type="number" value={formData.capacity} onChange={(e) => setFormData({...formData, capacity: parseInt(e.target.value)})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Room *</label>
-                  <input type="text" value={formData.room} onChange={(e) => setFormData({...formData, room: e.target.value})} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple" />
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Venue/Lecture Hall *</label>
+                  <select 
+                    value={formData.venue} 
+                    onChange={(e) => {
+                      const selectedVenue = availableVenues.find(v => v.name === e.target.value);
+                      setFormData({
+                        ...formData, 
+                        venue: e.target.value,
+                        venueType: selectedVenue?.type || 'Classroom',
+                        room: e.target.value,
+                      });
+                    }} 
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple"
+                  >
+                    <option value="">Select a venue...</option>
+                    {availableVenues.map((venue) => (
+                      <option key={venue.id} value={venue.name}>
+                        {venue.name} ({venue.building}) - {venue.type} - Capacity: {venue.capacity}
+                      </option>
+                    ))}
+                  </select>
+                  {!formData.venue && (
+                    <input 
+                      type="text" 
+                      value={formData.room} 
+                      onChange={(e) => setFormData({...formData, room: e.target.value})} 
+                      placeholder="Or enter custom room..."
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-authority-purple mt-2"
+                    />
+                  )}
                 </div>
                 <div className="col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">Schedule *</label>
