@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 export default function MyClasses() {
   const classes = [
     { id: 1, code: 'MATH101', name: 'Math 101 - Grade 9', students: 28, capacity: 30, room: 'Room 201', schedule: 'Mon/Wed/Fri 8:00-9:00', avgGrade: 86, attendance: 95 },
@@ -81,9 +83,12 @@ export default function MyClasses() {
             </div>
 
             <div className="mt-4 flex space-x-2">
-              <button className="flex-1 px-4 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors text-sm">
+              <Link 
+                to={`/teacher/classes/${cls.id}`}
+                className="flex-1 px-4 py-2 bg-authority-purple text-white rounded-lg hover:bg-opacity-90 transition-colors text-sm text-center"
+              >
                 View Class
-              </button>
+              </Link>
               <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors text-sm">
                 Roster
               </button>

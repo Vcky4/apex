@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Students() {
   const [selectedClass, setSelectedClass] = useState('all');
@@ -97,7 +98,7 @@ export default function Students() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{student.attendance}%</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{student.gpa.toFixed(1)}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                    <button className="text-blue-600 hover:text-blue-900 transition-colors">View Details</button>
+                    <Link to={`/teacher/students/${student.id}`} className="text-blue-600 hover:text-blue-900 transition-colors">View Details</Link>
                   </td>
                 </tr>
               ))}

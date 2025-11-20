@@ -1,4 +1,5 @@
 import { StatCard, DashboardGrid, Card } from '@apex-providers/ui-components';
+import { Link } from 'react-router-dom';
 
 export default function Dashboard() {
   return (
@@ -49,13 +50,17 @@ export default function Dashboard() {
               { time: '1:00 - 2:00 PM', class: 'Pre-Calculus - Grade 11', room: 'Room 201', students: 35 },
               { time: '2:15 - 3:15 PM', class: 'Calculus - Grade 12', room: 'Room 201', students: 31 },
             ].map((cls, idx) => (
-              <div key={idx} className="flex items-center justify-between p-3 bg-light-gray rounded-lg hover:bg-gray-100 cursor-pointer">
+              <Link 
+                key={idx} 
+                to={`/teacher/classes/${idx + 1}`}
+                className="flex items-center justify-between p-3 bg-light-gray rounded-lg hover:bg-gray-100 cursor-pointer"
+              >
                 <div className="flex-1">
                   <div className="font-medium text-charcoal-gray">{cls.class}</div>
                   <div className="text-sm text-gray-600">{cls.room} • {cls.students} students</div>
                 </div>
                 <div className="text-sm font-medium text-gray-600">{cls.time}</div>
-              </div>
+              </Link>
             ))}
           </div>
         </Card>
