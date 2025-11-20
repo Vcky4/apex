@@ -1,7 +1,7 @@
 import { Card, Button } from '@apex-providers/ui-components';
 import { useState } from 'react';
-import { Modal } from '../../shared/Modal';
-import { useToast, ToastContainer } from '../../shared/Toast';
+import { Modal } from '../../../shared/Modal';
+import { useToast, ToastContainer } from '../../../shared/Toast';
 
 interface Bill {
   id: number;
