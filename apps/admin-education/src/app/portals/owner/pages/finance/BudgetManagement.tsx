@@ -22,6 +22,29 @@ interface CapitalExpenditure {
 }
 
 export default function BudgetManagement() {
+  const [showAllocateModal, setShowAllocateModal] = useState(false);
+  const [showCreateBudgetModal, setShowCreateBudgetModal] = useState(false);
+  const [showRequisitionModal, setShowRequisitionModal] = useState(false);
+  const [allocateFormData, setAllocateFormData] = useState({
+    department: '',
+    amount: '',
+    fiscalYear: '',
+    description: '',
+  });
+  const [createBudgetFormData, setCreateBudgetFormData] = useState({
+    fiscalYear: '',
+    totalBudget: '',
+    description: '',
+  });
+  const [requisitionFormData, setRequisitionFormData] = useState({
+    project: '',
+    department: '',
+    amount: '',
+    priority: 'Medium' as 'High' | 'Medium' | 'Low',
+    description: '',
+    justification: '',
+  });
+
   const [budgets, setBudgets] = useState<Budget[]>([
     {
       id: '1',
@@ -92,6 +115,62 @@ export default function BudgetManagement() {
   const totalSpent = budgets.reduce((sum, b) => sum + b.spent, 0);
   const totalRemaining = totalAllocated - totalSpent;
 
+  const handleAllocateBudget = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newBudget: Budget = {
+      id: `budget-${Date.now()}`,
+      department: allocateFormData.department,
+      allocated: parseFloat(allocateFormData.amount),
+      spent: 0,
+      remaining: parseFloat(allocateFormData.amount),
+      utilization: 0,
+      status: 'On Track',
+    };
+    setBudgets([...budgets, newBudget]);
+    setAllocateFormData({ department: '', amount: '', fiscalYear: '', description: '' });
+    setShowAllocateModal(false);
+    alert('Budget allocated successfully!');
+  };
+
+  const handleCreateBudget = (e: React.FormEvent) => {
+    e.preventDefault();
+    // In real app, this would create a new fiscal year budget
+    alert(`Budget created for fiscal year ${createBudgetFormData.fiscalYear}!`);
+    setCreateBudgetFormData({ fiscalYear: '', totalBudget: '', description: '' });
+    setShowCreateBudgetModal(false);
+  };
+
+  const handleCreateRequisition = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newRequisition: CapitalExpenditure = {
+      id: `req-${Date.now()}`,
+      project: requisitionFormData.project,
+      department: requisitionFormData.department,
+      amount: parseFloat(requisitionFormData.amount),
+      status: 'Pending',
+      requestDate: new Date().toISOString().split('T')[0],
+      priority: requisitionFormData.priority,
+    };
+    setCapitalExpenditures([newRequisition, ...capitalExpenditures]);
+    setRequisitionFormData({
+      project: '',
+      department: '',
+      amount: '',
+      priority: 'Medium',
+      description: '',
+      justification: '',
+    });
+    setShowRequisitionModal(false);
+    alert('Requisition created successfully!');
+  };
+
+  const handleRemoveRequisition = (id: string) => {
+    if (confirm('Are you sure you want to remove this requisition?')) {
+      setCapitalExpenditures(capitalExpenditures.filter(req => req.id !== id));
+      alert('Requisition removed successfully!');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -99,7 +178,7 @@ export default function BudgetManagement() {
           <h1 className="text-3xl font-bold text-charcoal-gray">Budget Management</h1>
           <p className="text-gray-600 mt-2">Departmental budget allocation, tracking, and forecasting</p>
         </div>
-        <Button>Create New Budget</Button>
+        <Button onClick={() => setShowCreateBudgetModal(true)}>Create New Budget</Button>
       </div>
 
       {/* Budget Overview */}
@@ -125,7 +204,7 @@ export default function BudgetManagement() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Departmental Budget Allocation</h2>
-          <Button size="sm" variant="secondary">Allocate Budget</Button>
+          <Button size="sm" variant="secondary" onClick={() => setShowAllocateModal(true)}>Allocate Budget</Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -242,7 +321,7 @@ export default function BudgetManagement() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Capital Expenditure Approval Workflow</h2>
-          <Button size="sm" variant="secondary">New Capital Request</Button>
+          <Button size="sm" variant="secondary" onClick={() => setShowRequisitionModal(true)}>New Requisition</Button>
         </div>
 
         <div className="overflow-x-auto">
@@ -287,10 +366,36 @@ export default function BudgetManagement() {
                       <button className="text-blue-600 hover:text-blue-900">Review</button>
                       {exp.status === 'Pending' && (
                         <>
-                          <button className="text-green-600 hover:text-green-900">Approve</button>
-                          <button className="text-red-600 hover:text-red-900">Reject</button>
+                          <button 
+                            onClick={() => {
+                              setCapitalExpenditures(capitalExpenditures.map(r => 
+                                r.id === exp.id ? { ...r, status: 'Approved' as const } : r
+                              ));
+                              alert('Requisition approved!');
+                            }}
+                            className="text-green-600 hover:text-green-900"
+                          >
+                            Approve
+                          </button>
+                          <button 
+                            onClick={() => {
+                              setCapitalExpenditures(capitalExpenditures.map(r => 
+                                r.id === exp.id ? { ...r, status: 'Rejected' as const } : r
+                              ));
+                              alert('Requisition rejected!');
+                            }}
+                            className="text-red-600 hover:text-red-900"
+                          >
+                            Reject
+                          </button>
                         </>
                       )}
+                      <button 
+                        onClick={() => handleRemoveRequisition(exp.id)}
+                        className="text-red-600 hover:text-red-900"
+                      >
+                        Remove
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -299,6 +404,252 @@ export default function BudgetManagement() {
           </table>
         </div>
       </Card>
+
+      {/* Allocate Budget Modal */}
+      {showAllocateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Allocate Budget</h2>
+            </div>
+            <form onSubmit={handleAllocateBudget} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Department *</label>
+                <select
+                  value={allocateFormData.department}
+                  onChange={(e) => setAllocateFormData({...allocateFormData, department: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                >
+                  <option value="">Select Department</option>
+                  <option value="Academic">Academic</option>
+                  <option value="Operations">Operations</option>
+                  <option value="HR">HR</option>
+                  <option value="IT">IT</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Administration">Administration</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Amount ($) *</label>
+                <input
+                  type="number"
+                  value={allocateFormData.amount}
+                  onChange={(e) => setAllocateFormData({...allocateFormData, amount: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="50000"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Fiscal Year *</label>
+                <input
+                  type="text"
+                  value={allocateFormData.fiscalYear}
+                  onChange={(e) => setAllocateFormData({...allocateFormData, fiscalYear: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="2024-2025"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={allocateFormData.description}
+                  onChange={(e) => setAllocateFormData({...allocateFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  placeholder="Budget allocation description..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowAllocateModal(false);
+                    setAllocateFormData({ department: '', amount: '', fiscalYear: '', description: '' });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Allocate Budget</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Create New Budget Modal */}
+      {showCreateBudgetModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-md w-full">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Create New Budget</h2>
+            </div>
+            <form onSubmit={handleCreateBudget} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Fiscal Year *</label>
+                <input
+                  type="text"
+                  value={createBudgetFormData.fiscalYear}
+                  onChange={(e) => setCreateBudgetFormData({...createBudgetFormData, fiscalYear: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="2024-2025"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Total Budget ($) *</label>
+                <input
+                  type="number"
+                  value={createBudgetFormData.totalBudget}
+                  onChange={(e) => setCreateBudgetFormData({...createBudgetFormData, totalBudget: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="2000000"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+                <textarea
+                  value={createBudgetFormData.description}
+                  onChange={(e) => setCreateBudgetFormData({...createBudgetFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  placeholder="Budget description and notes..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowCreateBudgetModal(false);
+                    setCreateBudgetFormData({ fiscalYear: '', totalBudget: '', description: '' });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Create Budget</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* New Requisition Modal */}
+      {showRequisitionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">New Capital Requisition</h2>
+            </div>
+            <form onSubmit={handleCreateRequisition} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Project Name *</label>
+                  <input
+                    type="text"
+                    value={requisitionFormData.project}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, project: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="e.g., New Science Lab Equipment"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Department *</label>
+                  <select
+                    value={requisitionFormData.department}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, department: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="">Select Department</option>
+                    <option value="Science">Science</option>
+                    <option value="IT">IT</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Operations">Operations</option>
+                    <option value="Maintenance">Maintenance</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Amount ($) *</label>
+                  <input
+                    type="number"
+                    value={requisitionFormData.amount}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, amount: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="45000"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Priority *</label>
+                  <select
+                    value={requisitionFormData.priority}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, priority: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  value={requisitionFormData.description}
+                  onChange={(e) => setRequisitionFormData({...requisitionFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  required
+                  placeholder="Describe the project and requirements..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Justification *</label>
+                <textarea
+                  value={requisitionFormData.justification}
+                  onChange={(e) => setRequisitionFormData({...requisitionFormData, justification: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  required
+                  placeholder="Justify why this requisition is needed..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowRequisitionModal(false);
+                    setRequisitionFormData({
+                      project: '',
+                      department: '',
+                      amount: '',
+                      priority: 'Medium',
+                      description: '',
+                      justification: '',
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Create Requisition</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

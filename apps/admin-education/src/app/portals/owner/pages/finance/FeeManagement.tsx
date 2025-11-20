@@ -33,6 +33,16 @@ interface Scholarship {
 }
 
 export default function FeeManagement() {
+  const [showScholarshipModal, setShowScholarshipModal] = useState(false);
+  const [scholarshipFormData, setScholarshipFormData] = useState({
+    name: '',
+    type: 'Merit' as 'Merit' | 'Need-Based' | 'Athletic' | 'Other',
+    discount: '',
+    description: '',
+    eligibilityCriteria: '',
+    notifyParents: true,
+  });
+
   const [feeStructures, setFeeStructures] = useState<FeeStructure[]>([
     {
       id: '1',
@@ -263,7 +273,7 @@ export default function FeeManagement() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Scholarship & Discount Administration</h2>
-          <Button size="sm" variant="secondary">Create Scholarship</Button>
+          <Button size="sm" variant="secondary" onClick={() => setShowScholarshipModal(true)}>Create Scholarship</Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -327,6 +337,143 @@ export default function FeeManagement() {
           <Button variant="outline" fullWidth>Configure Payment Plans</Button>
         </div>
       </Card>
+
+      {/* Create Scholarship Modal */}
+      {showScholarshipModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">Create Scholarship</h2>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const newScholarship: Scholarship = {
+                id: `sch-${Date.now()}`,
+                name: scholarshipFormData.name,
+                type: scholarshipFormData.type,
+                discount: parseFloat(scholarshipFormData.discount),
+                studentsCount: 0,
+                totalValue: 0,
+                status: 'Active',
+              };
+              setScholarships([...scholarships, newScholarship]);
+              
+              // Send notification to all parents
+              if (scholarshipFormData.notifyParents) {
+                alert(`Scholarship "${scholarshipFormData.name}" created successfully!\n\nNotification sent to all parents via email.`);
+              } else {
+                alert(`Scholarship "${scholarshipFormData.name}" created successfully!`);
+              }
+              
+              setScholarshipFormData({
+                name: '',
+                type: 'Merit',
+                discount: '',
+                description: '',
+                eligibilityCriteria: '',
+                notifyParents: true,
+              });
+              setShowScholarshipModal(false);
+            }} className="p-6 space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Scholarship Name *</label>
+                <input
+                  type="text"
+                  value={scholarshipFormData.name}
+                  onChange={(e) => setScholarshipFormData({...scholarshipFormData, name: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  required
+                  placeholder="e.g., Academic Excellence Scholarship"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Type *</label>
+                  <select
+                    value={scholarshipFormData.type}
+                    onChange={(e) => setScholarshipFormData({...scholarshipFormData, type: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Merit">Merit</option>
+                    <option value="Need-Based">Need-Based</option>
+                    <option value="Athletic">Athletic</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Discount (%) *</label>
+                  <input
+                    type="number"
+                    value={scholarshipFormData.discount}
+                    onChange={(e) => setScholarshipFormData({...scholarshipFormData, discount: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    min="1"
+                    max="100"
+                    placeholder="50"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Description *</label>
+                <textarea
+                  value={scholarshipFormData.description}
+                  onChange={(e) => setScholarshipFormData({...scholarshipFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  required
+                  placeholder="Describe the scholarship program..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Eligibility Criteria *</label>
+                <textarea
+                  value={scholarshipFormData.eligibilityCriteria}
+                  onChange={(e) => setScholarshipFormData({...scholarshipFormData, eligibilityCriteria: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  required
+                  placeholder="List eligibility requirements..."
+                />
+              </div>
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="notifyParents"
+                  checked={scholarshipFormData.notifyParents}
+                  onChange={(e) => setScholarshipFormData({...scholarshipFormData, notifyParents: e.target.checked})}
+                  className="w-4 h-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
+                />
+                <label htmlFor="notifyParents" className="ml-2 text-sm text-gray-700">
+                  Send notification to all parents
+                </label>
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowScholarshipModal(false);
+                    setScholarshipFormData({
+                      name: '',
+                      type: 'Merit',
+                      discount: '',
+                      description: '',
+                      eligibilityCriteria: '',
+                      notifyParents: true,
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Create Scholarship</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

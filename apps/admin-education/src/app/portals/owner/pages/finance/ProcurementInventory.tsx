@@ -56,6 +56,16 @@ interface Asset {
 }
 
 export default function ProcurementInventory() {
+  const [showRequisitionModal, setShowRequisitionModal] = useState(false);
+  const [requisitionFormData, setRequisitionFormData] = useState({
+    requestedBy: '',
+    department: '',
+    items: '',
+    totalAmount: '',
+    priority: 'Medium' as 'High' | 'Medium' | 'Low',
+    description: '',
+  });
+
   const [purchaseRequisitions, setPurchaseRequisitions] = useState<PurchaseRequisition[]>([
     {
       id: '1',
@@ -260,7 +270,7 @@ export default function ProcurementInventory() {
           <h1 className="text-3xl font-bold text-charcoal-gray">Procurement & Inventory</h1>
           <p className="text-gray-600 mt-2">Purchase requisitions, vendor management, and asset tracking</p>
         </div>
-        <Button>New Requisition</Button>
+        <Button onClick={() => setShowRequisitionModal(true)}>New Requisition</Button>
       </div>
 
       {/* Overview Stats */}
@@ -570,6 +580,142 @@ export default function ProcurementInventory() {
           </div>
         </Card>
       </div>
+
+      {/* New Requisition Modal */}
+      {showRequisitionModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="p-6 border-b border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900">New Purchase Requisition</h2>
+            </div>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const newRequisition: PurchaseRequisition = {
+                id: `pr-${Date.now()}`,
+                requisitionNumber: `PR-${new Date().getFullYear()}-${String(purchaseRequisitions.length + 1).padStart(3, '0')}`,
+                requestedBy: requisitionFormData.requestedBy,
+                department: requisitionFormData.department,
+                items: requisitionFormData.items,
+                totalAmount: parseFloat(requisitionFormData.totalAmount),
+                requestDate: new Date().toISOString().split('T')[0],
+                status: 'Draft',
+                priority: requisitionFormData.priority,
+                approver: null,
+              };
+              setPurchaseRequisitions([newRequisition, ...purchaseRequisitions]);
+              setRequisitionFormData({
+                requestedBy: '',
+                department: '',
+                items: '',
+                totalAmount: '',
+                priority: 'Medium',
+                description: '',
+              });
+              setShowRequisitionModal(false);
+              alert('Purchase requisition created successfully!');
+            }} className="p-6 space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Requested By *</label>
+                  <input
+                    type="text"
+                    value={requisitionFormData.requestedBy}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, requestedBy: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="e.g., Dr. Smith"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Department *</label>
+                  <select
+                    value={requisitionFormData.department}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, department: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="">Select Department</option>
+                    <option value="Science">Science</option>
+                    <option value="IT">IT</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Operations">Operations</option>
+                    <option value="Maintenance">Maintenance</option>
+                    <option value="Administration">Administration</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Items/Description *</label>
+                <textarea
+                  value={requisitionFormData.items}
+                  onChange={(e) => setRequisitionFormData({...requisitionFormData, items: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={3}
+                  required
+                  placeholder="e.g., Lab Equipment (Microscopes, Test Tubes)"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Total Amount ($) *</label>
+                  <input
+                    type="number"
+                    value={requisitionFormData.totalAmount}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, totalAmount: e.target.value})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                    placeholder="12500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Priority *</label>
+                  <select
+                    value={requisitionFormData.priority}
+                    onChange={(e) => setRequisitionFormData({...requisitionFormData, priority: e.target.value as any})}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                    required
+                  >
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
+                <textarea
+                  value={requisitionFormData.description}
+                  onChange={(e) => setRequisitionFormData({...requisitionFormData, description: e.target.value})}
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-600"
+                  rows={2}
+                  placeholder="Additional notes or justification..."
+                />
+              </div>
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    setShowRequisitionModal(false);
+                    setRequisitionFormData({
+                      requestedBy: '',
+                      department: '',
+                      items: '',
+                      totalAmount: '',
+                      priority: 'Medium',
+                      description: '',
+                    });
+                  }}
+                  className="flex-1"
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" className="flex-1">Create Requisition</Button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

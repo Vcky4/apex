@@ -36,7 +36,7 @@ export default function FinancePortal({ user, onLogout }: FinancePortalProps) {
         { label: 'Budget Management', href: '/admin/finance/budget' },
         { label: 'Fee Management', href: '/admin/finance/fees' },
         { label: 'Accounts Management', href: '/admin/finance/accounts' },
-        { label: 'Grant & Funding Management', href: '/admin/finance/grants' },
+        { label: 'Funding Tracking', href: '/admin/finance/grants' },
         { label: 'Procurement & Inventory', href: '/admin/finance/procurement' },
       ],
     },

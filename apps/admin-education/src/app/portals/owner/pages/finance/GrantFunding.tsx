@@ -10,6 +10,7 @@ interface Grant {
   approvalDate: string | null;
   status: 'Draft' | 'Submitted' | 'Under Review' | 'Approved' | 'Rejected' | 'Active';
   category: string;
+  sourceType: 'Grant' | 'Donation' | 'Government Funding' | 'Corporate Sponsorship' | 'Other';
   complianceDeadline: string | null;
 }
 
@@ -54,6 +55,7 @@ export default function GrantFunding() {
       approvalDate: '2024-01-10',
       status: 'Active',
       category: 'Academic',
+      sourceType: 'Grant',
       complianceDeadline: '2024-06-30'
     },
     {
@@ -65,6 +67,7 @@ export default function GrantFunding() {
       approvalDate: null,
       status: 'Under Review',
       category: 'Infrastructure',
+      sourceType: 'Government Funding',
       complianceDeadline: null
     },
     {
@@ -76,6 +79,19 @@ export default function GrantFunding() {
       approvalDate: '2024-01-20',
       status: 'Active',
       category: 'Student Support',
+      sourceType: 'Donation',
+      complianceDeadline: '2024-12-31'
+    },
+    {
+      id: '4',
+      grantName: 'Technology Partnership Program',
+      grantor: 'TechCorp Inc.',
+      amount: 100000,
+      applicationDate: '2024-01-10',
+      approvalDate: '2024-01-25',
+      status: 'Active',
+      category: 'IT Infrastructure',
+      sourceType: 'Corporate Sponsorship',
       complianceDeadline: '2024-12-31'
     }
   ]);
@@ -197,10 +213,13 @@ export default function GrantFunding() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-charcoal-gray">Grant & Funding Management</h1>
-          <p className="text-gray-600 mt-2">Grant application tracking, allocation, and compliance reporting</p>
+          <h1 className="text-3xl font-bold text-charcoal-gray">Funding Tracking</h1>
+          <p className="text-gray-600 mt-2">Track all sources of funding including grants, donations, government funding, and other revenue streams</p>
         </div>
-        <Button>New Grant Application</Button>
+        <Button onClick={() => {
+          // In real app, this would open a modal to add new funding source
+          alert('New funding source form would open here');
+        }}>Add Funding Source</Button>
       </div>
 
       {/* Overview Stats */}
@@ -248,18 +267,23 @@ export default function GrantFunding() {
         />
       </DashboardGrid>
 
-      {/* Grant Application Tracking */}
+      {/* Funding Tracking */}
       <Card>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-semibold">Grant Application Tracking</h2>
+          <h2 className="text-xl font-semibold">Funding Sources Tracking</h2>
           <div className="flex gap-2">
             <select className="border rounded-lg px-3 py-2 text-sm">
-              <option>All Statuses</option>
-              <option>Active</option>
-              <option>Under Review</option>
-              <option>Draft</option>
+              <option>All Sources</option>
+              <option>Grants</option>
+              <option>Donations</option>
+              <option>Government Funding</option>
+              <option>Corporate Sponsorships</option>
+              <option>Other</option>
             </select>
-            <Button size="sm" variant="secondary">New Application</Button>
+            <Button size="sm" variant="secondary" onClick={() => {
+              // In real app, this would open a modal
+              alert('Add new funding source form would open here');
+            }}>Add Funding Source</Button>
           </div>
         </div>
 
@@ -267,8 +291,9 @@ export default function GrantFunding() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grant Name</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grantor</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Funding Name</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source Type</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Application Date</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
@@ -281,6 +306,17 @@ export default function GrantFunding() {
                 <tr key={grant.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{grant.grantName}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{grant.grantor}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
+                      grant.sourceType === 'Grant' ? 'bg-blue-100 text-blue-800' :
+                      grant.sourceType === 'Donation' ? 'bg-green-100 text-green-800' :
+                      grant.sourceType === 'Government Funding' ? 'bg-purple-100 text-purple-800' :
+                      grant.sourceType === 'Corporate Sponsorship' ? 'bg-orange-100 text-orange-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {grant.sourceType}
+                    </span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-blue-600">${grant.amount.toLocaleString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{grant.applicationDate}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{grant.category}</td>
