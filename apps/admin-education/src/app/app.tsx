@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import Login from './auth/Login';
-import AdminPortal from './portals/admin/AdminPortal';
+import PrincipalPortal from './portals/principal/PrincipalPortal';
 import HRPortal from './portals/hr/HRPortal';
 import FinancePortal from './portals/finance/FinancePortal';
 import OwnerPortal from './portals/owner/OwnerPortal';
@@ -22,7 +22,7 @@ const getRouteForRole = (role: string): string => {
     case 'OWNER':
       return '/admin/owner/dashboard';
     case 'ACADEMIC_EXECUTIVE':
-      return '/admin/dashboard';
+      return '/principal/dashboard';
     case 'DEPARTMENT_HEAD':
       return '/admin/department/science/dashboard';
     case 'STUDENT_AFFAIRS_EXECUTIVE':
@@ -31,6 +31,8 @@ const getRouteForRole = (role: string): string => {
     case 'OPERATIONS_EXECUTIVE':
     case 'OPERATIONS_MANAGER':
       return '/admin/operations/dashboard';
+    case 'PRINCIPAL':
+      return '/principal/dashboard';
     case 'STUDENT':
       return '/student/dashboard';
     case 'TEACHER':
@@ -38,7 +40,7 @@ const getRouteForRole = (role: string): string => {
     case 'PARENT':
       return '/parent/dashboard';
     default:
-      return '/admin/dashboard';
+      return '/principal/dashboard';
   }
 };
 
@@ -60,7 +62,7 @@ const isPathForRole = (pathname: string, role: string): boolean => {
       return pathname.startsWith('/admin/finance');
     case 'ACADEMIC_EXECUTIVE':
       // Academic executives can access department portals (their downlines)
-      return pathname.startsWith('/admin/department');
+      return pathname.startsWith('/admin/department') || pathname.startsWith('/principal');
     case 'DEPARTMENT_HEAD':
       return pathname.startsWith('/admin/department');
     case 'STUDENT_AFFAIRS_EXECUTIVE':
@@ -69,6 +71,8 @@ const isPathForRole = (pathname: string, role: string): boolean => {
     case 'OPERATIONS_EXECUTIVE':
     case 'OPERATIONS_MANAGER':
       return pathname.startsWith('/admin/operations');
+    case 'PRINCIPAL':
+      return pathname.startsWith('/principal');
     case 'STUDENT':
       return pathname.startsWith('/student');
     case 'TEACHER':
@@ -76,10 +80,10 @@ const isPathForRole = (pathname: string, role: string): boolean => {
     case 'PARENT':
       return pathname.startsWith('/parent');
     default:
-      return pathname.startsWith('/admin') && !pathname.startsWith('/admin/hr') &&
+      return pathname.startsWith('/principal') || (pathname.startsWith('/admin') && !pathname.startsWith('/admin/hr') &&
              !pathname.startsWith('/admin/finance') && !pathname.startsWith('/admin/owner') &&
  !pathname.startsWith('/admin/department') &&
-             !pathname.startsWith('/admin/student-affairs') && !pathname.startsWith('/admin/operations');
+             !pathname.startsWith('/admin/student-affairs') && !pathname.startsWith('/admin/operations'));
   }
 };
 
@@ -94,6 +98,7 @@ const useAuth = () => {
       DEPARTMENT_HEAD: '6B46C1',
       VICE_PRINCIPAL: '10B981',
       OPERATIONS_MANAGER: '2563EB',
+      PRINCIPAL: '6B46C1',
       ADMIN: '6B46C1',
     };
     
@@ -101,7 +106,7 @@ const useAuth = () => {
       id: '1',
       name: credentials.email.split('@')[0],
       email: credentials.email,
-      role: credentials.role || 'ADMIN',
+      role: credentials.role || 'PRINCIPAL',
       avatar: `https://ui-avatars.com/api/?name=${credentials.email.split('@')[0]}&background=${roleColors[credentials.role] || '6B46C1'}&color=fff`,
     };
     setUser(mockUser);
@@ -145,8 +150,8 @@ function AppRouter({ user, logout }: { user: any; logout: () => void }) {
       {/* Department Head Portal Routes */}
       <Route path="/admin/department/:deptName/*" element={<DepartmentPortal user={user} onLogout={logout} />} />
       
-      {/* General Admin Portal Routes */}
-      <Route path="/admin/*" element={<AdminPortal user={user} onLogout={logout} />} />
+      {/* Principal Portal Routes */}
+      <Route path="/principal/*" element={<PrincipalPortal user={user} onLogout={logout} />} />
       
       {/* Student Portal Routes */}
       <Route path="/student/*" element={<StudentPortal user={user} onLogout={logout} />} />
@@ -162,7 +167,7 @@ function AppRouter({ user, logout }: { user: any; logout: () => void }) {
         path="/"
         element={
           <Navigate
-            to={getRouteForRole(user?.role || 'ADMIN')}
+            to={getRouteForRole(user?.role || 'PRINCIPAL')}
             replace
           />
         }
@@ -181,7 +186,7 @@ export function App() {
     login(credentials);
     // Navigate immediately after setting user
     // Use a small delay to ensure state is updated
-    const role = credentials.role || 'ADMIN';
+    const role = credentials.role || 'PRINCIPAL';
     const correctRoute = getRouteForRole(role);
     setTimeout(() => {
       navigate(correctRoute, { replace: true });

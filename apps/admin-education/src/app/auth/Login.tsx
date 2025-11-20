@@ -80,6 +80,7 @@ export default function Login({ onLogin }: LoginProps) {
                 <option value="OPERATIONS_EXECUTIVE">Operations Executive</option>
                 <option value="OWNER">School Owner</option>
                 <option value="DEPARTMENT_HEAD">Department Head</option>
+                <option value="PRINCIPAL">Principal</option>
                 <option value="ADMIN">Administrator</option>
                 <option value="TEACHER">Teacher</option>
                 <option value="STUDENT">Student</option>
@@ -165,10 +166,10 @@ export default function Login({ onLogin }: LoginProps) {
                     👨‍👩‍👧 Parent
                   </button>
                   <button
-                    onClick={() => quickLogin('ADMIN', 'admin@school.edu')}
-                    className="px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 text-sm font-medium text-left"
+                    onClick={() => quickLogin('PRINCIPAL', 'principal@school.edu')}
+                    className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-sm font-medium text-left"
                   >
-                    ⚙️ Admin
+                    🎓 Principal
                   </button>
                 </div>
               </div>
