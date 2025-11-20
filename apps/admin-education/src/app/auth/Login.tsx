@@ -77,7 +77,6 @@ export default function Login({ onLogin }: LoginProps) {
                 <option value="FINANCE_EXECUTIVE">Finance Executive</option>
                 <option value="ACADEMIC_EXECUTIVE">Academic Executive</option>
                 <option value="STUDENT_AFFAIRS_EXECUTIVE">Student Affairs Executive</option>
-                <option value="OPERATIONS_EXECUTIVE">Operations Executive</option>
                 <option value="OWNER">School Owner</option>
                 <option value="PRINCIPAL">Principal</option>
                 <option value="ADMIN">Administrator</option>
@@ -121,12 +120,6 @@ export default function Login({ onLogin }: LoginProps) {
                     className="px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm font-medium text-left"
                   >
                     🎓 Student Affairs
-                  </button>
-                  <button
-                    onClick={() => quickLogin('OPERATIONS_EXECUTIVE', 'operations@school.edu')}
-                    className="px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-sm font-medium text-left"
-                  >
-                    🏗️ Operations Executive
                   </button>
                   <button
                     onClick={() => quickLogin('OWNER', 'owner@school.edu')}

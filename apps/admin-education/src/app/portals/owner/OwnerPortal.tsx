@@ -49,7 +49,6 @@ export default function OwnerPortal({ user, onLogout }: OwnerPortalProps) {
         { label: 'HR Executive Portal', href: '/admin/hr/dashboard' },
         { label: 'Academic Executive Portal', href: '/principal/dashboard' },
         { label: 'Student Affairs Portal', href: '/admin/student-affairs/dashboard' },
-        { label: 'Operations Portal', href: '/admin/operations/dashboard' },
       ],
     },
   ];

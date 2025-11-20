@@ -41,7 +41,6 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
           { value: 'PARENT', label: 'Parent' },
           { value: 'STUDENT', label: 'Student' },
           { value: 'VICE_PRINCIPAL', label: 'Vice Principal' },
-          { value: 'OPERATIONS_MANAGER', label: 'Operations Manager' },
         ];
       case 'HR_EXECUTIVE':
         return [
@@ -52,10 +51,6 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
       case 'VICE_PRINCIPAL':
         return [
           { value: 'TEACHER', label: 'Teacher' },
-        ];
-      case 'OPERATIONS_MANAGER':
-        return [
-          { value: 'OPERATIONS_STAFF', label: 'Operations Staff' },
         ];
       default:
         return [];
@@ -107,7 +102,6 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
       OWNER: 'bg-yellow-100 text-yellow-800',
       PRINCIPAL: 'bg-purple-100 text-purple-800',
       VICE_PRINCIPAL: 'bg-green-100 text-green-800',
-      OPERATIONS_MANAGER: 'bg-blue-100 text-blue-800',
       TEACHER: 'bg-cyan-100 text-cyan-800',
       PARENT: 'bg-orange-100 text-orange-800',
       STUDENT: 'bg-emerald-100 text-emerald-800',
