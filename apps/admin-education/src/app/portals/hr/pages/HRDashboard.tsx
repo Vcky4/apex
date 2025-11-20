@@ -64,20 +64,30 @@ export default function HRDashboard() {
         <h2 className="text-xl font-bold text-charcoal-gray mb-4">HR Operations</h2>
         <DashboardGrid columns={2}>
           <Card>
-            <h3 className="text-lg font-semibold mb-3">Pending Recruitment Requests</h3>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-lg font-semibold">Job Requests from Principal</h3>
+              <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">2 New</span>
+            </div>
             <div className="space-y-2">
-              <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                <span>Math Teacher - High School</span>
-                <span className="text-sm text-gray-600">Urgent</span>
+              <div className="flex justify-between items-center p-2 bg-blue-50 rounded border-l-4 border-l-blue-500">
+                <div>
+                  <span className="font-medium">Mathematics Teacher</span>
+                  <span className="ml-2 text-xs text-red-600">Urgent</span>
+                </div>
+                <span className="text-xs text-gray-500">From Principal</span>
               </div>
-              <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                <span>Librarian</span>
-                <span className="text-sm text-gray-600">Normal</span>
+              <div className="flex justify-between items-center p-2 bg-blue-50 rounded border-l-4 border-l-blue-500">
+                <div>
+                  <span className="font-medium">Science Lab Assistant</span>
+                  <span className="ml-2 text-xs text-orange-600">High</span>
+                </div>
+                <span className="text-xs text-gray-500">From Principal</span>
               </div>
-              <div className="flex justify-between items-center p-2 bg-blue-50 rounded">
-                <span>IT Support Specialist</span>
-                <span className="text-sm text-gray-600">Normal</span>
-              </div>
+            </div>
+            <div className="mt-3 pt-3 border-t">
+              <a href="/admin/hr/recruitment" className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                View All Requests →
+              </a>
             </div>
           </Card>
           <Card>

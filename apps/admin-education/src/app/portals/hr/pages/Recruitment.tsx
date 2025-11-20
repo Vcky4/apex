@@ -10,6 +10,21 @@ interface Position {
   budget: number;
   createdDate: string;
   applicantCount: number;
+  requestedBy?: string;
+  isFromPrincipal?: boolean;
+}
+
+interface JobRequest {
+  id: string;
+  position: string;
+  department: string;
+  priority: 'Urgent' | 'High' | 'Normal' | 'Low';
+  status: 'Pending' | 'In Review' | 'Approved' | 'Rejected' | 'Filled';
+  description: string;
+  requirements: string;
+  budget: number;
+  requestedDate: string;
+  requestedBy: string;
 }
 
 interface Applicant {
@@ -23,6 +38,34 @@ interface Applicant {
 }
 
 export default function Recruitment() {
+  // Job requests from Principal (notifications)
+  const [jobRequests, setJobRequests] = useState<JobRequest[]>([
+    {
+      id: 'req-1',
+      position: 'Mathematics Teacher',
+      department: 'Mathematics',
+      priority: 'Urgent',
+      status: 'Pending',
+      description: 'Need a qualified mathematics teacher for high school students. Must have experience teaching algebra, geometry, and calculus.',
+      requirements: 'Bachelor\'s degree in Mathematics or Education, Teaching certification, 3+ years experience',
+      budget: 55000,
+      requestedDate: '2025-01-10',
+      requestedBy: 'Principal',
+    },
+    {
+      id: 'req-2',
+      position: 'Science Lab Assistant',
+      department: 'Science',
+      priority: 'High',
+      status: 'Pending',
+      description: 'Assistant needed for science laboratory to help with experiments and maintain equipment.',
+      requirements: 'Associate degree in Science, Lab experience preferred',
+      budget: 35000,
+      requestedDate: '2025-01-05',
+      requestedBy: 'Principal',
+    },
+  ]);
+
   const [positions, setPositions] = useState<Position[]>([
     {
       id: '1',
@@ -32,7 +75,9 @@ export default function Recruitment() {
       status: 'Open',
       budget: 55000,
       createdDate: '2024-01-15',
-      applicantCount: 12
+      applicantCount: 12,
+      requestedBy: 'Principal',
+      isFromPrincipal: true,
     },
     {
       id: '2',
@@ -110,6 +155,36 @@ export default function Recruitment() {
     }
   };
 
+  const approveJobRequest = (requestId: string) => {
+    const request = jobRequests.find(r => r.id === requestId);
+    if (request) {
+      // Convert job request to position
+      const newPosition: Position = {
+        id: `pos-${Date.now()}`,
+        title: request.position,
+        department: request.department,
+        priority: request.priority,
+        status: 'Open',
+        budget: request.budget,
+        createdDate: new Date().toISOString().split('T')[0],
+        applicantCount: 0,
+        requestedBy: 'Principal',
+        isFromPrincipal: true,
+      };
+      setPositions([newPosition, ...positions]);
+      // Remove from job requests
+      setJobRequests(jobRequests.filter(r => r.id !== requestId));
+      alert('Job request approved and converted to open position!');
+    }
+  };
+
+  const rejectJobRequest = (requestId: string) => {
+    setJobRequests(jobRequests.map(r => 
+      r.id === requestId ? { ...r, status: 'Rejected' as const } : r
+    ));
+    alert('Job request rejected.');
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -124,6 +199,65 @@ export default function Recruitment() {
           New Position Requisition
         </Button>
       </div>
+
+      {/* Job Requests from Principal - Notifications */}
+      {jobRequests.filter(r => r.status === 'Pending').length > 0 && (
+        <Card className="border-l-4 border-l-blue-500">
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <h2 className="text-xl font-bold text-charcoal-gray">New Job Requests from Principal</h2>
+                <span className="px-2 py-1 bg-red-100 text-red-800 rounded-full text-xs font-medium">
+                  {jobRequests.filter(r => r.status === 'Pending').length} New
+                </span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {jobRequests.filter(r => r.status === 'Pending').map((request) => (
+                <div key={request.id} className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <div className="flex items-start justify-between mb-2">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="font-semibold text-gray-900">{request.position}</h3>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          request.priority === 'Urgent' ? 'bg-red-100 text-red-800' :
+                          request.priority === 'High' ? 'bg-orange-100 text-orange-800' :
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {request.priority} Priority
+                        </span>
+                      </div>
+                      <p className="text-sm text-gray-600 mb-1">Department: {request.department}</p>
+                      <p className="text-sm text-gray-600 mb-2">Budget: ${request.budget.toLocaleString()}</p>
+                      <p className="text-sm text-gray-700">{request.description}</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-3">
+                    <Button
+                      size="sm"
+                      onClick={() => approveJobRequest(request.id)}
+                      className="flex-1"
+                    >
+                      Approve & Create Position
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => rejectJobRequest(request.id)}
+                      className="flex-1"
+                    >
+                      Reject
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+      )}
 
       {/* Position Requisition Management */}
       <Card>
