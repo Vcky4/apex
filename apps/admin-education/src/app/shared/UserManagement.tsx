@@ -37,9 +37,18 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
         ];
       case 'PRINCIPAL':
         return [
+          { value: 'TEACHER', label: 'Teacher' },
+          { value: 'PARENT', label: 'Parent' },
+          { value: 'STUDENT', label: 'Student' },
           { value: 'VICE_PRINCIPAL', label: 'Vice Principal' },
           { value: 'DEPARTMENT_HEAD', label: 'Department Head' },
           { value: 'OPERATIONS_MANAGER', label: 'Operations Manager' },
+        ];
+      case 'HR_EXECUTIVE':
+        return [
+          { value: 'TEACHER', label: 'Teacher' },
+          { value: 'PARENT', label: 'Parent' },
+          { value: 'STUDENT', label: 'Student' },
         ];
       case 'DEPARTMENT_HEAD':
         return [
@@ -106,6 +115,8 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
       DEPARTMENT_HEAD: 'bg-indigo-100 text-indigo-800',
       OPERATIONS_MANAGER: 'bg-blue-100 text-blue-800',
       TEACHER: 'bg-cyan-100 text-cyan-800',
+      PARENT: 'bg-orange-100 text-orange-800',
+      STUDENT: 'bg-emerald-100 text-emerald-800',
       OPERATIONS_STAFF: 'bg-gray-100 text-gray-800',
     };
     return colors[role] || 'bg-gray-100 text-gray-800';

@@ -7,7 +7,7 @@ import EmployeeLifecycle from './pages/EmployeeLifecycle';
 import PerformanceManagement from './pages/PerformanceManagement';
 import CompensationBenefits from './pages/CompensationBenefits';
 import HRCompliance from './pages/HRCompliance';
-import UserManagementPage from '../vice-principal/pages/UserManagementPage';
+import UserManagementPage from './pages/UserManagementPage';
 
 interface HRPortalProps {
   user: any;
