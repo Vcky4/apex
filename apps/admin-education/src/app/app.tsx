@@ -6,7 +6,6 @@ import PrincipalPortal from './portals/principal/PrincipalPortal';
 import HRPortal from './portals/hr/HRPortal';
 import FinancePortal from './portals/finance/FinancePortal';
 import OwnerPortal from './portals/owner/OwnerPortal';
-import DepartmentPortal from './portals/department/DepartmentPortal';
 import StudentAffairsPortal from './portals/vice-principal/VicePrincipalPortal';
 import OperationsPortal from './portals/operations/OperationsPortal';
 import StudentPortal from './portals/student/StudentPortal';
@@ -24,8 +23,6 @@ const getRouteForRole = (role: string): string => {
       return '/admin/owner/dashboard';
     case 'ACADEMIC_EXECUTIVE':
       return '/principal/dashboard';
-    case 'DEPARTMENT_HEAD':
-      return '/admin/department/science/dashboard';
     case 'STUDENT_AFFAIRS_EXECUTIVE':
     case 'VICE_PRINCIPAL':
       return '/admin/student-affairs/dashboard';
@@ -56,17 +53,13 @@ const isPathForRole = (pathname: string, role: string): boolean => {
              pathname.startsWith('/admin/hr') ||
              pathname.startsWith('/admin/student-affairs') ||
              pathname.startsWith('/admin/operations') ||
-             pathname.startsWith('/admin/department') ||
              pathname.startsWith('/principal');
     case 'HR_EXECUTIVE':
       return pathname.startsWith('/admin/hr');
     case 'FINANCE_EXECUTIVE':
       return pathname.startsWith('/admin/finance');
     case 'ACADEMIC_EXECUTIVE':
-      // Academic executives can access department portals (their downlines)
-      return pathname.startsWith('/admin/department') || pathname.startsWith('/principal');
-    case 'DEPARTMENT_HEAD':
-      return pathname.startsWith('/admin/department');
+      return pathname.startsWith('/principal');
     case 'STUDENT_AFFAIRS_EXECUTIVE':
     case 'VICE_PRINCIPAL':
       return pathname.startsWith('/admin/student-affairs');
@@ -84,7 +77,6 @@ const isPathForRole = (pathname: string, role: string): boolean => {
     default:
       return pathname.startsWith('/principal') || (pathname.startsWith('/admin') && !pathname.startsWith('/admin/hr') &&
              !pathname.startsWith('/admin/finance') && !pathname.startsWith('/admin/owner') &&
- !pathname.startsWith('/admin/department') &&
              !pathname.startsWith('/admin/student-affairs') && !pathname.startsWith('/admin/operations'));
   }
 };
@@ -97,7 +89,6 @@ const useAuth = () => {
     // Mock login - replace with API call
     const roleColors: { [key: string]: string } = {
       OWNER: 'D4AF37',
-      DEPARTMENT_HEAD: '6B46C1',
       VICE_PRINCIPAL: '10B981',
       OPERATIONS_MANAGER: '2563EB',
       PRINCIPAL: '6B46C1',
@@ -148,9 +139,6 @@ function AppRouter({ user, logout }: { user: any; logout: () => void }) {
       
       {/* Student Affairs Administration Portal Routes */}
       <Route path="/admin/student-affairs/*" element={<StudentAffairsPortal user={user} onLogout={logout} />} />
-      
-      {/* Department Head Portal Routes */}
-      <Route path="/admin/department/:deptName/*" element={<DepartmentPortal user={user} onLogout={logout} />} />
       
       {/* Principal Portal Routes */}
       <Route path="/principal/*" element={<PrincipalPortal user={user} onLogout={logout} />} />

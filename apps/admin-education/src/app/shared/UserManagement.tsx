@@ -41,7 +41,6 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
           { value: 'PARENT', label: 'Parent' },
           { value: 'STUDENT', label: 'Student' },
           { value: 'VICE_PRINCIPAL', label: 'Vice Principal' },
-          { value: 'DEPARTMENT_HEAD', label: 'Department Head' },
           { value: 'OPERATIONS_MANAGER', label: 'Operations Manager' },
         ];
       case 'HR_EXECUTIVE':
@@ -49,10 +48,6 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
           { value: 'TEACHER', label: 'Teacher' },
           { value: 'PARENT', label: 'Parent' },
           { value: 'STUDENT', label: 'Student' },
-        ];
-      case 'DEPARTMENT_HEAD':
-        return [
-          { value: 'TEACHER', label: 'Teacher' },
         ];
       case 'VICE_PRINCIPAL':
         return [
@@ -112,7 +107,6 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
       OWNER: 'bg-yellow-100 text-yellow-800',
       PRINCIPAL: 'bg-purple-100 text-purple-800',
       VICE_PRINCIPAL: 'bg-green-100 text-green-800',
-      DEPARTMENT_HEAD: 'bg-indigo-100 text-indigo-800',
       OPERATIONS_MANAGER: 'bg-blue-100 text-blue-800',
       TEACHER: 'bg-cyan-100 text-cyan-800',
       PARENT: 'bg-orange-100 text-orange-800',
@@ -282,30 +276,20 @@ export default function UserManagement({ currentUserRole, onCreateUser, managedU
                     ))}
                   </select>
                 </div>
-                {(formData.role === 'DEPARTMENT_HEAD' || formData.role === 'TEACHER') && (
+                {formData.role === 'TEACHER' && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Department *</label>
-                    {currentUserRole === 'DEPARTMENT_HEAD' && !editingUser ? (
-                      <input
-                        type="text"
-                        value="Automatically set to your department"
-                        disabled
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50"
-                        title="Department is set automatically based on your role"
-                      />
-                    ) : (
-                      <select
-                        required
-                        value={formData.department}
-                        onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-executive-gold"
-                      >
-                        <option value="">Select Department</option>
-                        {departments.map(dept => (
-                          <option key={dept} value={dept}>{dept}</option>
-                        ))}
-                      </select>
-                    )}
+                    <select
+                      required
+                      value={formData.department}
+                      onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-executive-gold"
+                    >
+                      <option value="">Select Department</option>
+                      {departments.map(dept => (
+                        <option key={dept} value={dept}>{dept}</option>
+                      ))}
+                    </select>
                   </div>
                 )}
                 {!editingUser && (

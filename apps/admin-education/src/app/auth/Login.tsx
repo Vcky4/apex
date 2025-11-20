@@ -79,7 +79,6 @@ export default function Login({ onLogin }: LoginProps) {
                 <option value="STUDENT_AFFAIRS_EXECUTIVE">Student Affairs Executive</option>
                 <option value="OPERATIONS_EXECUTIVE">Operations Executive</option>
                 <option value="OWNER">School Owner</option>
-                <option value="DEPARTMENT_HEAD">Department Head</option>
                 <option value="PRINCIPAL">Principal</option>
                 <option value="ADMIN">Administrator</option>
                 <option value="TEACHER">Teacher</option>
@@ -141,12 +140,6 @@ export default function Login({ onLogin }: LoginProps) {
               <div className="pt-2 border-t">
                 <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Other Roles</p>
                 <div className="grid grid-cols-2 gap-2">
-                  <button
-                    onClick={() => quickLogin('DEPARTMENT_HEAD', 'depthead@school.edu')}
-                    className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-lg hover:bg-indigo-100 text-sm font-medium text-left"
-                  >
-                    📚 Dept Head
-                  </button>
                   <button
                     onClick={() => quickLogin('TEACHER', 'teacher@school.edu')}
                     className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-lg hover:bg-cyan-100 text-sm font-medium text-left"
