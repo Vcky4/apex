@@ -19,6 +19,7 @@ interface Admission {
   priority: 'High' | 'Medium' | 'Low';
   status: 'Pending' | 'Assigned' | 'Completed';
   requestedDate: string;
+  assignedBed?: string;
 }
 
 export default function PatientFlowManagement() {
@@ -52,16 +53,19 @@ export default function PatientFlowManagement() {
 
   const handleAssignBed = (admission: Admission) => {
     const availableBed = beds.find(b => b.status === 'Available' && b.unit === admission.unit);
+    
     if (availableBed) {
-      setBeds(beds.map(b => 
-        b.id === availableBed.id 
-          ? { ...b, status: 'Occupied', patient: admission.patient, admissionDate: new Date().toISOString().split('T')[0] }
-          : b
-      ));
-      setAdmissions(admissions.map(a => 
-        a.id === admission.id ? { ...a, status: 'Assigned' } : a
-      ));
-      showToast(`Bed ${availableBed.bedNumber} assigned to ${admission.patient}`, 'success');
+      if (confirm(`Assign ${admission.patient} to ${availableBed.bedNumber} in ${admission.unit}?`)) {
+        setBeds(beds.map(b => 
+          b.id === availableBed.id 
+            ? { ...b, status: 'Occupied', patient: admission.patient, admissionDate: new Date().toISOString().split('T')[0] }
+            : b
+        ));
+        setAdmissions(admissions.map(a => 
+          a.id === admission.id ? { ...a, status: 'Assigned', assignedBed: availableBed.bedNumber } : a
+        ));
+        showToast(`Bed ${availableBed.bedNumber} assigned to ${admission.patient}`, 'success');
+      }
     } else {
       showToast(`No available beds in ${admission.unit}. Please check other units or wait for discharge.`, 'warning');
     }
@@ -207,9 +211,9 @@ export default function PatientFlowManagement() {
                         {admission.priority}
                       </span>
                     </div>
-                    <Button size="sm" onClick={() => handleAssignBed(admission)}>Assign Bed</Button>
+                    <Button size="sm" onClick={() => handleAssignBed(admission)}>Assign Ward/Bed</Button>
                   </div>
-                  <div className="text-xs text-gray-500 mt-1">{admission.unit} • {admission.requestedDate}</div>
+                  <div className="text-xs text-gray-500 mt-1">Target: {admission.unit} • {admission.requestedDate}</div>
                 </div>
               ))}
             </div>
