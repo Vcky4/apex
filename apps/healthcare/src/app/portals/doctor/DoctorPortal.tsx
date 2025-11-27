@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { AdminLayout } from '@apex-providers/ui-components';
 import DoctorDashboard from './pages/DoctorDashboard';
+import MyPatients from './pages/MyPatients';
 import EHR from './pages/EHR';
 import ClinicalDecisionSupport from './pages/ClinicalDecisionSupport';
 import Telemedicine from './pages/Telemedicine';
@@ -23,6 +24,7 @@ export default function DoctorPortal({ user, onLogout }: DoctorPortalProps) {
       href: '/doctor/patients',
       icon: '👥',
       children: [
+        { label: 'My Patients', href: '/doctor/patients' },
         { label: 'Electronic Health Records', href: '/doctor/patients/ehr' },
         { label: 'Clinical Decision Support', href: '/doctor/clinical-support' },
         { label: 'Telemedicine Portal', href: '/doctor/telemedicine' },
@@ -107,6 +109,7 @@ export default function DoctorPortal({ user, onLogout }: DoctorPortalProps) {
     <AdminLayout navigation={navigation} logo={logo} userMenu={userMenu} vertical="healthcare" sidebarColor="bg-doctor-blue">
       <Routes>
         <Route path="dashboard" element={<DoctorDashboard />} />
+        <Route path="patients" element={<MyPatients />} />
         <Route path="patients/ehr/:patientId?" element={<EHR />} />
         <Route path="clinical-support" element={<ClinicalDecisionSupport />} />
         <Route path="telemedicine" element={<Telemedicine />} />

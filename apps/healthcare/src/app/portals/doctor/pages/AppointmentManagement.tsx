@@ -1,10 +1,13 @@
 import { Card, Button } from '@apex-providers/ui-components';
 import { useState } from 'react';
+import { Modal } from '../../../shared/Modal';
 import { useToast, ToastContainer } from '../../../shared/Toast';
 
 export default function AppointmentManagement() {
   const { toasts, showToast, removeToast } = useToast();
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [showAppointmentModal, setShowAppointmentModal] = useState(false);
+  const [appointmentData, setAppointmentData] = useState<any>({});
 
   const appointments = [
     { id: 1, patient: 'John Doe', time: '09:00 AM', type: 'Follow-up', duration: '30 min' },
@@ -30,6 +33,10 @@ export default function AppointmentManagement() {
               className="px-3 py-2 border border-gray-300 rounded-lg"
             />
             <Button onClick={() => showToast('Opening schedule settings...', 'info')}>Manage Availability</Button>
+            <Button onClick={() => {
+              setAppointmentData({ date: selectedDate });
+              setShowAppointmentModal(true);
+            }}>New Appointment</Button>
           </div>
         </div>
         <div className="space-y-3">
@@ -75,6 +82,104 @@ export default function AppointmentManagement() {
           </div>
         </Card>
       </div>
+      {/* Schedule Appointment Modal */}
+      <Modal
+        isOpen={showAppointmentModal}
+        onClose={() => {
+          setShowAppointmentModal(false);
+          setAppointmentData({});
+        }}
+        title="Schedule New Appointment"
+        size="lg"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => {
+              setShowAppointmentModal(false);
+              setAppointmentData({});
+            }}>Cancel</Button>
+            <Button onClick={() => {
+              if (!appointmentData.patient || !appointmentData.type || !appointmentData.time) {
+                showToast('Please fill required fields', 'error');
+                return;
+              }
+              showToast(`Appointment scheduled for ${appointmentData.patient} on ${appointmentData.date}`, 'success');
+              setShowAppointmentModal(false);
+              setAppointmentData({});
+            }}>Schedule</Button>
+          </div>
+        }
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Patient Name *</label>
+            <input
+              type="text"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={appointmentData.patient || ''}
+              onChange={(e) => setAppointmentData({ ...appointmentData, patient: e.target.value })}
+              placeholder="Enter patient name"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+              <input
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={appointmentData.date || ''}
+                onChange={(e) => setAppointmentData({ ...appointmentData, date: e.target.value })}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Time *</label>
+              <input
+                type="time"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={appointmentData.time || ''}
+                onChange={(e) => setAppointmentData({ ...appointmentData, time: e.target.value })}
+              />
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Appointment Type *</label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={appointmentData.type || ''}
+              onChange={(e) => setAppointmentData({ ...appointmentData, type: e.target.value })}
+            >
+              <option value="">Select Type</option>
+              <option value="Consultation">Consultation</option>
+              <option value="Follow-up">Follow-up</option>
+              <option value="Check-up">Check-up</option>
+              <option value="Procedure">Procedure</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Duration</label>
+            <select
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={appointmentData.duration || '30 min'}
+              onChange={(e) => setAppointmentData({ ...appointmentData, duration: e.target.value })}
+            >
+              <option value="15 min">15 min</option>
+              <option value="30 min">30 min</option>
+              <option value="45 min">45 min</option>
+              <option value="60 min">1 hour</option>
+            </select>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+            <textarea
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              rows={3}
+              value={appointmentData.notes || ''}
+              onChange={(e) => setAppointmentData({ ...appointmentData, notes: e.target.value })}
+              placeholder="Additional notes..."
+            />
+          </div>
+        </div>
+      </Modal>
+
       <ToastContainer toasts={toasts} removeToast={removeToast} />
     </div>
   );
