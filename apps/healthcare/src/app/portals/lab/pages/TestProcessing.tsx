@@ -52,13 +52,31 @@ export default function TestProcessing() {
     setFormData({});
   };
 
-  const handleEnterResult = (test: TestRequest) => {
+  const [showUpdateStatusModal, setShowUpdateStatusModal] = useState(false);
+
+  const handleUpdateStatus = (test: TestRequest) => {
     setSelectedTest(test);
     setFormData({
-      result: '',
-      verifiedBy: '',
+      status: test.status,
+      notes: ''
     });
-    setShowResultModal(true);
+    setShowUpdateStatusModal(true);
+  };
+
+  const handleSaveStatusUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedTest) return;
+
+    setTestRequests(testRequests.map(t => 
+      t.id === selectedTest.id 
+        ? { ...t, status: formData.status }
+        : t
+    ));
+
+    showToast(`Status updated to ${formData.status} for ${selectedTest.testType}`, 'success');
+    setShowUpdateStatusModal(false);
+    setSelectedTest(null);
+    setFormData({});
   };
 
   const handleSaveResult = (e: React.FormEvent) => {
@@ -142,13 +160,11 @@ export default function TestProcessing() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     {!test.sampleReceived && (
-                      <button onClick={() => handleReceiveSample(test)} className="text-blue-600 hover:text-blue-900 mr-3">Receive Sample</button>
+                      <button onClick={() => handleReceiveSample(test)} className="text-blue-600 hover:text-blue-900 mr-3">Receive</button>
                     )}
+                    <button onClick={() => handleUpdateStatus(test)} className="text-purple-600 hover:text-purple-900 mr-3">Update Status</button>
                     {test.status === 'In Progress' && (
-                      <button onClick={() => handleEnterResult(test)} className="text-green-600 hover:text-green-900">Enter Result</button>
-                    )}
-                    {test.status === 'Completed' && (
-                      <span className="text-gray-500">Completed</span>
+                      <button onClick={() => handleEnterResult(test)} className="text-green-600 hover:text-green-900">Result</button>
                     )}
                   </td>
                 </tr>
@@ -216,6 +232,54 @@ export default function TestProcessing() {
                 <option value="Clotted">Clotted</option>
                 <option value="Insufficient">Insufficient</option>
               </select>
+            </div>
+          </form>
+        )}
+      </Modal>
+
+      {/* Update Status Modal */}
+      <Modal
+        isOpen={showUpdateStatusModal}
+        onClose={() => {
+          setShowUpdateStatusModal(false);
+          setSelectedTest(null);
+          setFormData({});
+        }}
+        title={`Update Status: ${selectedTest?.testType}`}
+        size="md"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => setShowUpdateStatusModal(false)}>Cancel</Button>
+            <Button onClick={() => {
+               const form = document.getElementById('update-status-form') as HTMLFormElement;
+               if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }}>Update Status</Button>
+          </div>
+        }
+      >
+        {selectedTest && (
+          <form id="update-status-form" onSubmit={handleSaveStatusUpdate} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+              <select
+                value={formData.status || ''}
+                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              >
+                <option value="Pending">Pending</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+              <textarea
+                value={formData.notes || ''}
+                onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+                rows={3}
+                placeholder="Reason for status update..."
+              />
             </div>
           </form>
         )}

@@ -27,14 +27,34 @@ export default function InventoryManagement() {
     { id: 4, item: 'Glucose Test Strips', category: 'Supplies', quantity: 200, unit: 'strips', expiryDate: '2025-06-30', status: 'In Stock', reorderLevel: 100 },
   ]);
 
-  const handleOrderSupplies = (item: InventoryItem) => {
+  const [showUpdateStockModal, setShowUpdateStockModal] = useState(false);
+
+  const handleUpdateStock = (item: InventoryItem) => {
     setSelectedItem(item);
     setFormData({
-      quantity: item.reorderLevel,
-      vendor: '',
-      expectedDelivery: '',
+      quantity: item.quantity,
+      status: item.status
     });
-    setShowOrderModal(true);
+    setShowUpdateStockModal(true);
+  };
+
+  const handleSaveStockUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedItem) return;
+
+    const newQuantity = parseInt(formData.quantity);
+    const newStatus = newQuantity === 0 ? 'Out of Stock' : newQuantity < selectedItem.reorderLevel ? 'Low Stock' : 'In Stock';
+
+    setInventory(inventory.map(i => 
+      i.id === selectedItem.id 
+        ? { ...i, quantity: newQuantity, status: newStatus }
+        : i
+    ));
+
+    showToast(`Inventory updated for ${selectedItem.item}`, 'success');
+    setShowUpdateStockModal(false);
+    setSelectedItem(null);
+    setFormData({});
   };
 
   const handleSaveOrder = (e: React.FormEvent) => {
@@ -107,11 +127,9 @@ export default function InventoryManagement() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button onClick={() => handleUpdateStock(item)} className="text-green-600 hover:text-green-900 mr-3">Update Stock</button>
                     {(item.status === 'Low Stock' || item.status === 'Out of Stock') && (
                       <button onClick={() => handleOrderSupplies(item)} className="text-blue-600 hover:text-blue-900">Order</button>
-                    )}
-                    {item.status === 'In Stock' && (
-                      <button onClick={() => showToast(`Viewing details for ${item.item}...`, 'info')} className="text-gray-600 hover:text-gray-900">View</button>
                     )}
                   </td>
                 </tr>
@@ -120,6 +138,44 @@ export default function InventoryManagement() {
           </table>
         </div>
       </Card>
+
+      {/* Update Stock Modal */}
+      <Modal
+        isOpen={showUpdateStockModal}
+        onClose={() => {
+          setShowUpdateStockModal(false);
+          setSelectedItem(null);
+          setFormData({});
+        }}
+        title={`Update Inventory: ${selectedItem?.item}`}
+        size="md"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => setShowUpdateStockModal(false)}>Cancel</Button>
+            <Button onClick={() => {
+               const form = document.getElementById('update-lab-stock-form') as HTMLFormElement;
+               if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }}>Save Update</Button>
+          </div>
+        }
+      >
+        {selectedItem && (
+          <form id="update-lab-stock-form" onSubmit={handleSaveStockUpdate} className="space-y-4">
+             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Current Quantity</label>
+              <input
+                type="number"
+                required
+                min="0"
+                value={formData.quantity || ''}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+              <p className="text-xs text-gray-500 mt-1">System will automatically update status based on reorder level ({selectedItem.reorderLevel}).</p>
+            </div>
+          </form>
+        )}
+      </Modal>
 
       {/* Order Supplies Modal */}
       <Modal

@@ -19,6 +19,8 @@ export default function InventoryControl() {
   const { toasts, showToast, removeToast } = useToast();
   const [showOrderModal, setShowOrderModal] = useState(false);
   const [showReceiveModal, setShowReceiveModal] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<InventoryItem | null>(null);
   const [formData, setFormData] = useState<any>({});
 
@@ -28,6 +30,76 @@ export default function InventoryControl() {
     { id: 3, medication: 'Amoxicillin', genericName: 'Amoxicillin', quantity: 0, unit: 'capsules', expiryDate: '2025-03-15', status: 'Out of Stock', reorderLevel: 250, location: 'C-08' },
     { id: 4, medication: 'Atorvastatin', genericName: 'Atorvastatin Calcium', quantity: 800, unit: 'tablets', expiryDate: '2025-09-30', status: 'In Stock', reorderLevel: 400, location: 'A-15' },
   ]);
+
+  const handleAddMedication = () => {
+    setFormData({
+      medication: '',
+      genericName: '',
+      quantity: 0,
+      unit: 'tablets',
+      expiryDate: '',
+      reorderLevel: 100,
+      location: '',
+      status: 'Out of Stock'
+    });
+    setShowAddModal(true);
+  };
+
+  const handleSaveNewMedication = (e: React.FormEvent) => {
+    e.preventDefault();
+    const { medication, genericName, quantity, unit, expiryDate, reorderLevel, location } = formData;
+    
+    if (!medication || !genericName) {
+      showToast('Please fill in all required fields', 'error');
+      return;
+    }
+
+    const newItem: InventoryItem = {
+      id: inventory.length + 1,
+      medication,
+      genericName,
+      quantity: parseInt(quantity) || 0,
+      unit,
+      expiryDate,
+      reorderLevel: parseInt(reorderLevel) || 100,
+      location,
+      status: (parseInt(quantity) || 0) === 0 ? 'Out of Stock' : (parseInt(quantity) || 0) < (parseInt(reorderLevel) || 100) ? 'Low Stock' : 'In Stock'
+    };
+
+    setInventory([...inventory, newItem]);
+    showToast(`${medication} added to inventory`, 'success');
+    setShowAddModal(false);
+    setFormData({});
+  };
+
+  const handleUpdateStock = (item: InventoryItem) => {
+    setSelectedItem(item);
+    setFormData({
+      quantity: item.quantity,
+      status: item.status
+    });
+    setShowUpdateModal(true);
+  };
+
+  const handleSaveStockUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedItem) return;
+
+    setInventory(inventory.map(i => 
+      i.id === selectedItem.id 
+        ? { 
+            ...i, 
+            quantity: parseInt(formData.quantity),
+            status: parseInt(formData.quantity) === 0 ? 'Out of Stock' : parseInt(formData.quantity) < i.reorderLevel ? 'Low Stock' : 'In Stock'
+          } 
+        : i
+    ));
+
+    showToast(`Stock updated for ${selectedItem.medication}`, 'success');
+    setShowUpdateModal(false);
+    setSelectedItem(null);
+    setFormData({});
+  };
 
   const handleOrderMedication = (item: InventoryItem) => {
     setSelectedItem(item);
@@ -104,9 +176,12 @@ export default function InventoryControl() {
       <Card>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-semibold">Medication Inventory</h2>
-          <div className="text-sm text-gray-600">
-            Low Stock: {inventory.filter(i => i.status === 'Low Stock').length} | 
-            Out of Stock: {inventory.filter(i => i.status === 'Out of Stock').length}
+          <div className="flex items-center space-x-4">
+            <div className="text-sm text-gray-600">
+              Low Stock: {inventory.filter(i => i.status === 'Low Stock').length} | 
+              Out of Stock: {inventory.filter(i => i.status === 'Out of Stock').length}
+            </div>
+            <Button onClick={handleAddMedication}>Add Medication</Button>
           </div>
         </div>
         <div className="overflow-x-auto">
@@ -141,8 +216,9 @@ export default function InventoryControl() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                    <button onClick={() => handleUpdateStock(item)} className="text-blue-600 hover:text-blue-900 mr-3">Update</button>
                     {(item.status === 'Low Stock' || item.status === 'Out of Stock') && (
-                      <button onClick={() => handleOrderMedication(item)} className="text-blue-600 hover:text-blue-900 mr-3">Order</button>
+                      <button onClick={() => handleOrderMedication(item)} className="text-orange-600 hover:text-orange-900 mr-3">Order</button>
                     )}
                     <button onClick={() => handleReceiveStock(item)} className="text-green-600 hover:text-green-900">Receive</button>
                   </td>
@@ -152,6 +228,136 @@ export default function InventoryControl() {
           </table>
         </div>
       </Card>
+
+      {/* Add Medication Modal */}
+      <Modal
+        isOpen={showAddModal}
+        onClose={() => {
+          setShowAddModal(false);
+          setFormData({});
+        }}
+        title="Add New Medication"
+        size="lg"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => setShowAddModal(false)}>Cancel</Button>
+            <Button onClick={() => {
+              const form = document.getElementById('add-med-form') as HTMLFormElement;
+              if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }}>Add Medication</Button>
+          </div>
+        }
+      >
+        <form id="add-med-form" onSubmit={handleSaveNewMedication} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Medication Name *</label>
+              <input
+                type="text"
+                required
+                value={formData.medication || ''}
+                onChange={(e) => setFormData({ ...formData, medication: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Generic Name *</label>
+              <input
+                type="text"
+                required
+                value={formData.genericName || ''}
+                onChange={(e) => setFormData({ ...formData, genericName: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Initial Quantity</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.quantity || ''}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Unit</label>
+              <select
+                value={formData.unit || 'tablets'}
+                onChange={(e) => setFormData({ ...formData, unit: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              >
+                <option value="tablets">Tablets</option>
+                <option value="capsules">Capsules</option>
+                <option value="ml">ml (Liquid)</option>
+                <option value="mg">mg</option>
+                <option value="inhaler">Inhaler</option>
+              </select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Reorder Level</label>
+              <input
+                type="number"
+                min="0"
+                value={formData.reorderLevel || ''}
+                onChange={(e) => setFormData({ ...formData, reorderLevel: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Shelf Location</label>
+              <input
+                type="text"
+                value={formData.location || ''}
+                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+            </div>
+          </div>
+        </form>
+      </Modal>
+
+      {/* Update Stock Modal */}
+      <Modal
+        isOpen={showUpdateModal}
+        onClose={() => {
+          setShowUpdateModal(false);
+          setSelectedItem(null);
+          setFormData({});
+        }}
+        title={`Update Stock: ${selectedItem?.medication}`}
+        size="md"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => setShowUpdateModal(false)}>Cancel</Button>
+            <Button onClick={() => {
+               const form = document.getElementById('update-stock-form') as HTMLFormElement;
+               if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }}>Save Update</Button>
+          </div>
+        }
+      >
+        {selectedItem && (
+          <form id="update-stock-form" onSubmit={handleSaveStockUpdate} className="space-y-4">
+             <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Current Quantity</label>
+              <input
+                type="number"
+                required
+                min="0"
+                value={formData.quantity || ''}
+                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+              <p className="text-xs text-gray-500 mt-1">Adjusting this will automatically update the stock status.</p>
+            </div>
+          </form>
+        )}
+      </Modal>
 
       {/* Order Modal */}
       <Modal

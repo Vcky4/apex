@@ -10,6 +10,7 @@ interface MedicalRecord {
   provider: string;
   title: string;
   description: string;
+  status?: 'Pending' | 'In Progress' | 'Completed';
 }
 
 export default function MedicalRecords() {
@@ -24,6 +25,7 @@ export default function MedicalRecords() {
       provider: 'Dr. Sarah Johnson',
       title: 'Annual Check-up',
       description: 'Routine physical examination. All vitals normal.',
+      status: 'Completed'
     },
     {
       id: 2,
@@ -32,6 +34,25 @@ export default function MedicalRecords() {
       provider: 'Lab',
       title: 'Complete Blood Count',
       description: 'All values within normal range.',
+      status: 'Completed'
+    },
+    {
+      id: 4,
+      type: 'Lab Result',
+      date: '2025-01-20',
+      provider: 'Lab',
+      title: 'Lipid Panel',
+      description: 'Sample received, processing.',
+      status: 'In Progress'
+    },
+    {
+      id: 5,
+      type: 'Lab Result',
+      date: '2025-01-21',
+      provider: 'Lab',
+      title: 'Vitamin D Level',
+      description: 'Order placed, awaiting sample.',
+      status: 'Pending'
     },
     {
       id: 3,
@@ -40,6 +61,7 @@ export default function MedicalRecords() {
       provider: 'Dr. Michael Chen',
       title: 'Flu Vaccine',
       description: 'Influenza vaccine administered.',
+      status: 'Completed'
     },
   ]);
 
@@ -82,11 +104,26 @@ export default function MedicalRecords() {
                   <div className="font-semibold text-gray-900">{record.title}</div>
                   <div className="text-sm text-gray-600 mt-1">{record.type} • {record.provider}</div>
                   <div className="text-sm text-gray-700 mt-2">{record.description}</div>
-                  <div className="text-xs text-gray-500 mt-2">Date: {record.date}</div>
+                  <div className="flex items-center mt-2 space-x-4">
+                    <div className="text-xs text-gray-500">Date: {record.date}</div>
+                    {record.type === 'Lab Result' && record.status && (
+                       <span className={`text-xs px-2 py-0.5 rounded-full ${
+                         record.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                         record.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                         'bg-yellow-100 text-yellow-800'
+                       }`}>
+                         Status: {record.status}
+                       </span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex space-x-2">
-                  <Button size="sm" variant="outline" onClick={() => showToast(`Viewing ${record.title}...`, 'info')}>View</Button>
-                  <Button size="sm" variant="outline" onClick={() => showToast(`Downloading ${record.title}...`, 'info')}>Download</Button>
+                  <Button size="sm" variant="outline" onClick={() => showToast(`Viewing ${record.title}...`, 'info')}>
+                    {record.status === 'Pending' ? 'View Order' : record.status === 'In Progress' ? 'Track Status' : 'View Result'}
+                  </Button>
+                  {record.status === 'Completed' && (
+                    <Button size="sm" variant="outline" onClick={() => showToast(`Downloading ${record.title}...`, 'info')}>Download</Button>
+                  )}
                 </div>
               </div>
             </div>
