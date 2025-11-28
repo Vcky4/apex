@@ -6,7 +6,9 @@ import { useToast, ToastContainer } from '../../../shared/Toast';
 export default function AppointmentBooking() {
   const { toasts, showToast, removeToast } = useToast();
   const [showModal, setShowModal] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [formData, setFormData] = useState<any>({});
+  const [patientFormData, setPatientFormData] = useState<any>({});
   const [searchTerm, setSearchTerm] = useState('');
 
   // Mock data
@@ -15,6 +17,12 @@ export default function AppointmentBooking() {
     { id: 2, name: 'Dr. Michael Chen', specialty: 'General Practice', department: 'Primary Care' },
     { id: 3, name: 'Dr. Emily Rodriguez', specialty: 'Pediatrics', department: 'Pediatrics' },
   ];
+
+  const [patients, setPatients] = useState([
+    { id: 1, name: 'John Doe', dob: '1980-05-15', gender: 'Male', phone: '555-0101' },
+    { id: 2, name: 'Jane Smith', dob: '1975-08-22', gender: 'Female', phone: '555-0102' },
+    { id: 3, name: 'Bob Johnson', dob: '1985-03-10', gender: 'Male', phone: '555-0103' },
+  ]);
 
   const [appointments, setAppointments] = useState([
     { id: 1, patient: 'John Doe', doctor: 'Dr. Sarah Johnson', date: '2025-01-25', time: '09:00', type: 'Consultation', status: 'Scheduled' },
@@ -25,6 +33,21 @@ export default function AppointmentBooking() {
     apt.patient.toLowerCase().includes(searchTerm.toLowerCase()) ||
     apt.doctor.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleRegisterPatient = (e: React.FormEvent) => {
+    e.preventDefault();
+    const newPatient = {
+      id: patients.length + 1,
+      name: patientFormData.name,
+      dob: patientFormData.dob,
+      gender: patientFormData.gender,
+      phone: patientFormData.phone
+    };
+    setPatients([...patients, newPatient]);
+    showToast(`Patient ${newPatient.name} registered successfully`, 'success');
+    setShowRegisterModal(false);
+    setPatientFormData({});
+  };
 
   const handleBookAppointment = (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,7 +87,10 @@ export default function AppointmentBooking() {
             />
             <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
           </div>
-          <Button onClick={() => setShowModal(true)}>Book Appointment</Button>
+          <div className="flex space-x-2">
+            <Button variant="outline" onClick={() => setShowRegisterModal(true)}>Register Patient</Button>
+            <Button onClick={() => setShowModal(true)}>Book Appointment</Button>
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -114,6 +140,73 @@ export default function AppointmentBooking() {
       </Card>
 
       <Modal
+        isOpen={showRegisterModal}
+        onClose={() => { setShowRegisterModal(false); setPatientFormData({}); }}
+        title="Register New Patient"
+        size="lg"
+        footer={
+          <div className="flex justify-end space-x-3">
+            <Button variant="outline" onClick={() => setShowRegisterModal(false)}>Cancel</Button>
+            <Button onClick={() => {
+               const form = document.getElementById('register-form') as HTMLFormElement;
+               if (form) form.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+            }}>Register Patient</Button>
+          </div>
+        }
+      >
+        <form id="register-form" onSubmit={handleRegisterPatient} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+            <input
+              type="text"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={patientFormData.name || ''}
+              onChange={(e) => setPatientFormData({...patientFormData, name: e.target.value})}
+              placeholder="Enter full name"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth *</label>
+              <input
+                type="date"
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={patientFormData.dob || ''}
+                onChange={(e) => setPatientFormData({...patientFormData, dob: e.target.value})}
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gender *</label>
+              <select
+                required
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+                value={patientFormData.gender || ''}
+                onChange={(e) => setPatientFormData({...patientFormData, gender: e.target.value})}
+              >
+                <option value="">Select Gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number *</label>
+            <input
+              type="tel"
+              required
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
+              value={patientFormData.phone || ''}
+              onChange={(e) => setPatientFormData({...patientFormData, phone: e.target.value})}
+              placeholder="(555) 000-0000"
+            />
+          </div>
+        </form>
+      </Modal>
+
+      <Modal
         isOpen={showModal}
         onClose={() => { setShowModal(false); setFormData({}); }}
         title="Book New Appointment"
@@ -130,15 +223,18 @@ export default function AppointmentBooking() {
       >
         <form id="booking-form" onSubmit={handleBookAppointment} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Patient Name *</label>
-            <input
-              type="text"
+            <label className="block text-sm font-medium text-gray-700 mb-1">Patient *</label>
+            <select
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
               value={formData.patientName || ''}
               onChange={(e) => setFormData({...formData, patientName: e.target.value})}
-              placeholder="Enter patient name"
-            />
+            >
+              <option value="">Select Patient</option>
+              {patients.map(p => (
+                <option key={p.id} value={p.name}>{p.name} (DOB: {p.dob})</option>
+              ))}
+            </select>
           </div>
           <div className="grid grid-cols-2 gap-4">
              <div>
