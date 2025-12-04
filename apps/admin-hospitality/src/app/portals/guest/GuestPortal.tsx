@@ -1,6 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
+import Services from './pages/Services';
 
 const GuestDashboard = () => (
   <div className="space-y-8">
@@ -100,7 +101,6 @@ const GuestDashboard = () => (
   </div>
 );
 
-const Services = () => <div className="p-6 bg-white rounded-lg shadow">Service Directory Placeholder</div>;
 const CheckOut = () => <div className="p-6 bg-white rounded-lg shadow">Check-out & Feedback Placeholder</div>;
 
 interface GuestPortalProps {
@@ -135,4 +135,3 @@ export default function GuestPortal({ user, onLogout }: GuestPortalProps) {
     </AdminLayout>
   );
 }
-
