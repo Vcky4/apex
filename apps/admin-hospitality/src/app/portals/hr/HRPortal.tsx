@@ -1,6 +1,8 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
+import Scheduling from './pages/Scheduling';
+import Training from './pages/Training';
 
 // Placeholder pages
 const HRDashboard = () => (
@@ -123,9 +125,6 @@ const HRDashboard = () => (
     </div>
   </div>
 );
-
-const Scheduling = () => <div className="p-6 bg-white rounded-lg shadow">Scheduling & Roster Management Placeholder</div>;
-const Training = () => <div className="p-6 bg-white rounded-lg shadow">Service Excellence Training Placeholder</div>;
 
 interface HRPortalProps {
   user: any;
