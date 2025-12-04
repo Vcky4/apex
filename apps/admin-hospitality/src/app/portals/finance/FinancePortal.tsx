@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
 import RatesAndInventory from './pages/RatesAndInventory';
+import AccountsAndBilling from './pages/AccountsAndBilling';
 
 // Placeholder pages
 const FinanceDashboard = () => (
@@ -104,8 +105,6 @@ const FinanceDashboard = () => (
   </div>
 );
 
-const Accounts = () => <div className="p-6 bg-white rounded-lg shadow">Accounts & Billing Placeholder</div>;
-
 interface FinancePortalProps {
   user: any;
   onLogout: () => void;
@@ -132,7 +131,7 @@ export default function FinancePortal({ user, onLogout }: FinancePortalProps) {
       <Routes>
         <Route path="dashboard" element={<FinanceDashboard />} />
         <Route path="rates" element={<RatesAndInventory />} />
-        <Route path="accounts" element={<Accounts />} />
+        <Route path="accounts" element={<AccountsAndBilling />} />
         <Route path="/" element={<Navigate to="dashboard" replace />} />
       </Routes>
     </AdminLayout>
