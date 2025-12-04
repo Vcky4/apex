@@ -1404,6 +1404,8 @@ FAQ and knowledge base access
 Live chat support
 Return and exchange portal
 Connects to: Admin customer service systems
+
+
 5. Hospitality Vertical - Complete Portal Ecosystem
 5.1 Guest Portal (/hospitality/guest)
 Dashboard (/hospitality/guest/dashboard)

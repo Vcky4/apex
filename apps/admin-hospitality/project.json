@@ -1,0 +1,9 @@
+{
+  "name": "admin-hospitality",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/admin-hospitality/src",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project admin-hospitality --web",
+  "targets": {}
+}
