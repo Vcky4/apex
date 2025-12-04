@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
 import FrontDesk from './pages/FrontDesk';
+import Tasks from './pages/Tasks';
 
 const StaffDashboard = () => (
   <div className="space-y-8">
@@ -123,8 +124,6 @@ const StaffDashboard = () => (
     </div>
   </div>
 );
-
-const Tasks = () => <div className="p-6 bg-white rounded-lg shadow">Task Management Placeholder</div>;
 
 interface StaffPortalProps {
   user: any;
