@@ -1,32 +1,106 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import { AdminLayout, NavItem } from '@apex-providers/ui-components';
-import { Dashboard } from '@apex-providers/ui-components';
+import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
 
 // Placeholder pages
 const FinanceDashboard = () => (
-  <Dashboard
-    stats={[
-      { label: 'RevPAR', value: '$142.50', change: '+12%', changeType: 'increase' },
-      { label: 'Occupancy', value: '78%', change: '+5%', changeType: 'increase' },
-      { label: 'ADR', value: '$182.00', change: '+3%', changeType: 'increase' },
-      { label: 'F&B Revenue', value: '$12,450', change: 'Today', changeType: 'neutral' },
-    ]}
-    charts={
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-64 flex items-center justify-center text-gray-400">
-          Revenue Trends Chart Placeholder
-        </div>
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 h-64 flex items-center justify-center text-gray-400">
-          Channel Performance Chart Placeholder
-        </div>
-      </div>
-    }
-    recentActivity={[
-      { id: 1, user: 'System', action: 'Night Audit Completed', time: '4 hours ago' },
-      { id: 2, user: 'Reservation', action: 'Group Booking #442 Confirmed', time: '2 hours ago' },
-    ]}
-  />
+  <div className="space-y-8">
+    <div>
+      <h1 className="text-3xl font-bold text-charcoal-gray">Financial Overview</h1>
+      <p className="text-gray-600 mt-2">Revenue Management & P&L</p>
+    </div>
+
+    {/* Revenue Management */}
+    <section>
+      <h2 className="text-xl font-bold text-charcoal-gray mb-4">Revenue Metrics</h2>
+      <DashboardGrid columns={4}>
+        <StatCard
+          title="RevPAR"
+          value="$142.50"
+          icon={<span className="text-xl">📈</span>}
+          color="green"
+          trend={{ value: 12, isPositive: true }}
+        />
+        <StatCard
+          title="ADR"
+          value="$182.00"
+          icon={<span className="text-xl">💵</span>}
+          color="blue"
+          trend={{ value: 3, isPositive: true }}
+        />
+        <StatCard
+          title="Occupancy"
+          value="78%"
+          icon={<span className="text-xl">🏨</span>}
+          color="purple"
+          trend={{ value: 5, isPositive: true }}
+        />
+        <StatCard
+          title="Total Rev (YTD)"
+          value="$2.4M"
+          icon={<span className="text-xl">💰</span>}
+          color="gold"
+        />
+      </DashboardGrid>
+    </section>
+
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      {/* Channel Performance */}
+      <section>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Channel Performance</h2>
+        <Card>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Direct Bookings</span>
+                <span className="font-bold">45%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '45%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>OTA (Expedia, Booking)</span>
+                <span className="font-bold">35%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '35%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Corporate / Group</span>
+                <span className="font-bold">20%</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-purple-500 h-2 rounded-full" style={{ width: '20%' }}></div>
+              </div>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      {/* Cost Control */}
+      <section>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Cost Control</h2>
+        <DashboardGrid columns={2}>
+          <StatCard
+            title="Payroll %"
+            value="28%"
+            color="orange"
+            trend={{ value: 1, isPositive: false }} // slight increase
+          />
+          <StatCard
+            title="F&B Cost"
+            value="32%"
+            color="red"
+            trend={{ value: 2, isPositive: false }} // Over budget
+          />
+        </DashboardGrid>
+      </section>
+    </div>
+  </div>
 );
 
 const Rates = () => <div className="p-6 bg-white rounded-lg shadow">Rate & Inventory Management Placeholder</div>;
@@ -64,4 +138,3 @@ export default function FinancePortal({ user, onLogout }: FinancePortalProps) {
     </AdminLayout>
   );
 }
-

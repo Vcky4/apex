@@ -4,6 +4,8 @@ import Login from './auth/Login';
 import HRPortal from './portals/hr/HRPortal';
 import FinancePortal from './portals/finance/FinancePortal';
 import OperationsPortal from './portals/operations/OperationsPortal';
+import GuestPortal from './portals/guest/GuestPortal';
+import StaffPortal from './portals/staff/StaffPortal';
 
 // Helper function to get the correct route for a role
 const getRouteForRole = (role: string): string => {
@@ -14,6 +16,10 @@ const getRouteForRole = (role: string): string => {
       return '/admin/finance/dashboard';
     case 'OPERATIONS_ADMIN':
       return '/admin/operations/dashboard';
+    case 'GUEST':
+      return '/hospitality/guest/dashboard';
+    case 'STAFF':
+      return '/hospitality/staff/dashboard';
     default:
       return '/admin/operations/dashboard';
   }
@@ -28,8 +34,11 @@ const isPathForRole = (pathname: string, role: string): boolean => {
       return pathname.startsWith('/admin/finance');
     case 'OPERATIONS_ADMIN':
       return pathname.startsWith('/admin/operations');
+    case 'GUEST':
+      return pathname.startsWith('/hospitality/guest');
+    case 'STAFF':
+      return pathname.startsWith('/hospitality/staff');
     default:
-      // Super admin or unknown role fallback - maybe allow everything for dev
       return true; 
   }
 };
@@ -75,6 +84,12 @@ function AppRouter({ user, logout }: { user: any; logout: () => void }) {
       
       {/* Operations Portal Routes */}
       <Route path="/admin/operations/*" element={<OperationsPortal user={user} onLogout={logout} />} />
+      
+      {/* Guest Portal Routes */}
+      <Route path="/hospitality/guest/*" element={<GuestPortal user={user} onLogout={logout} />} />
+      
+      {/* Staff Portal Routes */}
+      <Route path="/hospitality/staff/*" element={<StaffPortal user={user} onLogout={logout} />} />
       
       {/* Default redirect */}
       <Route

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@apex-providers/ui-components';
 
 interface LoginProps {
@@ -28,7 +28,7 @@ export default function Login({ onLogin }: LoginProps) {
             <span className="text-navy-900 font-bold text-4xl">H</span>
           </div>
           <h1 className="text-3xl font-bold text-white mb-2">Hospitality Management</h1>
-          <p className="text-white/80">Apex Hospitality Admin System</p>
+          <p className="text-white/80">Apex Hospitality System</p>
         </div>
 
         {/* Login Form */}
@@ -45,7 +45,7 @@ export default function Login({ onLogin }: LoginProps) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500 placeholder:text-gray-400"
-                placeholder="admin@hotel.com"
+                placeholder="user@hotel.com"
                 required
               />
             </div>
@@ -73,9 +73,15 @@ export default function Login({ onLogin }: LoginProps) {
                 onChange={(e) => setRole(e.target.value)}
                 className="w-full px-4 py-3 bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gold-500"
               >
-                <option value="HR_ADMIN">HR Administrator</option>
-                <option value="FINANCE_ADMIN">Finance Administrator</option>
-                <option value="OPERATIONS_ADMIN">Operations Administrator</option>
+                <optgroup label="Administration">
+                  <option value="HR_ADMIN">HR Administrator</option>
+                  <option value="FINANCE_ADMIN">Finance Administrator</option>
+                  <option value="OPERATIONS_ADMIN">Operations Administrator</option>
+                </optgroup>
+                <optgroup label="User Portals">
+                  <option value="GUEST">Hotel Guest</option>
+                  <option value="STAFF">Hotel Staff</option>
+                </optgroup>
               </select>
             </div>
 
@@ -86,24 +92,36 @@ export default function Login({ onLogin }: LoginProps) {
 
           <div className="mt-6">
             <p className="text-center text-sm text-gray-600 mb-4">Quick Demo Login:</p>
-            <div className="space-y-2">
+            <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => quickLogin('HR_ADMIN', 'hr@hotel.com')}
-                className="w-full px-4 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-sm font-medium text-left"
+                className="px-3 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 text-xs font-medium text-left"
               >
-                👥 HR Administrator
+                👥 HR Admin
               </button>
               <button
                 onClick={() => quickLogin('FINANCE_ADMIN', 'finance@hotel.com')}
-                className="w-full px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-sm font-medium text-left"
+                className="px-3 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 text-xs font-medium text-left"
               >
-                💰 Finance Administrator
+                💰 Finance Admin
               </button>
               <button
                 onClick={() => quickLogin('OPERATIONS_ADMIN', 'ops@hotel.com')}
-                className="w-full px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 text-sm font-medium text-left"
+                className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-xs font-medium text-left"
               >
-                🏨 Operations Administrator
+                🏨 Ops Admin
+              </button>
+              <button
+                onClick={() => quickLogin('GUEST', 'guest@hotel.com')}
+                className="px-3 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 text-xs font-medium text-left"
+              >
+                👋 Guest
+              </button>
+              <button
+                onClick={() => quickLogin('STAFF', 'staff@hotel.com')}
+                className="px-3 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 text-xs font-medium text-left col-span-2"
+              >
+                👔 Staff (Front Desk/Housekeeping)
               </button>
             </div>
           </div>
@@ -116,4 +134,3 @@ export default function Login({ onLogin }: LoginProps) {
     </div>
   );
 }
-
