@@ -27,21 +27,53 @@ const Modal = ({ isOpen, onClose, title, children }: { isOpen: boolean; onClose:
 };
 
 export default function FrontDesk() {
-  const [view, setView] = useState<'checkin' | 'checkout' | 'inhouse'>('checkin');
+  const [view, setView] = useState<'checkin' | 'checkout' | 'inhouse' | 'orders'>('checkin');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedGuest, setSelectedGuest] = useState<any>(null);
   const [isCheckInModalOpen, setIsCheckInModalOpen] = useState(false);
   const [isCheckOutModalOpen, setIsCheckOutModalOpen] = useState(false);
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+  const [isCreateGuestModalOpen, setIsCreateGuestModalOpen] = useState(false);
+  const [newGuest, setNewGuest] = useState({ name: '', room: '', type: 'Standard', status: 'Arriving', bookingId: '', balance: 0, loyalty: 'Member' });
 
-  // Mock Data
-  const guests = [
-    { id: 1, name: 'Alice Smith', room: '304', type: 'Standard', status: 'Arriving', bookingId: 'BK-7890', balance: 0, loyalty: 'Silver' },
-    { id: 2, name: 'Bob Jones', room: '501', type: 'Suite', status: 'Arriving', bookingId: 'BK-7891', balance: 0, loyalty: 'Gold' },
-    { id: 3, name: 'Charlie Brown', room: '202', type: 'Standard', status: 'Departing', bookingId: 'BK-7885', balance: 125.50, loyalty: 'Member' },
-    { id: 4, name: 'David Wilson', room: '405', type: 'Deluxe', status: 'In-House', bookingId: 'BK-7888', balance: 450.00, loyalty: 'Platinum' },
-    { id: 5, name: 'Eva Green', room: '601', type: 'Suite', status: 'Departing', bookingId: 'BK-7882', balance: 0.00, loyalty: 'Gold' },
-  ];
+  // Mock Data & Local Storage
+  const [guests, setGuests] = useState<any[]>([]);
+  const [orders, setOrders] = useState<any[]>([]);
+
+  React.useEffect(() => {
+    // Load guests
+    const storedGuests = localStorage.getItem('apex-hospitality-guests');
+    if (storedGuests) {
+      setGuests(JSON.parse(storedGuests));
+    } else {
+      const initialGuests = [
+        { id: 1, name: 'Alice Smith', room: '304', type: 'Standard', status: 'Arriving', bookingId: 'BK-7890', balance: 0, loyalty: 'Silver' },
+        { id: 2, name: 'Bob Jones', room: '501', type: 'Suite', status: 'Arriving', bookingId: 'BK-7891', balance: 0, loyalty: 'Gold' },
+        { id: 3, name: 'Charlie Brown', room: '202', type: 'Standard', status: 'Departing', bookingId: 'BK-7885', balance: 125.50, loyalty: 'Member' },
+        { id: 4, name: 'David Wilson', room: '405', type: 'Deluxe', status: 'In-House', bookingId: 'BK-7888', balance: 450.00, loyalty: 'Platinum' },
+        { id: 5, name: 'Eva Green', room: '601', type: 'Suite', status: 'Departing', bookingId: 'BK-7882', balance: 0.00, loyalty: 'Gold' },
+      ];
+      setGuests(initialGuests);
+      localStorage.setItem('apex-hospitality-guests', JSON.stringify(initialGuests));
+    }
+
+    // Load orders
+    const storedOrders = localStorage.getItem('apex-hospitality-orders');
+    if (storedOrders) {
+      setOrders(JSON.parse(storedOrders));
+    }
+  }, []);
+
+  const handleCreateGuest = () => {
+    const guestId = Math.max(...guests.map(g => g.id), 0) + 1;
+    const guestToAdd = { ...newGuest, id: guestId, bookingId: `BK-${7900 + guestId}` };
+    const updatedGuests = [...guests, guestToAdd];
+    setGuests(updatedGuests);
+    localStorage.setItem('apex-hospitality-guests', JSON.stringify(updatedGuests));
+    setIsCreateGuestModalOpen(false);
+    setNewGuest({ name: '', room: '', type: 'Standard', status: 'Arriving', bookingId: '', balance: 0, loyalty: 'Member' });
+    alert(`Guest ${guestToAdd.name} created and assigned to room ${guestToAdd.room}`);
+  };
 
   const filteredGuests = guests.filter(g => {
     const matchesSearch = g.name.toLowerCase().includes(searchTerm.toLowerCase()) || g.room.includes(searchTerm);
@@ -65,12 +97,18 @@ export default function FrontDesk() {
   };
 
   const completeCheckIn = () => {
+    const updatedGuests = guests.map(g => g.id === selectedGuest.id ? { ...g, status: 'In-House' } : g);
+    setGuests(updatedGuests);
+    localStorage.setItem('apex-hospitality-guests', JSON.stringify(updatedGuests));
     alert(`Check-in completed for ${selectedGuest.name}. Key card activated.`);
     setIsCheckInModalOpen(false);
   };
 
   const completeCheckOut = () => {
-    alert(`Check-out completed for ${selectedGuest.name}. Room 304 status updated to Dirty.`);
+    const updatedGuests = guests.map(g => g.id === selectedGuest.id ? { ...g, status: 'Departed' } : g);
+    setGuests(updatedGuests);
+    localStorage.setItem('apex-hospitality-guests', JSON.stringify(updatedGuests));
+    alert(`Check-out completed for ${selectedGuest.name}. Room ${selectedGuest.room} status updated to Dirty.`);
     setIsCheckOutModalOpen(false);
   };
 
@@ -82,6 +120,7 @@ export default function FrontDesk() {
           <p className="text-gray-600 mt-1">Manage arrivals, departures, and guest requests</p>
         </div>
         <div className="flex space-x-2">
+          <Button onClick={() => setIsCreateGuestModalOpen(true)}>+ Create Guest</Button>
           <div className="relative">
             <input 
               type="text" 
@@ -123,9 +162,51 @@ export default function FrontDesk() {
         >
           In-House Guests
         </button>
+        <button 
+          onClick={() => setView('orders')}
+          className={`pb-3 px-4 font-medium text-sm transition-colors ${
+            view === 'orders' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Room Orders
+        </button>
       </div>
 
-      {/* Guest List */}
+      {view === 'orders' ? (
+        <Card>
+          <div className="space-y-4">
+             <h3 className="font-bold text-gray-900">Active Room Orders</h3>
+             {orders.length === 0 ? (
+                <p className="text-gray-500">No active orders found.</p>
+             ) : (
+               <div className="grid gap-4">
+                 {orders.map((order, idx) => (
+                   <div key={idx} className="p-4 border border-gray-200 rounded-lg flex justify-between items-center">
+                     <div>
+                       <div className="flex items-center space-x-2">
+                         <span className="font-bold text-lg">Room {order.room || 'Unknown'}</span>
+                         <span className="text-sm text-gray-500">{new Date(order.timestamp).toLocaleTimeString()}</span>
+                       </div>
+                       <ul className="mt-2 text-sm text-gray-700">
+                         {order.items.map((item: any, i: number) => (
+                           <li key={i}>{item.quantity}x {item.name}</li>
+                         ))}
+                       </ul>
+                     </div>
+                     <div className="text-right">
+                       <p className="font-bold text-lg">${order.total.toFixed(2)}</p>
+                       <span className="inline-block px-2 py-1 text-xs font-semibold rounded bg-yellow-100 text-yellow-800">
+                         {order.status || 'Pending'}
+                       </span>
+                     </div>
+                   </div>
+                 ))}
+               </div>
+             )}
+          </div>
+        </Card>
+      ) : (
+      /* Guest List */
       <Card>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
@@ -177,6 +258,66 @@ export default function FrontDesk() {
           </table>
         </div>
       </Card>
+      )}
+
+      {/* Create Guest Modal */}
+      <Modal
+        isOpen={isCreateGuestModalOpen}
+        onClose={() => setIsCreateGuestModalOpen(false)}
+        title="Create Guest Reservation"
+      >
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Guest Name</label>
+            <input 
+              type="text" 
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={newGuest.name}
+              onChange={(e) => setNewGuest({...newGuest, name: e.target.value})}
+              placeholder="Full Name"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+             <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Room Number</label>
+                <input 
+                  type="text" 
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={newGuest.room}
+                  onChange={(e) => setNewGuest({...newGuest, room: e.target.value})}
+                  placeholder="e.g. 305"
+                />
+             </div>
+             <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Room Type</label>
+                <select 
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                  value={newGuest.type}
+                  onChange={(e) => setNewGuest({...newGuest, type: e.target.value})}
+                >
+                  <option value="Standard">Standard</option>
+                  <option value="Deluxe">Deluxe</option>
+                  <option value="Suite">Suite</option>
+                </select>
+             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
+            <select 
+              className="w-full p-2 border border-gray-300 rounded-md"
+              value={newGuest.status}
+              onChange={(e) => setNewGuest({...newGuest, status: e.target.value})}
+            >
+              <option value="Arriving">Arriving (Check-in)</option>
+              <option value="In-House">In-House</option>
+            </select>
+          </div>
+          <div className="flex justify-end space-x-3 pt-4">
+            <Button variant="outline" onClick={() => setIsCreateGuestModalOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateGuest} disabled={!newGuest.name || !newGuest.room}>Create & Assign</Button>
+          </div>
+        </div>
+      </Modal>
 
       {/* Check-In Modal */}
       <Modal

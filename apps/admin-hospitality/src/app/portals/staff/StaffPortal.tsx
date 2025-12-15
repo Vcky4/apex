@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
 import FrontDesk from './pages/FrontDesk';
 import Tasks from './pages/Tasks';
+import Kitchen from './pages/Kitchen';
 
 const StaffDashboard = () => (
   <div className="space-y-8">
@@ -134,6 +135,7 @@ export default function StaffPortal({ user, onLogout }: StaffPortalProps) {
   const navigation: NavItem[] = [
     { label: 'Dashboard', href: '/hospitality/staff/dashboard', icon: '📊' },
     { label: 'Front Desk', href: '/hospitality/staff/frontdesk', icon: '🖥️' },
+    { label: 'Kitchen', href: '/hospitality/staff/kitchen', icon: '👨‍🍳' },
     { label: 'Tasks', href: '/hospitality/staff/tasks', icon: '✅' },
   ];
 
@@ -151,6 +153,7 @@ export default function StaffPortal({ user, onLogout }: StaffPortalProps) {
       <Routes>
         <Route path="dashboard" element={<StaffDashboard />} />
         <Route path="frontdesk" element={<FrontDesk />} />
+        <Route path="kitchen" element={<Kitchen />} />
         <Route path="tasks" element={<Tasks />} />
         <Route path="/" element={<Navigate to="dashboard" replace />} />
       </Routes>

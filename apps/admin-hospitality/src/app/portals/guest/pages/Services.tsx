@@ -94,6 +94,20 @@ export default function Services() {
   const totalCartValue = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   const submitOrder = () => {
+    // Save to local storage for Kitchen/Front Desk
+    const newOrder = {
+        id: Date.now(),
+        room: '304', // Hardcoded for this demo user "Alice Smith"
+        items: cart,
+        total: totalCartValue,
+        status: 'Pending',
+        timestamp: new Date().toISOString()
+    };
+
+    const storedOrders = localStorage.getItem('apex-hospitality-orders');
+    const orders = storedOrders ? JSON.parse(storedOrders) : [];
+    localStorage.setItem('apex-hospitality-orders', JSON.stringify([...orders, newOrder]));
+
     setCart([]);
     setToast(`Order placed successfully! Total: $${totalCartValue.toFixed(2)}`);
   };

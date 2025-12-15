@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, Button } from '@apex-providers/ui-components';
 
 // Reusing Modal Component
@@ -41,6 +41,45 @@ export default function Tasks() {
     if (filter === 'my-tasks') return task.assignee.includes('Sarah'); // Mock current user
     return true;
   });
+
+  useEffect(() => {
+    // Load tasks from local storage
+    const storedTasks = localStorage.getItem('apex-hospitality-tasks');
+    if (storedTasks) {
+        setTasks(prev => {
+            // Merge stored tasks with default tasks if not already present
+            const stored = JSON.parse(storedTasks);
+            const combined = [...prev];
+            stored.forEach((t: any) => {
+                if (!combined.find(c => c.id === t.id)) {
+                    combined.unshift(t);
+                }
+            });
+            return combined;
+        });
+    }
+
+    // Poll for new tasks
+    const interval = setInterval(() => {
+        const currentStored = localStorage.getItem('apex-hospitality-tasks');
+        if (currentStored) {
+            const stored = JSON.parse(currentStored);
+            setTasks(prev => {
+                const combined = [...prev];
+                let hasNew = false;
+                stored.forEach((t: any) => {
+                    if (!combined.find(c => c.id === t.id)) {
+                        combined.unshift(t);
+                        hasNew = true;
+                    }
+                });
+                return hasNew ? combined : prev;
+            });
+        }
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const handleTaskClick = (task: any) => {
     setSelectedTask(task);
