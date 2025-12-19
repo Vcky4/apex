@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, DashboardGrid, StatCard } from '@apex-providers/ui-components';
+import { Card, Button, StatCard } from '@apex-providers/ui-components';
 
 export default function EventVenueManagement() {
   const [selectedVenue, setSelectedVenue] = useState<string>('all');
@@ -196,7 +196,7 @@ export default function EventVenueManagement() {
       </div>
 
       {/* Statistics Overview */}
-      <DashboardGrid columns={5}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard
           title="Total Venues"
           value={stats.totalVenues.toString()}
@@ -227,7 +227,7 @@ export default function EventVenueManagement() {
           icon={<span className="text-xl">📊</span>}
           color="orange"
         />
-      </DashboardGrid>
+      </div>
 
       {/* Filters */}
       <div className="flex space-x-4">

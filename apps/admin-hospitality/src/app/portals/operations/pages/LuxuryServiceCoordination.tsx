@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, DashboardGrid, StatCard } from '@apex-providers/ui-components';
+import { Card, Button, StatCard } from '@apex-providers/ui-components';
 
 export default function LuxuryServiceCoordination() {
   const [selectedService, setSelectedService] = useState<string>('all');
@@ -154,7 +154,7 @@ export default function LuxuryServiceCoordination() {
       </div>
 
       {/* Statistics Overview */}
-      <DashboardGrid columns={5}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard
           title="Total Services"
           value={stats.totalServices.toString()}
@@ -185,7 +185,7 @@ export default function LuxuryServiceCoordination() {
           icon={<span className="text-xl">👥</span>}
           color="purple"
         />
-      </DashboardGrid>
+      </div>
 
       {/* Filters */}
       <div className="flex space-x-4">

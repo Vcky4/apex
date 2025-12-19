@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Card, Button, DashboardGrid, StatCard } from '@apex-providers/ui-components';
+import { Card, Button, StatCard } from '@apex-providers/ui-components';
 
 export default function LuxuryStaffManagement() {
   const [selectedProperty, setSelectedProperty] = useState<string>('all');
@@ -82,7 +82,7 @@ export default function LuxuryStaffManagement() {
       </div>
 
       {/* Statistics Overview */}
-      <DashboardGrid columns={5}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
         <StatCard
           title="Total Staff"
           value={stats.totalStaff.toString()}
@@ -113,7 +113,7 @@ export default function LuxuryStaffManagement() {
           icon={<span className="text-xl">😊</span>}
           color="green"
         />
-      </DashboardGrid>
+      </div>
 
       {/* Filters */}
       <div className="flex space-x-4">
