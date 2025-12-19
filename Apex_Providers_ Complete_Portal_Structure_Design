@@ -1,0 +1,1339 @@
+# Apex Providers: Complete Portal Structure Design Flow
+
+* * *
+## ADMIN ECOSYSTEM
+* * *
+## 1\. Education Vertical - Complete Administrative Structure
+### 1.1 Human Resources Administration (`/education/admin/hr`)
+### **HR Executive Dashboard** (`/education/admin/hr/dashboard`)
+**Color Scheme:** Professional Blue with HR Green accents **Access Level:** Complete staff management and HR operations
+**Content Structure:**
+*   **Workforce Analytics:**
+*   Staff Headcount & Turnover Rates
+*   Teacher-Student Ratio Monitoring
+*   Department-wise Staff Distribution
+*   Diversity & Inclusion Metrics
+*   **HR Operations:**
+*   Pending Recruitment Requests
+*   Performance Review Status
+*   Leave & Attendance Compliance
+*   Training & Development Progress
+*   **Compliance Monitoring:**
+*   Certification Expiry Tracking
+*   Background Check Status
+*   Labor Law Compliance
+*   Union Agreement Management
+### **HR Management Modules:**
+**1.1.1 Recruitment & Staffing** (`/education/admin/hr/recruitment`)
+*   Position Requisition Management
+*   Applicant Tracking System (ATS)
+*   Interview Scheduling & Coordination
+*   Onboarding Workflow Automation
+*   **Integration Points:** Finance for salary budgeting, Department heads for requirements
+**1.1.2 Employee Lifecycle** (`/education/admin/hr/employee-lifecycle`)
+*   Contract Management & Renewals
+*   Promotion & Transfer Processing
+*   Exit Interview Management
+*   Alumni Network Management
+*   **Reminder System:** Contract renewals, probation reviews, exit formalities
+**1.1.3 Performance Management** (`/education/admin/hr/performance`)
+*   Teacher Performance Evaluation System
+*   Support Staff Assessment
+*   Professional Growth Tracking
+*   360-Degree Feedback Collection
+*   **Analytics:** Performance trends, improvement areas, recognition programs
+**1.1.4 Compensation & Benefits** (`/education/admin/hr/compensation`)
+*   Salary Structure Management
+*   Benefits Administration (Health, Retirement)
+*   Bonus & Incentive Programs
+*   Payroll Integration & Validation
+*   **Integration:** Finance department, payroll systems
+**1.1.5 HR Compliance** (`/education/admin/hr/compliance`)
+*   Certification & License Tracking
+*   Background Check Management
+*   Labor Law Compliance Monitoring
+*   Audit Preparation & Documentation
+*   **Reminder System:** License renewals, compliance training, audit deadlines
+### 1.2 Finance & Accounting Administration (`/education/admin/finance`)
+### **Finance Executive Dashboard** (`/education/admin/finance/dashboard`)
+**Color Scheme:** Financial Green with analytical Blue accents **Access Level:** Complete financial management and oversight
+**Content Structure:**
+*   **Financial Health:**
+*   Real-time Budget vs Actual Analysis
+*   Cash Flow Monitoring & Forecasting
+*   Revenue Collection Efficiency
+*   Expense Management Metrics
+*   **Operational Finance:**
+*   Accounts Payable & Receivable Status
+*   Grant & Funding Management
+*   Financial Aid Distribution
+*   Procurement Process Tracking
+### **Finance Management Modules:**
+**1.2.1 Budget Management** (`/education/admin/finance/budget`)
+*   Departmental Budget Allocation
+*   Budget vs Expenditure Tracking
+*   Forecasting & Scenario Planning
+*   Capital Expenditure Approval Workflow
+*   **Integration:** Department heads, procurement system
+**1.2.2 Fee Management** (`/education/admin/finance/fees`)
+*   Tuition Fee Structure Management
+*   Payment Plan Configuration
+*   Scholarship & Discount Administration
+*   Outstanding Fee Collection Tracking
+*   **Reminder System:** Fee due dates, payment plans, collection escalation
+**1.2.3 Accounts Management** (`/education/admin/finance/accounts`)
+*   Accounts Payable Processing
+*   Accounts Receivable Management
+*   Bank Reconciliation Automation
+*   Financial Reporting & Statements
+*   **Integration:** Banking systems, parent payment portal
+**1.2.4 Grant & Funding Management** (`/education/admin/finance/grants`)
+*   Grant Application Tracking
+*   Fund Allocation & Utilization
+*   Compliance Reporting for Grants
+*   Donor Management & Reporting
+*   **Reminder System:** Grant deadlines, reporting requirements, renewal dates
+**1.2.5 Procurement & Inventory** (`/education/admin/finance/procurement`)
+*   Purchase Requisition Workflow
+*   Vendor Management & Performance
+*   Inventory Tracking & Valuation
+*   Asset Management & Depreciation
+*   **Integration:** Department requisitions, vendor portals
+### 1.3 Academic Administration (`/education/admin/academics`)
+### **Academic Executive Dashboard** (`/education/admin/academics/dashboard`)
+**Color Scheme:** Academic Gold with learning Blue accents **Access Level:** Curriculum and academic program management
+**Content Structure:**
+*   **Academic Performance:**
+*   School-wide Academic Results Analysis
+*   Standardized Test Performance Tracking
+*   Curriculum Implementation Progress
+*   Learning Outcome Achievement Rates
+*   **Program Management:**
+*   Course Enrollment & Capacity Planning
+*   Teacher Workload Distribution
+*   Resource Allocation Efficiency
+*   Academic Calendar Management
+### **Academic Management Modules:**
+**1.3.1 Curriculum Development** (`/education/admin/academics/curriculum`)
+*   Curriculum Design & Mapping
+*   Standards Alignment Tracking
+*   Textbook & Resource Selection
+*   Program Evaluation & Improvement
+*   **Integration:** Teacher portals, learning management system
+**1.3.2 Student Assessment** (`/education/admin/academics/assessment`)
+*   Assessment Schedule Management
+*   Test Development & Security
+*   Results Analysis & Reporting
+*   Progress Monitoring Systems
+*   **Analytics:** Performance trends, achievement gaps, improvement areas
+**1.3.3 Program Accreditation** (`/education/admin/academics/accreditation`)
+*   Accreditation Requirement Tracking
+*   Self-Study Documentation Management
+*   Site Visit Coordination
+*   Compliance Evidence Collection
+*   **Reminder System:** Reporting deadlines, review cycles, improvement plans
+### 1.4 Operations & Facilities Administration (`/education/admin/operations`)
+### **Operations Executive Dashboard** (`/education/admin/operations/dashboard`)
+**Color Scheme:** Operational Blue with safety Green accents **Access Level:** Complete facilities and operational management
+**Content Structure:**
+*   **Facilities Management:**
+*   Building Utilization & Capacity
+*   Maintenance Work Order Status
+*   Safety & Security Compliance
+*   Energy Consumption Analytics
+*   **Support Services:**
+*   Transportation Fleet Management
+*   Food Service Operations
+*   IT Infrastructure Status
+*   Supply Chain Management
+### **Operations Management Modules:**
+**1.4.1 Facilities Management** (`/education/admin/operations/facilities`)
+*   Space Planning & Allocation
+*   Maintenance Schedule Management
+*   Capital Project Tracking
+*   Environmental Compliance Monitoring
+*   **Reminder System:** Maintenance schedules, inspection dates, project milestones
+**1.4.2 Transportation Management** (`/education/admin/operations/transportation`)
+*   Bus Route Optimization
+*   Fleet Maintenance Scheduling
+*   Driver Management & Compliance
+*   Parent Communication Systems
+*   **Integration:** GPS tracking, parent portals, scheduling systems
+**1.4.3 IT Administration** (`/education/admin/operations/it`)
+*   Network Infrastructure Management
+*   Device Inventory & Management
+*   Software License Tracking
+*   Help Desk & Support Management
+*   **Reminder System:** License renewals, maintenance windows, upgrade schedules
+### **1.4 Operations & Facilities Administration**
+**Enhanced Operations Executive Dashboard:**
+*   Visitor management metrics integrated with facilities usage
+*   Security compliance indicators with inviter accountability
+*   Overstay incident reports by department
+*   System usage analytics by inviter role
+
+### 1.5 Student Affairs Administration (`/education/admin/student-affairs`)
+### **Student Affairs Dashboard** (`/education/admin/student-affairs/dashboard`)
+**Color Scheme:** Student-focused Green with care Yellow accents **Access Level:** Comprehensive student life and support services management
+**Content Structure:**
+*   **Student Wellness:**
+*   Attendance & Punctuality Analytics
+*   Behavioral Incident Tracking
+*   Counseling Service Utilization
+*   Extracurricular Participation Rates
+*   **Support Services:**
+*   Special Education Program Management
+*   Health Services Coordination
+*   Career Counseling Effectiveness
+*   Parent Engagement Metrics
+*   Parent visitation patterns linked to student performance
+*   Visitor incidents correlated with behavioral data
+*   Early dismissal integration with visitor check-out
+*   Counseling visit coordination with visitor system
+### **Student Affairs Modules:**
+**1.5.1 Enrollment Management** (`/education/admin/student-affairs/enrollment`)
+*   Admission Process Workflow
+*   Student Registration & Records
+*   Class Placement Optimization
+*   Transfer & Withdrawal Processing
+*   **Integration:** Parent portals, academic systems
+**1.5.2 Student Support Services** (`/education/admin/student-affairs/support`)
+*   Counseling Program Management
+*   Special Needs Accommodation Tracking
+*   Tutoring & Academic Support
+*   Crisis Intervention Coordination
+*   **Reminder System:** IEP meetings, counseling sessions, support plan reviews
+**1.5.3 Discipline & Behavior Management** (`/education/admin/student-affairs/discipline`)
+*   Code of Conduct Management
+*   Incident Reporting & Tracking
+*   Restorative Practice Programs
+*   Parent Communication Logs
+*   **Analytics:** Behavior patterns, intervention effectiveness, trend analysis
+
+### **1.6 Security & Visitor Administration (/education/admin/security) <span style="color:red">(NEW)</span>**
+**Visitor Management Executive Dashboard** (/education/admin/security/dashboard)
+**Color Scheme:** Security Blue with alert Red accents
+**Access Level:** Security staff, School administration, Front desk personnel
+**Content Structure:**
+**Visitor Analytics:**
+*   Daily/Monthly Visitor Volume by Inviter Role
+*   Visitor Type Distribution (Parents, Contractors, Guests)
+*   Average Visit Duration by Department
+*   Pending Approval Requests by Inviter
+*   Overstay Alerts & Violations with Inviter Accountability
+**Security Operations:**
+*   Active Visitors on Campus with Inviter Information
+*   Scheduled Visits for Today with Host Details
+*   Pending Background Checks for Contractors
+*   Security Checkpoint Status
+**Compliance Monitoring:**
+*   Visitor Policy Compliance Rates by Inviter
+*   Emergency Evacuation Readiness
+*   Access Control Violations with Inviter Tracking
+*   Incident Reporting Status
+* * *
+## **Visitor Management Modules**
+### **1.6.1 Multi-Role Visitor Invite System (/education/admin/security/visitor-invite) <span style="color:red">(NEW)</span>**
+**Enhanced Invitation Workflow:**
+*       *   **Multi-Role Invitation Initiation:Administrators:** Full invitation privileges for any visitor type
+    *   **Teachers:** Parent meetings, guest speakers, classroom volunteers
+    *   **Students:** Parent/guardian visits (requires teacher approval)
+    *   **Staff:** Contractors, service providers, vendors
+    *   **Approval Process with Inviter Tracking:**Management receives requests with complete inviter details
+    *   Background check integration linked to inviter responsibility
+    *   Approval chain shows inviter → approver hierarchy
+    *   Automated approval based on inviter authority level
+    *   **Smart QR Code Generation:**Embedded inviter information in QR data structure
+    *   Role-based access permissions derived from inviter
+    *   Escalation contacts based on inviter department
+    *   Inviter notification upon visitor arrival/departure
+**Integration Points:** Teacher portals, Parent portals, Student portals, Staff scheduling systems
+### **1.6.2 Enhanced Visitor Check-in System (/education/admin/security/checkin) <span style="color:red">(NEW)</span>**
+**Check-in Process with Inviter Verification:**
+*   QR code scanning displays visitor + inviter information
+*   Photo capture and customized badge printing
+*   Emergency contact verification with inviter backup
+*   Purpose of visit confirmation against inviter's schedule
+**Enhanced Safety Features:**
+*   Sex Offender Registry cross-check
+*   Custody restriction alerts with inviter notification
+*   Visitor blacklist screening
+*   COVID-19 screening questionnaire
+**Inviter-Focused Reminder System:** Pre-visit notifications to both visitor and inviter, Host alerts, Check-in confirmations
+### **1.6.3 Visitor Monitoring & Overstay Management (/education/admin/security/monitoring) <span style="color:red">(NEW)</span>**
+**Real-time Monitoring with Inviter Accountability:**
+*   Active visitor dashboard showing visitor location + inviter details
+*   Visit duration tracking with inviter responsibility
+*   Automatic check-out reminders to visitor AND inviter
+*   Host notification system with escalation to inviter's manager
+**Enhanced Overstay Detection:**
+*   Automated flagging for exceeded stay duration
+*   Escalation protocols: Visitor → Inviter → Department Head → Security
+*   Security alert generation with inviter contact information
+*   Management notification system with inviter performance tracking
+**Inviter-Based Response Procedures:**
+*   Tier 1 (15 min before end): Notify Visitor + Inviter
+*   Tier 2 (30 min overdue): Notify Inviter + Security
+*   Tier 3 (60+ min overdue): Notify Inviter's Manager + Full Security
+*   Tier 4 (90+ min): Emergency protocols activation
+### **1.6.4 Emergency & Incident Management (/education/admin/security/emergency) <span style="color:red">(NEW)</span>**
+**Enhanced Emergency Features:**
+*   Instant campus-wide visitor roll call with inviter contacts
+*   Emergency evacuation tracking by inviter responsibility
+*   Lockdown procedure integration with inviter accountability
+*   Real-time visitor location mapping with inviter information
+**Incident Reporting with Inviter Chain:**
+*   Security incident documentation linked to inviter
+*   Visitor violation tracking by inviter department
+*   Follow-up action management assigned to inviter
+*   Compliance reporting with inviter performance metrics
+
+* * *
+## 2\. Healthcare Vertical - Complete Administrative Structure
+### 2.1 Healthcare HR Administration (`/healthcare/admin/hr`)
+### **Healthcare HR Executive Dashboard** (`/healthcare/admin/hr/dashboard`)
+**Color Scheme:** Medical White with HR Blue accents **Access Level:** Complete healthcare staff management
+**Content Structure:**
+*   **Clinical Staff Analytics:**
+*   Physician & Nurse Staffing Levels
+*   Specialty Coverage Analysis
+*   Staff-Patient Ratio Monitoring
+*   Clinical Competency Tracking
+*   **HR Operations:**
+*   Credentialing & Privileging Status
+*   Continuing Education Compliance
+*   Shift Scheduling Efficiency
+*   Staff Satisfaction & Burnout Monitoring
+### **Healthcare HR Modules:**
+**2.1.1 Clinical Staff Management** (`/healthcare/admin/hr/clinical-staff`)
+*   Physician Credentialing Workflow
+*   Nursing Staff Allocation
+*   Specialty Privilege Management
+*   Clinical Competency Assessment
+*   **Reminder System:** License renewals, credential expirations, competency assessments
+**2.1.2 Staff Scheduling & Rotation** (`/healthcare/admin/hr/scheduling`)
+*   Shift Pattern Optimization
+*   On-call Schedule Management
+*   Vacation & Leave Coordination
+*   Overtime & Staffing Gap Analysis
+*   **Integration:** Timekeeping systems, payroll, clinical departments
+**2.1.3 Healthcare Compliance** (`/healthcare/admin/hr/compliance`)
+*   Medical License Verification
+*   Certification Tracking (ACLS, BLS, PALS)
+*   Mandatory Training Compliance
+*   Professional Development Tracking
+*   **Reminder System:** Certification expirations, training deadlines, audit preparations
+### 2.2 Healthcare Finance Administration (`/healthcare/admin/finance`)
+### **Healthcare Finance Dashboard** (`/healthcare/admin/finance/dashboard`)
+**Color Scheme:** Financial Blue with healthcare Green accents **Access Level:** Complete healthcare financial management
+**Content Structure:**
+*   **Revenue Cycle Management:**
+*   Claims Submission & Denial Rates
+*   Accounts Receivable Aging
+*   Payer Mix & Reimbursement Analysis
+*   Patient Payment Collection Rates
+*   **Cost Management:**
+*   Departmental Cost per Case
+*   Supply Chain Expense Analysis
+*   Labor Cost Optimization
+*   Equipment Utilization ROI
+### **Healthcare Finance Modules:**
+**2.2.1 Revenue Cycle Management** (`/healthcare/admin/finance/rcm`)
+*   Patient Registration & Eligibility
+*   Claims Processing & Submission
+*   Denial Management & Appeals
+*   Payment Posting & Reconciliation
+*   **Integration:** EHR systems, insurance portals, patient billing
+**2.2.2 Cost Accounting** (`/healthcare/admin/finance/cost-accounting`)
+*   Procedure Cost Analysis
+*   Departmental Profitability
+*   Resource Utilization Optimization
+*   Service Line Performance Analysis
+*   **Analytics:** Cost variance, profitability trends, efficiency metrics
+**2.2.3 Healthcare Contract Management** (`/healthcare/admin/finance/contracts`)
+*   Payer Contract Administration
+*   Provider Agreement Management
+*   Service Contract Tracking
+*   Contract Compliance Monitoring
+*   **Reminder System:** Contract renewals, rate updates, compliance reporting
+### 2.3 Clinical Operations Administration (`/healthcare/admin/clinical-operations`)
+### **Clinical Operations Dashboard** (`/healthcare/admin/clinical-operations/dashboard`)
+**Color Scheme:** Clinical Blue with operational White accents **Access Level:** Clinical service line and operational management
+**Content Structure:**
+*   **Service Line Performance:**
+*   Department-wise Patient Volume
+*   Procedure Efficiency Metrics
+*   Quality Outcome Indicators
+*   Patient Satisfaction Scores
+*   **Resource Utilization:**
+*   OR & Procedure Room Utilization
+*   Bed Turnover Efficiency
+*   Equipment Usage Optimization
+*   Staff Productivity Analysis
+### **Clinical Operations Modules:**
+**2.3.1 Department Performance** (`/healthcare/admin/clinical-operations/departments`)
+*   Service Line Analytics
+*   Resource Allocation Optimization
+*   Performance Benchmarking
+*   Improvement Initiative Tracking
+*   **Integration:** Clinical departments, quality management
+**2.3.2 Patient Flow Management** (`/healthcare/admin/clinical-operations/patient-flow`)
+*   Admission-Discharge-Transfer Coordination
+*   Bed Management Optimization
+*   Wait Time Reduction Initiatives
+*   Throughput Analysis & Improvement
+*   **Analytics:** Bottleneck identification, flow efficiency, capacity planning
+**2.3.3 Medical Staff Office** (`/healthcare/admin/clinical-operations/medical-staff`)
+*   Physician Privilege Management
+*   Committee Meeting Coordination
+*   Peer Review Process Management
+*   Medical Staff Governance
+*   **Reminder System:** Committee meetings, privilege renewals, governance deadlines
+**2.3.4 Patient Check-in & Admission Suite** (/healthcare/admin/clinical-operations/patient-checkin) <span style="color:red">**(NEW)**</span>
+*   **Color Scheme:** Efficient Green with Calming Blue accents
+*   **Access Level:** Admission Staff, Floor Managers
+*   **Function:** Streamlines the patient arrival process from check-in to room assignment.
+    *   **Content Structure:Check-in Queue:** Real-time list of arriving patients (Pre-registered vs. Walk-in).
+    *   **Payment Processing:** Integrated terminal for co-pays and pre-payments. Generates receipts.
+    *   **Room Allocation Dashboard:** View of clean, occupied, and maintenance rooms. Automated suggestions based on patient needs (e.g., near nurse station, private room).
+    *   **Nurse Assignment:** Auto-assigns an in-charge nurse based on workload and specialty.
+    1. **Workflow:**Patient checks in at kiosk or with staff.
+    2. System verifies identity and insurance.
+    3. Payment is processed.
+    4. System allocates a room and assigns a primary nurse.
+    5. Wristband is printed, and the nurse is notified on their portal.
+**2.3.5 Patient Help & Request System** (/healthcare/admin/clinical-operations/patient-help) <span style="color:red">**(NEW)**</span>
+*   **Color Scheme:** Alert Amber with Responsive Green accents
+*   **Access Level:** Nursing Staff, Support Services
+*   **Function:** Central monitoring and dispatch for all patient requests.
+    *   **Content Structure:Live Request Board:** Real-time feed of patient requests, color-coded by priority and status (New, In Progress, Resolved).
+    *   **Staff Assignment:** Ability to assign requests to specific nurses or departments (e.g., Housekeeping, Maintenance).
+    *   **Analytics:** Reports on common request types, response times, and resolution rates.
+    *   **Button Configuration:** Admin interface to define and manage the types of requests available on the patient's bedside tablet/portal.
+*   **Integration Points:** Nurse Portal, Patient Portal, Room Management systems.
+
+### 2.4 Healthcare Quality & Compliance Administration (`/healthcare/admin/quality`)
+### **Quality & Compliance Dashboard** (`/healthcare/admin/quality/dashboard`)
+**Color Scheme:** Quality Green with compliance Blue accents **Access Level:** Complete quality and regulatory compliance management
+**Content Structure:**
+*   **Quality Metrics:**
+*   Patient Safety Indicators
+*   Clinical Outcome Measures
+*   Infection Control Rates
+*   Patient Experience Scores
+*   **Compliance Status:**
+*   Regulatory Requirement Tracking
+*   Accreditation Readiness
+*   Audit Finding Resolution
+*   Policy Management Status
+### **Quality & Compliance Modules:**
+**2.4.1 Quality Improvement** (`/healthcare/admin/quality/improvement`)
+*   Performance Measure Dashboard
+*   Quality Initiative Management
+*   Benchmarking & Goal Setting
+*   Improvement Project Tracking
+*   **Integration:** Clinical systems, patient feedback, staff input
+**2.4.2 Risk Management** (`/healthcare/admin/quality/risk-management`)
+*   Incident Reporting & Analysis
+*   Patient Safety Event Management
+*   Malpractice Claim Tracking
+*   Risk Assessment & Mitigation
+*   **Reminder System:** Incident reporting deadlines, follow-up actions, review meetings
+**2.4.3 Regulatory Compliance** (`/healthcare/admin/quality/compliance`)
+*   HIPAA Privacy & Security Management
+*   Joint Commission Readiness
+*   CMS Conditions of Participation
+*   State Licensing Requirements
+*   **Reminder System:** Audit dates, reporting deadlines, policy reviews
+### 2.5 Healthcare IT Administration (`/healthcare/admin/it`)
+### **Healthcare IT Dashboard** (`/healthcare/admin/it/dashboard`)
+**Color Scheme:** Technical Blue with medical Green accents **Access Level:** Healthcare technology and systems management
+**Content Structure:**
+*   **Systems Health:**
+*   EHR System Performance Metrics
+*   Network & Infrastructure Status
+*   Data Security & Privacy Compliance
+*   User Support Request Volume
+*   **Technology Initiatives:**
+*   Digital Health Implementation
+*   Interoperability Project Status
+*   Medical Device Integration
+*   Innovation Pipeline Management
+### **Healthcare IT Modules:**
+**2.5.1 EHR Management** (`/healthcare/admin/it/ehr`)
+*   System Configuration & Optimization
+*   User Access & Security Management
+*   Clinical Workflow Design
+*   Upgrade & Enhancement Planning
+*   **Integration:** Clinical departments, patient portals, billing systems
+**2.5.2 Health Information Management** (`/healthcare/admin/it/him`)
+*   Medical Records Management
+*   Release of Information Processing
+*   Coding & Documentation Quality
+*   Data Integrity & Governance
+*   **Reminder System:** Record completion deadlines, coding updates, compliance training
+**2.5.3 Telehealth Administration** (`/healthcare/admin/it/telehealth`)
+*   Virtual Care Platform Management
+*   Telemedicine Program Coordination
+*   Remote Patient Monitoring
+*   Digital Health Strategy
+*   **Integration:** Clinical services, patient engagement, billing systems
+
+* * *
+## 3\. Hospitality & Estates — Administrative Layer (Admin Only)
+* * *
+## 3.1 HR Administration
+**Route:** `/hospitality-estates/admin/hr`
+**Who uses it:** HR executives, senior operations managers
+### HR Executive Dashboard
+**Purpose:** Control staffing quality, availability, compliance and service excellence across all properties.
+**What the admin sees**
+*   Staff count by property, estate and event
+*   Staff-to-guest ratios (real-time + seasonal)
+*   Peak-period staffing gaps
+*   Department performance trends (front desk, concierge, security, housekeeping, events)
+**What the admin controls**
+*   Cross-property staff transfers and redeployment
+*   Minimum service staffing thresholds per property type
+*   Mandatory luxury service training rules
+*   Uniform, grooming, and brand standards enforcement
+* * *
+### Luxury Staff Management
+**Route:** `/hospitality-estates/admin/hr/staff-management`
+**Admin capabilities**
+*   Assign concierge and butler tiers (standard, VIP, ultra-luxury)
+*   Allocate staff across multiple properties and estates
+*   Track guest satisfaction scores per staff member
+**Why this matters**
+*   Direct link between service quality and revenue
+*   Identifies top performers and service risks early
+* * *
+### Event Staff Coordination
+**Route:** `/hospitality-estates/admin/hr/event-staff`
+**Admin capabilities**
+*   Deploy staff per event type (wedding, corporate, private)
+*   Assign specialized training requirements
+*   Approve temporary or contract staff
+*   Monitor staff-to-guest ratios for events
+**Admin control**
+*   Maximum event workload per staff member
+*   Mandatory certifications before event assignment
+* * *
+### Estate Staff & Security Management
+**Route:** `/hospitality-estates/admin/hr/estate-management`
+**Admin capabilities**
+*   Assign estate-specific staff roles
+*   Manage maintenance, grounds, and technical teams
+*   Control security personnel rotation
+*   Plan seasonal staffing increases
+**System reminders**
+*   Certification expiry
+*   Performance review cycles
+*   Training renewals
+* * *
+## 3.2 Finance Administration
+**Route:** `/hospitality-estates/admin/finance`
+**Who uses it:** Finance directors, property owners, executives
+### Finance Executive Dashboard
+**Purpose:** Full financial visibility and control across properties, estates, and events.
+**What the admin sees**
+*   Revenue per property, estate, and event
+*   Occupancy, ADR, RevPAR trends
+*   Event contribution to total revenue
+*   Visitor-paid revenue (consultations, events, access)
+**What the admin controls**
+*   Pricing rules and revenue targets
+*   Platform fees on visitor payments
+*   Event commission structures
+* * *
+### Multi-Property Revenue Management
+**Route:** `/hospitality-estates/admin/finance/revenue`
+**Admin capabilities**
+*   Set dynamic pricing rules
+*   Define event package profitability thresholds
+*   Optimize group and corporate booking rates
+*   Forecast revenue across seasons
+* * *
+### Estate & Event Accounting
+**Route:** `/hospitality-estates/admin/finance/estate-accounting`
+**Admin capabilities**
+*   Track estate rental income
+*   Manage event deposits and staged payments
+*   Approve vendor and contractor payouts
+*   Audit luxury service billing
+**Admin control**
+*   Payment schedules
+*   Contract renewal enforcement
+*   Audit readiness rules
+* * *
+### Amenity & Service Profitability
+**Route:** `/hospitality-estates/admin/finance/amenities`
+**Admin capabilities**
+*   Analyze spa, dining, concierge, transport ROI
+*   Identify underperforming luxury services
+*   Adjust pricing or service availability
+* * *
+## 3.3 Operations Administration
+**Route:** `/hospitality-estates/admin/operations`
+**Who uses it:** Operations directors, estate managers
+### Operations Executive Dashboard
+**Purpose:** Ensure guest experience consistency and asset health.
+**What the admin sees**
+*   Real-time guest satisfaction scores
+*   Service request resolution times
+*   Estate utilization rates
+*   Event execution quality scores
+**What the admin controls**
+*   Service-level standards (SLAs)
+*   Maintenance response timelines
+*   Event setup and teardown rules
+* * *
+### Estate & Property Operations
+**Route:** `/hospitality-estates/admin/operations/estates`
+**Admin capabilities**
+*   Monitor estate maintenance health
+*   Schedule inspections and renovations
+*   Enforce access and security policies
+*   Track asset lifecycle
+* * *
+### Luxury Service Coordination
+**Route:** `/hospitality-estates/admin/operations/services`
+**Admin capabilities**
+*   Approve service menus and pricing
+*   Control concierge and wellness capacity
+*   Manage vendor service levels
+*   Enforce service quality standards
+* * *
+### Event Venue Management
+**Route:** `/hospitality-estates/admin/operations/venues`
+**Admin capabilities**
+*   Define venue capacity limits
+*   Approve event layouts
+*   Control vendor access rules
+*   Enforce safety and crowd regulations
+* * *
+## 3.4 Security & Visitor Management Administration
+**Route:** `/hospitality-estates/admin/security`
+**Who uses it:** Security heads, senior management, compliance officers
+### Security Executive Dashboard
+**Purpose:** Full visibility and control of all visitor movement and access.
+**What the admin sees**
+*   Visitors by property and event
+*   Attendance patterns
+*   Access violations and anomalies
+*   Security incidents and response times
+**What the admin controls**
+*   Global visitor rules
+*   Visitor limits per guest, tenant, or event
+*   Paid vs free visit policies
+*   Emergency lockdown and access revocation
+* * *
+### Multi-Tier Visitor Invitation Control
+**Route:** `/hospitality-estates/admin/security/visitor-invite`
+**Admin defines**
+*   Who can invite visitors
+*   How many visitors per role
+*   Whether visits are paid or free
+*   Maximum visit duration
+**Role hierarchy**
+*   Owners / Managers → unlimited
+*   Event planners → bulk, event-only
+*   Guests → limited
+*   Tenants → pre-approved
+* * *
+### Event Guest Administration
+**Route:** `/hospitality-estates/admin/security/event-guests`
+**Admin capabilities**
+*   Import event guest lists
+*   Enforce capacity limits
+*   Enable QR or wristband systems
+*   Track attendance and exits
+**Admin control**
+*   VIP vs general access rules
+*   Credit eligibility (food, drinks, services)
+*   Fraud and abuse detection
+* * *
+## 3.5 Admin Authority & Governance (Implicit Layer)
+**Admins can**
+*   Override approvals
+*   Freeze or revoke access instantly
+*   Adjust financial rules retroactively (logged)
+*   View full audit trails
+**Admins cannot**
+*   Bypass audit logs
+*   Modify historical records without trace
+* * *
+
+#   
+
+#   
+
+# **PORTAL ECOSYSTEM**
+## 2\. Education Vertical - Complete Portal Ecosystem
+### 2.1 Student Portal (`/education/student`)
+### **Dashboard** (`/education/student/dashboard`)
+**Color Scheme:** Energetic Blue with Academic Gold accents **Access Level:** Individual student access
+**Content Structure:**
+*   **Academic Overview:**
+*   Current GPA and Grade Trends
+*   Upcoming Assignments & Deadlines
+*   Today’s Schedule & Classes
+*   Attendance Summary
+*   **Learning Resources:**
+*   Recent Course Materials
+*   Digital Library Access
+*   Learning Tools & Apps
+*   Study Group Invitations
+*   **Quick Actions:**
+*   Submit Assignment
+*   View Timetable
+*   Check Grades
+*   Contact Teacher
+### **Academic Management** (`/education/student/academics`)
+**Sub-pages:**
+*   **2.1.1 Course Dashboard** (`/education/student/academics/courses`)
+*   Enrolled courses with progress tracking
+*   Course materials and resources
+*   Assignment submission portal
+*   Grade tracking per course
+*   **Connects to:** Teacher gradebooks, learning management system
+*   **2.1.2 Assignment Center** (`/education/student/academics/assignments`)
+    *   Pending assignments with deadlines
+    *   Submission status tracking
+    *   Feedback and graded work
+    *   Plagiarism check integration
+    *   **Connects to:** Teacher assignment systems, grading portals
+*   **2.1.3 Grade Portal** (`/education/student/academics/grades`)
+    *   Current grades and GPA
+    *   Grade history and trends
+    *   Progress reports
+    *   Transcript access
+    *   **Connects to:** School admin systems, report card generation
+### **School Life** (`/education/student/school-life`)
+**Sub-pages:**
+*   **2.1.4 Schedule & Timetable** (`/education/student/schedule`)
+*   Daily class schedule
+*   Room assignments
+*   Teacher information
+*   Calendar synchronization
+*   **Connects to:** School scheduling systems
+*   **2.1.5 Extracurricular Activities** (`/education/student/activities`)
+    *   Club memberships and meetings
+    *   Sports team schedules
+    *   Event registrations
+    *   Activity participation tracking
+    *   **Connects to:** Activity coordinator portals
+**2.1.6 Visitor Requests** (/education/student/visitor-requests)
+*   Request parent/guardian visits for special events
+*   Invite family members for performances/awards
+*   Schedule meetings with teachers (triggers teacher invitation system)
+*   View visit request status and approval chain
+*   Limited to parent/guardian contacts only
+*   Requires teacher approval for all visits
+*   Maximum 2 visit requests per week
+
+### 2.2 Parent Portal (`/education/parent`)
+### **Dashboard** (`/education/parent/dashboard`)
+**Color Scheme:** Trustworthy Green with caring Blue accents **Access Level:** Parent/guardian access to their children’s information
+**Content Structure:**
+*   **Children Overview:**
+*   Multiple children dashboard
+*   Academic performance summary
+*   Attendance and punctuality
+*   Upcoming events and deadlines
+*   **Communication Center:**
+*   School announcements
+*   Teacher messages
+*   Event notifications
+*   Urgent alerts
+*   **Quick Actions:**
+*   View Report Cards
+*   Pay School Fees
+*   Schedule Parent-Teacher Meeting
+*   Submit Absence Note
+### **Child Monitoring** (`/education/parent/children`)
+**Sub-pages:**
+*   **2.2.1 Academic Progress** (`/education/parent/children/:studentId/academics`)
+*   Real-time grade monitoring
+*   Assignment completion status
+*   Teacher comments and feedback
+*   Progress trend analysis
+*   **Connects to:** Student grade portals, teacher feedback systems
+*   **2.2.2 Attendance Tracking** (`/education/parent/children/:studentId/attendance`)
+    *   Daily attendance records
+    *   Tardy and early departure tracking
+    *   Absence reason monitoring
+    *   Notification settings for absences
+    *   **Connects to:** School attendance systems
+*   **2.2.3 Behavior & Conduct** (`/education/parent/children/:studentId/behavior`)
+    *   Positive behavior recognition
+    *   Discipline incident reports
+    *   Teacher observations
+    *   Counselor meeting schedules
+    *   **Connects to:** School discipline systems
+### **School Engagement** (`/education/parent/engagement`)
+**Sub-pages:**
+*   **2.2.4 Communication Hub** (`/education/parent/communication`)
+*   Direct messaging with teachers
+*   School announcement feeds
+*   Parent-teacher meeting scheduling
+*   Class group communications
+*   **Connects to:** Teacher communication portals
+*   **2.2.5 Financial Management** (`/education/parent/finances`)
+    *   Fee payment portal
+    *   Payment history and receipts
+    *   Scholarship application status
+    *   Extra-curricular activity payments
+    *   **Connects to:** School financial systems
+**2.2.6 Visit Scheduling** (/education/parent/visitor-management)
+*   Request school visits for events/meetings
+*   Schedule parent-teacher meetings with teacher approval
+*   Volunteer sign-up system with automated clearance
+*   View visit approval status and inviter information
+*   Access visitor QR codes for approved visits
+*   Receive check-in/check-out notifications
+*   Update emergency contact information
+
+### 2.3 Teacher Portal (`/education/teacher`)
+### **Dashboard** (`/education/teacher/dashboard`)
+**Color Scheme:** Professional Blue with educational Green accents **Access Level:** Teaching staff with class management capabilities
+**Content Structure:**
+*   **Teaching Overview:**
+*   Today’s Classes & Schedule
+*   Upcoming Lessons to Prepare
+*   Pending Grading Workload
+*   Student Performance Alerts
+*   **Class Management:**
+*   Active Classes Summary
+*   Attendance Compliance
+*   Assignment Submission Status
+*   Student Progress Overview
+*   **Quick Actions:**
+*   Take Attendance
+*   Create Assignment
+*   Enter Grades
+*   Message Parents
+### **Classroom Management** (`/education/teacher/classes`)
+**Sub-pages:**
+*   **2.3.1 Gradebook Management** (`/education/teacher/classes/:classId/gradebook`)
+*   Assignment creation and distribution
+*   Grade entry and calculation
+*   Progress reporting
+*   Rubric-based grading
+*   **Connects to:** Student grade portals, admin reporting
+*   **2.3.2 Attendance System** (`/education/teacher/classes/:classId/attendance`)
+    *   Daily attendance recording
+    *   Pattern analysis and alerts
+    *   Absence note management
+    *   Compliance reporting
+    *   **Connects to:** Parent notifications, admin systems
+*   **2.3.3 Lesson Planning** (`/education/teacher/classes/:classId/lessons`)
+    *   Curriculum-aligned lesson plans
+    *   Resource attachment and sharing
+    *   Standards tracking
+    *   Collaborative planning
+    *   **Connects to:** Department resources, curriculum databases
+### **Student Engagement** (`/education/teacher/students`)
+**Sub-pages:**
+*   **2.3.4 Student Progress Tracking** (`/education/teacher/students/progress`)
+*   Individual student performance dashboards
+*   Intervention need identification
+*   Parent communication history
+*   Support service referrals
+*   **Connects to:** Student support systems, parent portals
+*   **2.3.5 Communication Center** (`/education/teacher/communication`)
+    *   Parent messaging portal
+    *   Class announcement system
+    *   Meeting scheduling
+    *   Communication templates
+    *   **Connects to:** Parent portals, school notification systems
+
+**2.3.6 Visitor Management** (/education/teacher/visitor-management)
+*   Invite parents for meetings/conferences with automated approval
+*   Schedule classroom volunteers with background check initiation
+*   Guest speaker coordination with department approval workflow
+*   Approve student-initiated parent visits
+*   View scheduled visitor calendar with real-time status
+*   Receive visitor arrival notifications with QR code access
+*   Monitor active visitors with duration tracking
+    *       *   
+
+* * *
+## 3\. Healthcare Vertical - Complete Portal Ecosystem
+### 3.1 Doctor/Physician Portal (`/healthcare/doctor`)
+### **Dashboard** (`/healthcare/doctor/dashboard`)
+**Color Scheme:** Clinical White with Doctor Blue accents **Access Level:** Medical practitioner with patient care responsibilities
+**Content Structure:**
+*   **Clinical Overview:**
+*   Today’s Appointment Schedule
+*   Pending Consultations
+*   Critical Patient Alerts
+*   Task and Follow-up List
+*   **Patient Management:**
+*   Active Patient Caseload
+*   Test Results Pending Review
+*   Prescription Renewal Requests
+*   Referral Status Updates
+*   **Quick Actions:**
+*   Start Consultation
+*   Review Test Results
+*   Write Prescription
+*   Refer to Specialist
+### **Patient Care** (`/healthcare/doctor/patients`)
+**Sub-pages:**
+*   **3.1.1 Electronic Health Records** (`/healthcare/doctor/patients/:patientId/ehr`)
+*   Comprehensive patient medical history
+*   Clinical notes and observations
+*   Treatment plan management
+*   Progress tracking
+*   **Connects to:** Hospital EMR systems, lab systems
+*   **3.1.2 Clinical Decision Support** (`/healthcare/doctor/clinical-support`)
+    *   Drug interaction checking
+    *   Clinical guideline access
+    *   Diagnostic support tools
+    *   Best practice alerts
+    *   **Connects to:** Medical databases, pharmacy systems
+*   **3.1.3 Telemedicine Portal** (`/healthcare/doctor/telemedicine`)
+    *   Virtual consultation scheduling
+    *   Video conferencing integration
+    *   Remote patient monitoring
+    *   Digital prescription writing
+    *   **Connects to:** Patient portals, pharmacy systems
+### **Medical Operations** (`/healthcare/doctor/operations`)
+**Sub-pages:**
+*   **3.1.4 Appointment Management** (`/healthcare/doctor/schedule`)
+*   Personal schedule management
+*   Procedure scheduling
+*   On-call calendar
+*   Leave and availability management
+*   **Connects to:** Hospital scheduling, patient booking
+*   **3.1.5 Diagnostic Review** (`/healthcare/doctor/diagnostics`)
+    *   Lab result analysis and signing
+    *   Imaging study review
+    *   Pathology reports
+    *   Result trend analysis
+    *   **Connects to:** Lab systems, radiology portals
+### 3.2 Nurse Portal (`/healthcare/nurse`)
+### **Dashboard** (`/healthcare/nurse/dashboard`)
+**Color Scheme:** Caring Lavender with professional White accents **Access Level:** Nursing staff with patient care responsibilities
+**Content Structure:**
+*   **Shift Overview:**
+*   Current Patient Assignment
+*   Medication Administration Schedule
+*   Vital Signs Monitoring
+*   Care Plan Tasks
+*   **Patient Care:**
+*   Patient Acuity Levels
+*   Treatment Schedule
+*   Documentation Requirements
+*   Handover Information
+*   **Quick Actions:**
+*   Record Vital Signs
+*   Medication Administration
+*   Update Care Plans
+*   Handover Reporting
+### **Nursing Care** (`/healthcare/nurse/patients`)
+**Sub-pages:**
+*   **3.2.1 Patient Care Plans** (`/healthcare/nurse/patients/:patientId/care-plan`)
+*   Nursing assessment documentation
+*   Care plan implementation
+*   Progress evaluation
+*   Intervention tracking
+*   **Connects to:** Doctor orders, EHR systems
+*   **3.2.2 Medication Administration** (`/healthcare/nurse/medications`)
+    *   Medication schedule management
+    *   Administration documentation
+    *   Allergy checking
+    *   Stock level monitoring
+    *   **Connects to:** Pharmacy systems, inventory
+*   **3.2.3 Vital Signs & Monitoring** (`/healthcare/nurse/vitals`)
+    *   Regular vital sign recording
+    *   Trend analysis and alerts
+    *   Monitoring device integration
+    *   Critical value reporting
+    *   **Connects to:** Patient monitoring systems, doctor alerts
+### **Clinical Operations** (`/healthcare/nurse/operations`)
+**Sub-pages:**
+*   **3.2.4 Shift Management** (`/healthcare/nurse/shift`)
+*   Handover report generation
+*   Task assignment coordination
+*   Break schedule management
+*   Incident reporting
+*   **Connects to:** Nursing supervisor portals
+*   **3.2.5 Clinical Documentation** (`/healthcare/nurse/documentation`)
+    *   Nursing notes and charts
+    *   Incident report filing
+    *   Quality indicator reporting
+    *   Compliance documentation
+    *   **Connects to:** Hospital record systems, quality departments
+### 3.3 Lab Assistant Portal (`/healthcare/lab`)
+### **Dashboard** (`/healthcare/lab/dashboard`)
+**Color Scheme:** Scientific Blue with laboratory White accents **Access Level:** Laboratory staff with diagnostic testing responsibilities
+**Content Structure:**
+*   **Lab Work Overview:**
+*   Pending Test Requests
+*   In-Progress Tests
+*   Critical Result Alerts
+*   Equipment Status
+*   **Quality Control:**
+*   QC Schedule Compliance
+*   Calibration Due Notices
+*   Reagent Inventory Levels
+*   Maintenance Requirements
+*   **Quick Actions:**
+*   Process New Samples
+*   Enter Test Results
+*   Order Supplies
+*   Run Quality Control
+### **Laboratory Operations** (`/healthcare/lab/operations`)
+**Sub-pages:**
+*   **3.3.1 Test Processing** (`/healthcare/lab/test-processing`)
+*   Sample reception and logging
+*   Test assignment and tracking
+*   Result entry and verification
+*   Turnaround time monitoring
+*   **Connects to:** Doctor orders, patient records
+*   **3.3.2 Quality Assurance** (`/healthcare/lab/quality`)
+    *   Daily QC performance
+    *   Equipment calibration records
+    *   Proficiency testing
+    *   Compliance documentation
+    *   **Connects to:** Quality management systems
+*   **3.3.3 Inventory Management** (`/healthcare/lab/inventory`)
+    *   Reagent and supply tracking
+    *   Expiration date monitoring
+    *   Order management
+    *   Vendor communication
+    *   **Connects to:** Hospital procurement systems
+### 3.4 Patient Portal (`/healthcare/patient`)
+### **Dashboard** (`/healthcare/patient/dashboard`)
+**Color Scheme:** Patient-focused Green with comforting Blue accents **Access Level:** Individual patient access to personal health information
+**Content Structure:**
+*   **Health Overview:**
+*   Upcoming Appointments
+*   Recent Test Results
+*   Current Medications
+*   Care Team Contacts
+*   **Health Management:**
+*   Symptom Tracking
+*   Health Metrics History
+*   Educational Resources
+*   Insurance Information
+*   **Quick Actions:**
+*   Book Appointment
+*   Message Doctor
+*   Request Prescription Refill
+*   View Health Records
+### **Health Management** (`/healthcare/patient/health`)
+**Sub-pages:**
+*   **3.4.1 Medical Records** (`/healthcare/patient/health/records`)
+*   Personal health history
+*   Lab and test results
+*   Immunization records
+*   Visit summaries
+*   **Connects to:** Hospital EMR systems
+*   **3.4.2 Appointment Management** (`/healthcare/patient/appointments`)
+    *   Schedule new appointments
+    *   View upcoming visits
+    *   Reschedule or cancel
+    *   Telemedicine options
+    *   **Connects to:** Doctor scheduling systems
+*   **3.4.3 Medication Tracking** (`/healthcare/patient/medications`)
+    *   Current medication list
+    *   Refill requests
+    *   Adherence tracking
+    *   Pharmacy information
+    *   **Connects to:** Pharmacy systems, doctor portals
+### **Patient Services** (`/healthcare/patient/services`)
+**Sub-pages:**
+*   **3.4.4 Billing & Insurance** (`/healthcare/patient/billing`)
+*   Bill payment portal
+*   Insurance claim status
+*   Cost estimates
+*   Payment history
+*   **Connects to:** Hospital billing systems
+*   **3.4.5 Communication Center** (`/healthcare/patient/communication`)
+    *   Secure messaging with providers
+    *   Health question submissions
+    *   Prescription renewal requests
+    *   Test result notifications
+    *   **Connects to:** Doctor and nurse portals
+**3.4.6 Help & Support** (/healthcare/patient/help) <span style="color:red">**(NEW)**</span>
+*   **Color Scheme:** Simple and Clear, with large, intuitive buttons.
+*   **Access Level:** In-patient during their stay.
+*   **Function:** Allows patients to request common needs directly from their bedside tablet or personal device.
+    *   **Content Structure:Quick-Request Buttons:** Large, tappable buttons with icons for:
+        *   `Medical Assistance` (High Priority - alerts nurse directly)
+        *   `Water / Refreshments`
+        *   `Bathroom Assistance`
+        *   `Room Temperature` (Too Hot / Too Cold)
+        *   `Pain Management`
+        *   `General Question`
+    *   **Request Status:** Shows the status of submitted requests ("Sent," "Nurse Notified," "On the way").
+    *   **Call Button:** A persistent, large button for emergency calls.
+*   **Integration Points:** Directly feeds into the **Patient Help & Request System** (`/healthcare/admin/clinical-operations/patient-help`) for staff monitoring and action.
+
+### 3.5 Pharmacist Portal (`/healthcare/pharmacist`)
+### **Dashboard** (`/healthcare/pharmacist/dashboard`)
+**Color Scheme:** Pharmaceutical Blue with safety Green accents **Access Level:** Pharmacy staff with medication dispensing responsibilities
+**Content Structure:**
+*   **Pharmacy Overview:**
+*   Pending Prescriptions
+*   Ready for Pickup
+*   Patient Consultations Scheduled
+*   Inventory Alerts
+*   **Safety & Compliance:**
+*   Drug Interaction Alerts
+*   Expiration Date Monitoring
+*   Regulatory Compliance Status
+*   Quality Control Checks
+*   **Quick Actions:**
+*   Process New Prescription
+*   Patient Consultation
+*   Inventory Check
+*   Insurance Verification
+### **Pharmacy Operations** (`/healthcare/pharmacist/operations`)
+**Sub-pages:**
+*   **3.5.1 Prescription Management** (`/healthcare/pharmacist/prescriptions`)
+*   Prescription receiving and verification
+*   Dispensing workflow management
+*   Medication therapy review
+*   Patient profile management
+*   **Connects to:** Doctor prescription systems, patient portals
+*   **3.5.2 Medication Safety** (`/healthcare/pharmacist/safety`)
+    *   Drug interaction checking
+    *   Allergy verification
+    *   Dosage validation
+    *   Contraindication screening
+    *   **Connects to:** Clinical decision support systems
+*   **3.5.3 Inventory Control** (`/healthcare/pharmacist/inventory`)
+    *   Drug stock level monitoring
+    *   Order management and tracking
+    *   Expiration date management
+    *   Controlled substance logging
+    *   **Connects to:** Supply chain systems, regulatory databases
+* * *
+Great work on the foundation — what you’re building here is already a **solid, enterprise-grade hospitality + estates ecosystem**. Based on the screenshots and the new requirements you listed, below is a **cleanly updated and expanded version of Section 4**, with a strong focus on **Visitor Management, Monetization, Approval flows, Bulk actions, and Security/Admin visibility**.
+I’ll keep this **product-ready**, structured, and easy to hand to design or engineering.
+* * *
+# 4\. Hospitality Vertical — Complete Portal Ecosystem
+* * *
+## 4.0 Cross‑Vertical Foundation (Core System)
+### Unified Visitor & Access Management Engine
+A shared system powering all portals.
+**Core Capabilities**
+*   Central Visitor Registry (single source of truth)
+*   QR code & access code generation
+*   Time‑bound, recurring, and permanent visitor access
+*   Approval workflows (Guest ↔ Staff ↔ Security)
+*   Visitor monetization (paid visits, consultations, events)
+*   Attendance tracking & analytics
+*   Visitor limits & access enforcement
+*   Event credit system (food, drinks, services)
+**Shared Entities**
+*   Guest
+*   Visitor
+*   Visit Session
+*   Event
+*   Credit Wallet
+*   Property / Room / Estate
+* * *
+## 4.1 Hospitality Guest Portal
+**Base Path:** `/hospitality/guest`
+### 4.1.1 Guest Dashboard
+**Path:** `/hospitality/guest/dashboard`
+**Color Scheme:** Luxurious Navy with Gold accents
+**Access Level:** Individual guest (active stay)
+#### Stay Overview
+*   Reservation details
+*   Check‑in & check‑out times
+*   Digital key (if applicable)
+*   Real‑time folio & billing
+*   Booked services (spa, dining, transport)
+*   Events
+#### Visitor Overview
+*   Total visitors invited
+*   Pending vs approved visitors
+*   Visitor limit usage (e.g. 5 / 10)
+*   Revenue earned from visitors
+#### Quick Actions
+*   Invite Visitor
+*   View Visitor Earnings
+*   Contact Concierge
+*   Request Late Check‑out
+* * *
+### 4.1.2 Visitor Management
+**Path:** `/hospitality/guest/visitors`
+#### Add Visitor Flow
+*   Visitor name
+*   Phone number
+*   Optional ID upload
+*   Visit date & time window
+*   Visit duration
+**Visitation Type (Dropdown)**
+*   Family
+*   Service
+*   Consultancy
+*   Repair
+*   Event
+**Paid Visit Configuration (Conditional)**
+*   Toggle paid visit
+*   Set price
+*   Auto‑invoice generation
+*   Revenue credited to guest wallet
+**Access Frequency**
+*   One‑time visit
+*   Recurring visit
+*   Permanent visitor (QR/code valid for set duration)
+#### Visitor Controls
+*   Approve / reject staff‑initiated requests
+*   Convert visitor to permanent
+*   Revoke access instantly
+*   Extend visit duration
+#### Visitor Insights
+*   Number of visits
+*   Last visit timestamp
+*   Visit types history
+*   Revenue generated per visitor
+* * *
+### 4.1.3 Pre‑Arrival & Check‑in
+**Path:** `/hospitality/guest/checkin`
+*   Digital pre‑registration
+*   ID & payment method upload
+*   Special requests & preferences
+*   Pre‑approve visitors before arrival
+*   Upsells (room upgrade, champagne)
+* * *
+### 4.1.4 Check‑out & Feedback
+**Path:** `/hospitality/guest/checkout`
+*   Express digital check‑out
+*   Final folio review
+*   Visitor charges reconciliation
+*   Invoice & receipt download
+*   Post‑stay feedback
+* * *
+## 4.2 Hospitality Staff Portal
+**Base Path:** `/hospitality/staff`
+### 4.2.1 Staff Dashboard
+**Path:** `/hospitality/staff/dashboard`
+**Color Scheme:** Efficient Gray with Teal accents
+#### Operations Overview
+*   Today’s arrivals & departures
+*   In‑house guests
+*   Room Allocation
+*   Guest Creation
+*   Kitchen Display system
+*   Task Creation
+*   Pending visitor approvals
+*   Visitor payment exceptions
+*   Alerts & priority flags
+#### Quick Actions
+*   Register Visitor
+*   Scan Visitor QR
+*   Assign Visitor to Guest
+*   Call Security
+* * *
+### 4.2.2 Visitor Registry (Help Desk & Security)
+**Path:** `/hospitality/staff/visitors`
+#### Central Visitor Registry
+*   Full visitor list
+*   Filters by status, visit type, guest, date
+*   Real‑time check‑in / check‑out timestamps
+#### Bulk Visitor Management
+*   CSV / Excel upload
+*   Bulk QR generation
+*   Bulk assignment to guests
+*   Bulk approval (permission‑based)
+#### Staff‑Initiated Visitor Flow
+*   Register visitor manually
+*   Assign to guest
+*   Trigger approval notification to guest
+*   Track approval status
+* * *
+### 4.2.3 Front Desk Console
+**Path:** `/hospitality/staff/frontdesk`
+*   Guest profile & history
+*   Check‑in / check‑out workflows
+*   Folio & payment processing
+*   Visitor billing & approvals
+*   Visitor‑to‑guest linkage
+* * *
+## 4.3 Hospitality‑Estates Guest Portal
+**Base Path:** `/hospitality-estates/guest`
+### 4.3.1 Guest Dashboard
+#### Stay & Event Overview
+*   Reservation & itinerary
+*   Event schedules
+*   Real‑time folio & billing
+#### Visitor & Earnings Summary
+*   Total visitors hosted
+*   Paid consultations & events
+*   Earnings breakdown
+*   Downloadable statements
+* * *
+### 4.3.2 Pre‑Arrival Experience
+**Path:** `/hospitality-estates/guest/pre-arrival`
+*   Digital check‑in
+*   Preference submission
+*   Service pre‑booking
+*   Visitor pre‑approval
+* * *
+### 4.3.3 Event & Visitor Management
+**Path:** `/hospitality-estates/guest/visitor-management`
+*   Bulk visitor invites
+*   Event attendance tracking
+*   Visitor visit count history
+*   Permanent QR for multi‑day access
+*   Visitor credit visibility
+* * *
+## 4.4 Event Planner (Major Guest) Portal
+**Base Path:** `/hospitality-estates/event-planner`
+### 4.4.1 Event Planner Dashboard
+#### Event Overview
+*   Event timeline
+*   Visitor list
+*   Vendor coordination
+*   Budget & payment status
+* * *
+### 4.4.2 Visitor Invitation System
+**Path:** `/hospitality-estates/event-planner/guest-invites`
+*   Bulk guest invitations
+*   Automated QR code generation
+*   RSVP tracking
+*   Visitor type assignment
+*   Attendance analytics
+#### Visitor Credit System
+*   Allocate credits per visitor
+*   Credit categories: food, drinks, services
+*   Real‑time credit balance tracking
+*   Auto‑denial when credits are exhausted
+* * *
+### 4.4.3 Real‑time Event Monitoring
+**Path:** `/hospitality-estates/event-planner/monitoring`
+*   Live check‑in status
+*   Capacity alerts
+*   Credit usage analytics
+*   Incident reporting
+* * *
+## 4.5 Property Owner Portal
+**Base Path:** `/hospitality-estates/owner`
+### 4.5.1 Owner Dashboard
+*   Portfolio performance
+*   Occupancy & revenue metrics
+*   Guest satisfaction scores
+* * *
+### 4.5.2 Tenant & Visitor Management
+**Path:** `/hospitality-estates/owner/visitor-management`
+*   Set visitor limits per guest
+*   Approve permanent visitors
+*   Monitor visitor traffic
+*   Security access audits
+* * *
+### 4.5.3 Maintenance & Improvements
+*   Maintenance requests
+*   Vendor coordination
+*   Property inspections
+
+* * *
+
+This comprehensive portal ecosystem provides complete coverage for all requested user types while maintaining a consistent, scalable architecture that supports the multi-tenant platform model. Each portal is designed with appropriate access levels, feature sets, and integration points to create a seamless experience within and across verticals.

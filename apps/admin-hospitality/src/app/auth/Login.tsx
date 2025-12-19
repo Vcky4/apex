@@ -77,6 +77,7 @@ export default function Login({ onLogin }: LoginProps) {
                   <option value="HR_ADMIN">HR Administrator</option>
                   <option value="FINANCE_ADMIN">Finance Administrator</option>
                   <option value="OPERATIONS_ADMIN">Operations Administrator</option>
+                  <option value="SECURITY_ADMIN">Security Administrator</option>
                 </optgroup>
                 <optgroup label="User Portals">
                   <option value="GUEST">Hotel Guest</option>
@@ -110,6 +111,12 @@ export default function Login({ onLogin }: LoginProps) {
                 className="px-3 py-2 bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 text-xs font-medium text-left"
               >
                 🏨 Ops Admin
+              </button>
+              <button
+                onClick={() => quickLogin('SECURITY_ADMIN', 'security@hotel.com')}
+                className="px-3 py-2 bg-red-50 text-red-700 rounded-lg hover:bg-red-100 text-xs font-medium text-left"
+              >
+                🛡️ Security Admin
               </button>
               <button
                 onClick={() => quickLogin('GUEST', 'guest@hotel.com')}

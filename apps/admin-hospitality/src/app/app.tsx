@@ -4,6 +4,7 @@ import Login from './auth/Login';
 import HRPortal from './portals/hr/HRPortal';
 import FinancePortal from './portals/finance/FinancePortal';
 import OperationsPortal from './portals/operations/OperationsPortal';
+import SecurityPortal from './portals/security/SecurityPortal';
 import GuestPortal from './portals/guest/GuestPortal';
 import StaffPortal from './portals/staff/StaffPortal';
 
@@ -11,17 +12,19 @@ import StaffPortal from './portals/staff/StaffPortal';
 const getRouteForRole = (role: string): string => {
   switch (role) {
     case 'HR_ADMIN':
-      return '/admin/hr/dashboard';
+      return '/hospitality-estates/admin/hr/dashboard';
     case 'FINANCE_ADMIN':
-      return '/admin/finance/dashboard';
+      return '/hospitality-estates/admin/finance/dashboard';
     case 'OPERATIONS_ADMIN':
-      return '/admin/operations/dashboard';
+      return '/hospitality-estates/admin/operations/dashboard';
+    case 'SECURITY_ADMIN':
+      return '/hospitality-estates/admin/security/dashboard';
     case 'GUEST':
       return '/hospitality/guest/dashboard';
     case 'STAFF':
       return '/hospitality/staff/dashboard';
     default:
-      return '/admin/operations/dashboard';
+      return '/hospitality-estates/admin/operations/dashboard';
   }
 };
 
@@ -29,11 +32,13 @@ const getRouteForRole = (role: string): string => {
 const isPathForRole = (pathname: string, role: string): boolean => {
   switch (role) {
     case 'HR_ADMIN':
-      return pathname.startsWith('/admin/hr');
+      return pathname.startsWith('/hospitality-estates/admin/hr');
     case 'FINANCE_ADMIN':
-      return pathname.startsWith('/admin/finance');
+      return pathname.startsWith('/hospitality-estates/admin/finance');
     case 'OPERATIONS_ADMIN':
-      return pathname.startsWith('/admin/operations');
+      return pathname.startsWith('/hospitality-estates/admin/operations');
+    case 'SECURITY_ADMIN':
+      return pathname.startsWith('/hospitality-estates/admin/security');
     case 'GUEST':
       return pathname.startsWith('/hospitality/guest');
     case 'STAFF':
@@ -77,13 +82,16 @@ function AppRouter({ user, logout }: { user: any; logout: () => void }) {
   return (
     <Routes>
       {/* HR Portal Routes */}
-      <Route path="/admin/hr/*" element={<HRPortal user={user} onLogout={logout} />} />
+      <Route path="/hospitality-estates/admin/hr/*" element={<HRPortal user={user} onLogout={logout} />} />
       
       {/* Finance Portal Routes */}
-      <Route path="/admin/finance/*" element={<FinancePortal user={user} onLogout={logout} />} />
+      <Route path="/hospitality-estates/admin/finance/*" element={<FinancePortal user={user} onLogout={logout} />} />
       
       {/* Operations Portal Routes */}
-      <Route path="/admin/operations/*" element={<OperationsPortal user={user} onLogout={logout} />} />
+      <Route path="/hospitality-estates/admin/operations/*" element={<OperationsPortal user={user} onLogout={logout} />} />
+      
+      {/* Security Portal Routes */}
+      <Route path="/hospitality-estates/admin/security/*" element={<SecurityPortal user={user} onLogout={logout} />} />
       
       {/* Guest Portal Routes */}
       <Route path="/hospitality/guest/*" element={<GuestPortal user={user} onLogout={logout} />} />

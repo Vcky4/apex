@@ -1,128 +1,208 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AdminLayout, NavItem, Dashboard, StatCard, Card, DashboardGrid } from '@apex-providers/ui-components';
-import Scheduling from './pages/Scheduling';
-import Training from './pages/Training';
+import LuxuryStaffManagement from './pages/LuxuryStaffManagement';
+import EventStaffCoordination from './pages/EventStaffCoordination';
+import EstateStaffManagement from './pages/EstateStaffManagement';
 
-// Placeholder pages
+// HR Executive Dashboard per design document
 const HRDashboard = () => (
   <div className="space-y-8">
     <div>
-      <h1 className="text-3xl font-bold text-charcoal-gray">Hospitality HR Dashboard</h1>
-      <p className="text-gray-600 mt-2">Staff Management & Analytics</p>
+      <h1 className="text-3xl font-bold text-charcoal-gray">HR Executive Dashboard</h1>
+      <p className="text-gray-600 mt-2">Control staffing quality, availability, compliance and service excellence across all properties</p>
     </div>
 
-    {/* Staffing Analytics */}
+    {/* What the admin sees */}
     <section>
-      <h2 className="text-xl font-bold text-charcoal-gray mb-4">Staffing Analytics</h2>
+      <h2 className="text-xl font-bold text-charcoal-gray mb-4">Staff Overview</h2>
       <DashboardGrid columns={4}>
+        <StatCard
+          title="Staff Count by Property"
+          value="156"
+          icon={<span className="text-xl">👥</span>}
+          color="blue"
+          trend={{ value: 5, isPositive: true }}
+        />
         <StatCard
           title="Staff-to-Guest Ratio"
           value="1:4"
-          icon={<span className="text-xl">👥</span>}
-          color="blue"
+          icon={<span className="text-xl">📊</span>}
+          color="green"
           trend={{ value: 0, isPositive: true }}
         />
         <StatCard
-          title="Turnover Rate"
-          value="5%"
-          icon={<span className="text-xl">📉</span>}
-          color="red" // Red because turnover is bad usually, or maybe neutral
-          trend={{ value: 1.2, isPositive: false }} // Increased turnover
+          title="Peak-Period Gaps"
+          value="3"
+          icon={<span className="text-xl">⚠️</span>}
+          color="orange"
+          trend={{ value: -2, isPositive: true }}
         />
         <StatCard
-          title="Seasonal Staff"
-          value="24"
-          icon={<span className="text-xl">🏖️</span>}
+          title="Department Performance"
+          value="4.7/5"
+          icon={<span className="text-xl">⭐</span>}
           color="gold"
-        />
-        <StatCard
-          title="Labor Cost"
-          value="$45k"
-          icon={<span className="text-xl">💰</span>}
-          color="green"
-          trend={{ value: 2.5, isPositive: true }} // Cost up? context dependent.
         />
       </DashboardGrid>
     </section>
 
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-      {/* HR Operations */}
+      {/* Staff by Property, Estate and Event */}
       <section>
-        <h2 className="text-xl font-bold text-charcoal-gray mb-4">HR Operations</h2>
-        <div className="space-y-4">
-          <Card>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-bold text-gray-900">Recruitment</h3>
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full">3 Open Roles</span>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Staff Distribution</h2>
+        <Card>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Grand Hotel Downtown</span>
+                <span className="font-bold">45 Staff</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '45%' }}></div>
+              </div>
             </div>
-            <ul className="space-y-2 text-sm text-gray-600">
-              <li className="flex justify-between">
-                <span>Concierge</span>
-                <span className="text-orange-500">Interviewing</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Sous Chef</span>
-                <span className="text-green-500">Offer Sent</span>
-              </li>
-              <li className="flex justify-between">
-                <span>Housekeeping Mgr</span>
-                <span className="text-gray-500">Posting</span>
-              </li>
-            </ul>
-          </Card>
-
-          <Card>
-            <div className="flex justify-between items-center mb-2">
-              <h3 className="font-bold text-gray-900">Staff Satisfaction</h3>
-              <span className="text-2xl font-bold text-green-600">4.2/5</span>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Seaside Resort</span>
+                <span className="font-bold">38 Staff</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '38%' }}></div>
+              </div>
             </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-              <div className="bg-green-500 h-2 rounded-full" style={{ width: '84%' }}></div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Mountain Estate</span>
+                <span className="font-bold">32 Staff</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-purple-500 h-2 rounded-full" style={{ width: '32%' }}></div>
+              </div>
             </div>
-            <p className="text-xs text-gray-500">Based on latest pulse survey</p>
-          </Card>
-        </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Event Staff (Active)</span>
+                <span className="font-bold">41 Staff</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-gold-500 h-2 rounded-full" style={{ width: '41%' }}></div>
+              </div>
+            </div>
+          </div>
+        </Card>
       </section>
 
-      {/* Compliance & Grooming */}
+      {/* Department Performance Trends */}
       <section>
-        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Compliance & Standards</h2>
-        <div className="space-y-4">
-          <Card>
-            <h3 className="font-bold text-gray-900 mb-3">Training Compliance</h3>
-            <div className="space-y-3">
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Safety Certification</span>
-                  <span className="font-bold">98%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: '98%' }}></div>
-                </div>
+        <h2 className="text-xl font-bold text-charcoal-gray mb-4">Department Performance Trends</h2>
+        <Card>
+          <div className="space-y-4">
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Front Desk</span>
+                <span className="font-bold text-green-600">4.8/5</span>
               </div>
-              <div>
-                <div className="flex justify-between text-sm mb-1">
-                  <span>Hospitality Standards</span>
-                  <span className="font-bold">92%</span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div className="bg-gold-500 h-2 rounded-full" style={{ width: '92%' }}></div>
-                </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '96%' }}></div>
               </div>
             </div>
-          </Card>
-          
-          <Card>
-            <h3 className="font-bold text-gray-900 mb-2">Uniform Standards</h3>
-            <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <span className="text-green-500">●</span>
-              <span>Last inspection passed (Yesterday)</span>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Concierge</span>
+                <span className="font-bold text-green-600">4.9/5</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '98%' }}></div>
+              </div>
             </div>
-          </Card>
-        </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Security</span>
+                <span className="font-bold text-blue-600">4.6/5</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-blue-500 h-2 rounded-full" style={{ width: '92%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Housekeeping</span>
+                <span className="font-bold text-green-600">4.7/5</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '94%' }}></div>
+              </div>
+            </div>
+            <div>
+              <div className="flex justify-between text-sm mb-1">
+                <span>Events</span>
+                <span className="font-bold text-green-600">4.8/5</span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div className="bg-green-500 h-2 rounded-full" style={{ width: '96%' }}></div>
+              </div>
+            </div>
+          </div>
+        </Card>
       </section>
     </div>
+
+    {/* What the admin controls */}
+    <section>
+      <h2 className="text-xl font-bold text-charcoal-gray mb-4">Admin Controls</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <Card>
+          <h3 className="font-bold text-gray-900 mb-2">Cross-Property Transfers</h3>
+          <p className="text-sm text-gray-600 mb-4">Manage staff redeployment across properties</p>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Manage Transfers →</button>
+        </Card>
+        <Card>
+          <h3 className="font-bold text-gray-900 mb-2">Service Thresholds</h3>
+          <p className="text-sm text-gray-600 mb-4">Set minimum staffing levels per property type</p>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Configure →</button>
+        </Card>
+        <Card>
+          <h3 className="font-bold text-gray-900 mb-2">Training Rules</h3>
+          <p className="text-sm text-gray-600 mb-4">Mandatory luxury service training requirements</p>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Set Rules →</button>
+        </Card>
+        <Card>
+          <h3 className="font-bold text-gray-900 mb-2">Brand Standards</h3>
+          <p className="text-sm text-gray-600 mb-4">Uniform, grooming, and brand enforcement</p>
+          <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">Enforce →</button>
+        </Card>
+      </div>
+    </section>
+
+    {/* Seasonal Staffing Gaps */}
+    <section>
+      <h2 className="text-xl font-bold text-charcoal-gray mb-4">Peak-Period Staffing Gaps</h2>
+      <Card>
+        <div className="space-y-3">
+          <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg border border-orange-200">
+            <div>
+              <p className="font-medium text-gray-900">Thanksgiving Week</p>
+              <p className="text-xs text-gray-600">Nov 24-30, 2025</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold text-orange-600">-8 Staff</p>
+              <p className="text-xs text-gray-500">Gap identified</p>
+            </div>
+          </div>
+          <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200">
+            <div>
+              <p className="font-medium text-gray-900">Holiday Season</p>
+              <p className="text-xs text-gray-600">Dec 20-31, 2025</p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm font-bold text-yellow-600">-5 Staff</p>
+              <p className="text-xs text-gray-500">Gap identified</p>
+            </div>
+          </div>
+        </div>
+      </Card>
+    </section>
   </div>
 );
 
@@ -133,9 +213,10 @@ interface HRPortalProps {
 
 export default function HRPortal({ user, onLogout }: HRPortalProps) {
   const navigation: NavItem[] = [
-    { label: 'Dashboard', href: '/admin/hr/dashboard', icon: '📊' },
-    { label: 'Scheduling', href: '/admin/hr/scheduling', icon: '📅' },
-    { label: 'Training', href: '/admin/hr/training', icon: '🎓' },
+    { label: 'Dashboard', href: '/hospitality-estates/admin/hr/dashboard', icon: '📊' },
+    { label: 'Luxury Staff Management', href: '/hospitality-estates/admin/hr/staff-management', icon: '💎' },
+    { label: 'Event Staff Coordination', href: '/hospitality-estates/admin/hr/event-staff', icon: '🎉' },
+    { label: 'Estate Staff Management', href: '/hospitality-estates/admin/hr/estate-management', icon: '🏛️' },
   ];
 
   return (
@@ -152,8 +233,9 @@ export default function HRPortal({ user, onLogout }: HRPortalProps) {
     >
       <Routes>
         <Route path="dashboard" element={<HRDashboard />} />
-        <Route path="scheduling" element={<Scheduling />} />
-        <Route path="training" element={<Training />} />
+        <Route path="staff-management" element={<LuxuryStaffManagement />} />
+        <Route path="event-staff" element={<EventStaffCoordination />} />
+        <Route path="estate-management" element={<EstateStaffManagement />} />
         <Route path="/" element={<Navigate to="dashboard" replace />} />
       </Routes>
     </AdminLayout>
